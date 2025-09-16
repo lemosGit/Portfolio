@@ -8,7 +8,7 @@ import Image from "next/image"
 export function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [typedText, setTypedText] = useState("")
-  const fullText = "Desenvolvedor Full Stack"
+  const fullText = "Dev Full Stack"
 
   useEffect(() => {
     setIsVisible(true)
