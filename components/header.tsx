@@ -64,9 +64,11 @@ export function Header() {
               </a>
             ))}
             <ThemeToggle />
-            <Button className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-300">
-              Download CV
-            </Button>
+				<a href="/Curriculum.pdf" download>
+					<Button className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all duration-300">
+              		Download CV
+            	</Button>
+				</a>
           </div>
 
           {/* Mobile Menu Button */}

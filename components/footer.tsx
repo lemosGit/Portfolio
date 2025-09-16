@@ -18,13 +18,13 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://github.com/lemosGit"
                 className="p-2 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               >
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="www.linkedin.com/in/joão-lemos-pereira-3013932a0"
                 className="p-2 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-all duration-300"
               >
                 <Linkedin className="h-5 w-5" />
