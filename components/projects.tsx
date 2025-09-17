@@ -39,11 +39,11 @@ export function Projects() {
       featured: true,
     },
     {
-      title: "App de Gestão de Tarefas",
+      title: "Monitoramento de Serviços",
       description:
-        "Aplicação para gerenciamento de tarefas com drag & drop, colaboração em equipe e notificações em tempo real.",
-      image: "/task-management-app.png",
-      technologies: ["React", "Node.js", "Socket.io", "MongoDB"],
+        "Projeto de monitoramento de serviços em tempo real",
+      image: "/frontend.png",
+      technologies: ["React", "Node.js", "tailwindcss", "Prisma"],
       liveUrl: "#",
       githubUrl: "#",
       featured: true,
