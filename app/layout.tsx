@@ -1,33 +1,40 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Suspense } from "react"
-import "./globals.css"
+import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/jetbrains-mono";
+import "./globals.css";
+import { Providers } from "@/components/Providers";
+import { profile } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Desenvolvedor Full Stack | Frontend & Backend",
-  description: "Portfólio de desenvolvedor especializado em React, Next.js, Node.js, Java, Python e mais",
-  generator: "v0.app",
-}
+  title: `${profile.name} — ${profile.role}`,
+  description:
+    "Engenheiro de sistemas e programador focado em criar soluções digitais robustas, escaláveis e pensadas para o mundo real.",
+  openGraph: {
+    title: `${profile.name} — ${profile.role}`,
+    description: "Construo sistemas que transformam ideias em impacto.",
+    type: "website",
+    locale: "pt_PT",
+  },
+};
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export const viewport: Viewport = {
+  themeColor: "#03060b",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <Suspense fallback={null}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {children}
-          </ThemeProvider>
-        </Suspense>
-        <Analytics />
+    <html lang="pt-PT">
+      <body>
+        <a
+          href="#conteudo"
+          className="sr-only z-[100] bg-accent px-4 py-2 font-mono text-xs text-bg focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        >
+          Saltar para o conteúdo
+        </a>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  )
+  );
 }
