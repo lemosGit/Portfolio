@@ -5,14 +5,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#03060b",
-        surface: "#0a1220",
-        ink: { DEFAULT: "#eef3fa", dim: "#9aa6b6", faint: "#5d6a7c" },
-        accent: { DEFAULT: "#4db8ff", deep: "#2b7fff" },
+        bg: "#08060f",
+        surface: "#110d1f",
+        ink: { DEFAULT: "#efedf8", dim: "#a6a2bd", faint: "#6f6a8c" },
+        accent: { DEFAULT: "#8b6cff", deep: "#6d4cff", soft: "#b9a6ff" },
+        aqua: "#5fd4e8",
+        ok: "#3ddc97",
+        line: "rgba(167, 139, 250, 0.12)",
       },
       fontFamily: {
         sans: ['"Manrope Variable"', "system-ui", "sans-serif"],
+        display: ['"Space Grotesk Variable"', '"Manrope Variable"', "system-ui", "sans-serif"],
         mono: ['"JetBrains Mono Variable"', "ui-monospace", "monospace"],
+      },
+      transitionTimingFunction: {
+        // curva "ease-out" forte: resposta imediata, final suave
+        out: "cubic-bezier(0.23, 1, 0.32, 1)",
       },
       keyframes: {
         float: {

@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/jetbrains-mono";
+import "@fontsource-variable/space-grotesk";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { profile } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: `${profile.name} — ${profile.role}`,
+  title: `JP Studio — ${profile.name}, ${profile.role}`,
   description:
     "Engenheiro de sistemas e programador focado em criar soluções digitais robustas, escaláveis e pensadas para o mundo real.",
   openGraph: {
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#03060b",
+  themeColor: "#08060f",
   width: "device-width",
   initialScale: 1,
 };

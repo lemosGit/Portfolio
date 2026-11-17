@@ -1,0 +1,11 @@
+com base na minha metodologia de desenvolvimento de sistema, pretendo cirar um sistema que o cliente consegue visualizar algumas etapas e conversar apartir do meu site,
+falando acerca do projeto e ele podendo ver qual fase se encontra o projeto, onde pode ter tambem uma seccao de autenticacao do cliente onde o cliente vai poder, acessar
+a visualizacao do seu projeto deixar opniao, ver as fases que esta a ser feita, data marcada para a reuniao, e outras questoes que achas interessante ter como: ver o link do projeto demostracao sendo produzido, pode ser um link da vercel gratuito, ou ainda um local onde vai ter o codigo qr da app para baixar direitamente onde vai acessar o servidor do build o EAS buil.
+
+no entanto pretendo que o meu portfolofio seja uma rota joao-pereira/portfolio.dev, onde pode se navegar em portfolio, projeto, cliente -> onde tem o login reservado
+do cliente que vai ser passado para ele e o projeto para ser bem monitorado vai ler milestone e e das tarefas do github, sendo que deve ser ligado com um projeto que
+vai estar no github e organizado e depois ser consumido para implementar o visual na minha pagina
+
+e a pagina inicial é para ver alguns trabalhos resumidos e ter a secao de entrar como cliente, e assim o cliente pode ter todo esses acesso sobre o projeto.
+
+com base nestas informacoes pretendo que organizas a informacao para estar mais profissional

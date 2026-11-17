@@ -24,7 +24,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
             className="eyebrow mb-7 flex items-center gap-3"
           >
-            <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-accent shadow-[0_0_10px_#4db8ff]" />
+            <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-accent shadow-[0_0_10px_#8b6cff]" />
             Disponível para novos desafios
           </motion.p>
 

@@ -25,3 +25,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# exemplo de variáveis (sem segredos)
+!.env.example
+
+# locais (não versionar)
+env.local
+.obsidian/
+.mcp.json
