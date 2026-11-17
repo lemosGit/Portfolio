@@ -11,7 +11,7 @@ import { SpotCard } from "./SpotCard";
 /** Placeholder geométrico até existir uma captura real em /public/projects. */
 function Placeholder({ id }: { id: string }) {
   return (
-    <div className="relative grid h-full w-full place-items-center overflow-hidden bg-[radial-gradient(circle_at_50%_40%,rgba(43,127,255,0.14),transparent_70%)]">
+    <div className="relative grid h-full w-full place-items-center overflow-hidden bg-[radial-gradient(circle_at_50%_40%,rgba(109,76,255,0.14),transparent_70%)]">
       <svg viewBox="0 0 200 200" aria-hidden className="h-[78%] w-[78%] animate-spin-slower">
         {[84, 62, 40, 20].map((s, i) => (
           <rect
@@ -21,8 +21,8 @@ function Placeholder({ id }: { id: string }) {
             width={s}
             height={s}
             transform={`rotate(45 100 100)`}
-            fill={i === 3 ? "rgba(77,184,255,0.25)" : "none"}
-            stroke="#4db8ff"
+            fill={i === 3 ? "rgba(139, 108, 255,0.25)" : "none"}
+            stroke="#8b6cff"
             strokeOpacity={0.55 - i * 0.08}
             strokeWidth="0.8"
           />

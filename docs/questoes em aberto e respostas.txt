@@ -1,0 +1,16 @@
+questoes em aberto e respostas
+1- Nome do domínio final (ex.: joaopereira.dev).
+R: ja tenho o nome do domio no ar como https://joao-pereira.dev/ apenas pretendo adicionar no mesmo projeto algumas rotas
+
+
+2 - Nomes exatos das fases da sua metodologia (secção 4).
+R : sim nome exato das metodologia sendo, Descoberta & Requisitos, Design (UI/UX), Desenvolvimento, Testes & Validação, Entrega & Publicação, Suporte & Manutenção
+
+3 - Reuniões: agendadas manualmente no admin ou integradas com Google Calendar / Cal.com?
+R: agendado manualmente
+
+4 - Um cliente pode ter mais do que um projeto em simultâneo? (o modelo já suporta)
+R: um cliente pode ter varios projetos
+
+5 - Os repositórios dos clientes ficam na sua conta pessoal ou numa organização GitHub?
+R: de momento ficam na minha conta pessoal do github venculando pelo projeto.

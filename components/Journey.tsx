@@ -31,7 +31,7 @@ export function Journey() {
           <motion.span
             aria-hidden
             style={{ scaleY }}
-            className="absolute bottom-1 left-[5px] top-1 w-px origin-top bg-gradient-to-b from-accent to-accent-deep shadow-[0_0_10px_#4db8ff]"
+            className="absolute bottom-1 left-[5px] top-1 w-px origin-top bg-gradient-to-b from-accent to-accent-deep shadow-[0_0_10px_#8b6cff]"
           />
           {journey.map((j, i) => {
             const last = i === journey.length - 1;
@@ -48,7 +48,7 @@ export function Journey() {
                   aria-hidden
                   className={`absolute -left-8 top-1.5 h-[11px] w-[11px] border ${
                     last
-                      ? "animate-pulse-glow border-accent bg-accent shadow-[0_0_14px_#4db8ff]"
+                      ? "animate-pulse-glow border-accent bg-accent shadow-[0_0_14px_#8b6cff]"
                       : "border-accent/50 bg-bg"
                   }`}
                 />

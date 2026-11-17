@@ -1,0 +1,16 @@
+utilize as seguintes skill para o frontend:
+Frontend Design	Interfaces premium, estética futurista, layouts criativo
+Impeccable	Refinamento visual, consistência e polimento
+Taste Skill	Art direction, design sofisticado e anti-interface genérica
+Emil Kowalski — Design Engineering	Animações suaves, microinterações e motion design
+UI UX Pro Max	Paletas, tipografia, estilos e design systems
+utilize as skill conforme a necessidade
+
+
+1. Supabase: criar o projeto Free e correr o SQL, como em docs/supabase-setup.md.
+
+2. Cliente de teste: criar com --repo lemosGit/candongueiro_pay e registar a demo joao-pereira.dev/candongueiro_pay.
+R: escalrecendo sobre o dominio: o meu projeto esta na vercel veiculado com o dominio joao-pereira.dev, e pretendo adicionar as rotas apartir deste projeto.
+
+3. GitHub: criar o token com acesso só ao candongueiro_pay, criar a label cliente: visível e aplicá-la a 10–15 issues.
+4. Ligar o portal ao GitHub: é a única parte do código que falta para o piloto. As fases e as tarefas passam a vir do repositório real em vez dos dados de exemplo.

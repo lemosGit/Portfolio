@@ -23,7 +23,7 @@ export function Contact() {
     <section id="contacto" className="relative overflow-hidden border-y border-accent/40 py-32 md:py-44">
       <div
         aria-hidden
-        className="absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/10 bg-[radial-gradient(circle,rgba(43,127,255,0.12),transparent_65%)]"
+        className="absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/10 bg-[radial-gradient(circle,rgba(109,76,255,0.12),transparent_65%)]"
       />
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <Reveal>

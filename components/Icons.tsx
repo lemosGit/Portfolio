@@ -15,31 +15,3 @@ export function LinkedinIcon({ className }: P) {
     </svg>
   );
 }
-
-/** Marca: losango com as iniciais. */
-export function LogoMark({ className }: P) {
-  return (
-    <svg viewBox="0 0 40 40" aria-hidden className={className}>
-      <rect
-        x="8"
-        y="8"
-        width="24"
-        height="24"
-        transform="rotate(45 20 20)"
-        fill="rgba(77,184,255,0.06)"
-        stroke="#4db8ff"
-        strokeWidth="1.2"
-      />
-      <text
-        x="20"
-        y="23.5"
-        textAnchor="middle"
-        fontSize="9"
-        fontFamily="ui-monospace, monospace"
-        fill="#4db8ff"
-      >
-        JL
-      </text>
-    </svg>
-  );
-}

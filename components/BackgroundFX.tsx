@@ -69,14 +69,14 @@ export function BackgroundFX() {
         }
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(120, 205, 255, 0.55)";
+        ctx.fillStyle = "rgba(170, 150, 255, 0.55)";
         ctx.fill();
 
         for (let j = i + 1; j < pts.length; j++) {
           const q = pts[j];
           const dist = Math.hypot(p.x - q.x, p.y - q.y);
           if (dist < LINK) {
-            ctx.strokeStyle = `rgba(77, 184, 255, ${(1 - dist / LINK) * 0.16})`;
+            ctx.strokeStyle = `rgba(139, 108, 255, ${(1 - dist / LINK) * 0.16})`;
             ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
@@ -114,15 +114,15 @@ export function BackgroundFX() {
     <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <motion.div
         style={{ y: y1 }}
-        className="absolute -right-40 -top-40 h-[780px] w-[780px] rounded-full bg-[radial-gradient(circle,rgba(43,127,255,0.28),transparent_65%)] blur-2xl"
+        className="absolute -right-40 -top-40 h-[780px] w-[780px] rounded-full bg-[radial-gradient(circle,rgba(109,76,255,0.28),transparent_65%)] blur-2xl"
       />
       <motion.div
         style={{ y: y2 }}
-        className="absolute -left-52 top-[55%] h-[680px] w-[680px] rounded-full bg-[radial-gradient(circle,rgba(77,184,255,0.14),transparent_65%)] blur-2xl"
+        className="absolute -left-52 top-[55%] h-[680px] w-[680px] rounded-full bg-[radial-gradient(circle,rgba(139,108,255,0.14),transparent_65%)] blur-2xl"
       />
       <div className="grid-bg absolute inset-0" />
       <canvas ref={canvasRef} className="absolute inset-0" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(3,6,11,0.85)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(8,6,15,0.85)_100%)]" />
     </div>
   );
 }

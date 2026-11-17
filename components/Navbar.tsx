@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Menu, X } from "lucide-react";
-import { navLinks, profile } from "@/lib/data";
+import Link from "next/link";
+import { LockKeyhole, Menu, X } from "lucide-react";
+import { navLinks } from "@/lib/data";
 import { useActiveSection } from "@/lib/useActiveSection";
 import { cn, EASE } from "@/lib/utils";
-import { LogoMark } from "./Icons";
+import { BrandLockup } from "./BrandMark";
 
 const ids = [...navLinks.map((l) => l.id), "contacto"];
 
@@ -45,14 +46,8 @@ export function Navbar() {
         aria-label="Navegação principal"
         className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-5"
       >
-        <a href="#inicio" className="group flex items-center gap-3" aria-label="Início">
-          <LogoMark className="h-10 w-10 transition-transform duration-500 group-hover:rotate-90" />
-          <span className="leading-tight">
-            <span className="block text-[13px] font-medium">{profile.name}</span>
-            <span className="block font-mono text-[9px] uppercase tracking-[0.25em] text-ink-faint">
-              {profile.role}
-            </span>
-          </span>
+        <a href="#inicio" className="rounded-xl" aria-label="JP Studio — início">
+          <BrandLockup />
         </a>
 
         <ul className="hidden items-center gap-9 md:flex">
@@ -70,7 +65,7 @@ export function Navbar() {
                 {active === l.id && (
                   <motion.span
                     layoutId="nav-indicator"
-                    className="absolute inset-x-0 -bottom-0.5 h-px bg-accent shadow-[0_0_10px_#4db8ff]"
+                    className="absolute inset-x-0 -bottom-0.5 h-px bg-accent shadow-[0_0_10px_#8b6cff]"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -79,9 +74,9 @@ export function Navbar() {
           ))}
         </ul>
 
-        <a href="#contacto" className="btn-ghost hidden !px-4 !py-2.5 md:inline-flex">
-          Vamos conversar <ArrowRight size={14} />
-        </a>
+        <Link href="/cliente/login" className="btn-violet hidden h-11 px-4 md:inline-flex">
+          <LockKeyhole size={15} aria-hidden /> Área do cliente
+        </Link>
 
         <button
           type="button"
@@ -122,6 +117,11 @@ export function Navbar() {
                 </motion.li>
               ))}
             </ul>
+            <div className="px-5 pt-8">
+              <Link href="/cliente/login" className="btn-violet h-[52px] w-full">
+                <LockKeyhole size={16} aria-hidden /> Área do cliente
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
