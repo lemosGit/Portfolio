@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
 import { demoEmail, meetingEmail, replyEmail } from "@/lib/email/templates";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
-import { requireAdmin } from "./session";
+import { requireAdminStrict as requireAdmin } from "./session";
 
 export type AdminState = {
   ok?: boolean;

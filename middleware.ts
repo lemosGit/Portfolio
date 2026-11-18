@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_KEY, SUPABASE_URL, supabaseEnabled } from "@/lib/supabase/config";
 import { isAdminUser } from "@/lib/admin/role";
+import { getSessionClaims } from "@/lib/supabase/claims";
 
 const DEMO_COOKIE = "jp_portal_session";
 
@@ -29,11 +30,10 @@ export async function middleware(req: NextRequest) {
         },
       },
     });
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
-    signedIn = Boolean(user);
-    admin = isAdminUser(user);
+    // Renova o token se expirou e verifica a assinatura localmente (sem ida ao servidor de auth).
+    const claims = await getSessionClaims(sb);
+    signedIn = Boolean(claims);
+    admin = isAdminUser(claims);
   } else {
     signedIn = Boolean(req.cookies.get(DEMO_COOKIE)?.value);
   }
