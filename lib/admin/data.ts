@@ -2,6 +2,7 @@
  * Leituras do painel /admin. Usa a sessão do administrador (RLS: public.is_admin()),
  * e a chave secreta apenas para o estado das contas (último acesso, suspensão).
  */
+import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { accountsEnabled, createSupabaseAdmin } from "@/lib/supabase/admin";
 import { syncPhases, toView } from "@/lib/portal/data";
@@ -65,7 +66,7 @@ const fail = (what: string, e: { message: string }) => new Error(`Supabase (${wh
 
 /* ───────────── Contas (chave secreta) ───────────── */
 
-export async function loadAccounts(): Promise<Map<string, AccountInfo> | undefined> {
+async function loadAccountsUncached(): Promise<Map<string, AccountInfo> | undefined> {
   if (!accountsEnabled) return undefined;
   const admin = createSupabaseAdmin();
   const out = new Map<string, AccountInfo>();
@@ -230,7 +231,7 @@ export async function withProgress(p: AdminProject): Promise<ProjectView> {
 
 /* ───────────── Mensagens ───────────── */
 
-export async function listConversations(sb: SupabaseClient): Promise<Conversation[]> {
+async function listConversationsUncached(sb: SupabaseClient): Promise<Conversation[]> {
   const { data, error } = await sb
     .from("feedback")
     .select("project_id, author_role, body, created_at, projects (name, clients (name))")
@@ -332,3 +333,9 @@ export async function upcomingMeetings(sb: SupabaseClient, limit = 5) {
     clientName: m.projects?.clients?.name ?? "Cliente",
   }));
 }
+
+/** Uma só leitura por pedido (a barra lateral e a página partilham o resultado). */
+export const loadAccounts = cache(loadAccountsUncached);
+
+/** Uma só leitura por pedido (a barra lateral e a página partilham o resultado). */
+export const listConversations = cache(listConversationsUncached);

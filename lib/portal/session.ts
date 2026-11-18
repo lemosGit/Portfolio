@@ -6,6 +6,7 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSessionClaims } from "@/lib/supabase/claims";
 import { supabaseEnabled } from "@/lib/supabase/config";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getActiveProject, getClient, listFeedback } from "./data";
@@ -26,13 +27,11 @@ function countUnread(feedback: Feedback[]) {
 export const requirePortal = cache(async () => {
   if (supabaseEnabled) {
     const sb = await createSupabaseServer();
-    const {
-      data: { user },
-    } = await sb.auth.getUser();
-    if (!user) redirect("/cliente/sair");
+    const claims = await getSessionClaims(sb);
+    if (!claims) redirect("/cliente/sair");
 
     const preferred = (await cookies()).get(PROJECT_COOKIE)?.value;
-    const data = await loadPortal(sb, user.id, preferred);
+    const data = await loadPortal(sb, claims.sub, preferred);
     if (!data || !data.project) redirect("/cliente/sair?motivo=sem-projeto");
     if (data.mustChangePassword) redirect("/cliente/nova-senha");
     return {

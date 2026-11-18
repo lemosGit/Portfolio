@@ -73,11 +73,13 @@ export async function loadPortal(
   userId: string,
   preferredProjectId?: string,
 ): Promise<PortalData | undefined> {
+  // 1.º pedido: cliente + lista de projetos (para o seletor), juntos.
   const { data: c, error: ce } = await sb
     .from("clients")
-    .select("id, name, company, email, must_change_password")
+    .select("id, name, company, email, must_change_password, projects (id, name, status, created_at)")
     .eq("user_id", userId)
-    .maybeSingle<ClientRow>();
+    .order("created_at", { referencedTable: "projects", ascending: false })
+    .maybeSingle<ClientRow & { projects: (ProjectOption & { created_at: string })[] }>();
   if (ce) throw new Error(`Supabase (clients): ${ce.message}`);
   if (!c) return undefined;
 
@@ -89,40 +91,35 @@ export async function loadPortal(
     initials: initials(c.name),
   };
 
-  const { data: list, error: le } = await sb
-    .from("projects")
-    .select("id, name, status")
-    .eq("client_id", c.id)
-    .order("created_at", { ascending: false })
-    .returns<ProjectOption[]>();
-  if (le) throw new Error(`Supabase (projects): ${le.message}`);
-  const projects = list ?? [];
+  const projects: ProjectOption[] = (c.projects ?? []).map(({ id, name, status }) => ({ id, name, status }));
   // Escolha guardada pelo cliente; senão, o projeto ativo mais recente; senão, o mais recente.
   const chosen =
     projects.find((x) => x.id === preferredProjectId) ?? projects.find((x) => x.status === "ativo") ?? projects[0];
   if (!chosen) return { client, mustChangePassword: c.must_change_password, projects, feedback: [] };
 
-  const { data: p, error: pe } = await sb
-    .from("projects")
-    .select(
-      "id, slug, client_id, name, tagline, description, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
-    )
-    .eq("id", chosen.id)
-    .maybeSingle<ProjectRow>();
+  // 2.º pedido (em paralelo): detalhe do projeto e mensagens.
+  const [detail, feedbackResult] = await Promise.all([
+    sb
+      .from("projects")
+      .select(
+        "id, slug, client_id, name, tagline, description, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
+      )
+      .eq("id", chosen.id)
+      .maybeSingle<ProjectRow>(),
+    sb
+      .from("feedback")
+      .select("id, author_role, body, target_kind, target_ref, created_at")
+      .eq("project_id", chosen.id)
+      .order("created_at", { ascending: true })
+      .returns<FeedbackRow[]>(),
+  ]);
+  const { data: p, error: pe } = detail;
   if (pe) throw new Error(`Supabase (projects): ${pe.message}`);
   if (!p) return { client, mustChangePassword: c.must_change_password, projects, feedback: [] };
 
   const now = new Date().toISOString();
-  // Fases e tarefas vêm do GitHub (github_owner/github_repo), em paralelo com o feedback.
-  const [sync, feedbackResult] = await Promise.all([
-    syncPhases(p.github_owner, p.github_repo, p.phase_map),
-    sb
-      .from("feedback")
-      .select("id, author_role, body, target_kind, target_ref, created_at")
-      .eq("project_id", p.id)
-      .order("created_at", { ascending: true })
-      .returns<FeedbackRow[]>(),
-  ]);
+  // Fases e tarefas vêm do GitHub (em cache no servidor; o webhook invalida-a).
+  const sync = await syncPhases(p.github_owner, p.github_repo, p.phase_map);
 
   const project: Project = {
     id: p.id,
