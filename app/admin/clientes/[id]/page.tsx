@@ -79,7 +79,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
         </Section>
       </div>
 
-      <Section title="Projetos" description="O cliente vê no portal o projeto mais recente.">
+      <Section title="Projetos" description="Com mais de um projeto, o cliente troca entre eles no cartão da barra lateral do portal. Abre no projeto ativo mais recente.">
         {c.projects.length === 0 ? (
           <Empty>Este cliente ainda não tem projetos.</Empty>
         ) : (

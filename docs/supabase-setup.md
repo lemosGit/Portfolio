@@ -27,6 +27,8 @@ Copie `.env.example` para `.env.local` e preencha com os valores de **Project Se
 | `CRON_SECRET` | Vercel | Sim |
 | `GITHUB_TOKEN` | `.env.local` e Vercel | **Sim** |
 | `GITHUB_WEBHOOK_SECRET` | `.env.local` e Vercel | **Sim** |
+| `RESEND_API_KEY` | Vercel (e `.env.local` para testar) | **Sim** |
+| `EMAIL_FROM` | Vercel (opcional) | Não — por defeito `JP Studio <portal@joao-pereira.dev>` |
 
 ## 4. A sua conta de administrador
 
@@ -92,7 +94,7 @@ Os artefactos ficam guardados 90 dias.
 
 1. **Token** — GitHub → Settings → Developer settings → **Fine-grained tokens** → *Generate new token*:
    - *Resource owner*: `lemosGit` · *Repository access*: **Only select repositories** (ex.: `candongueiro_pay`).
-   - *Permissions → Repository*: **Issues: Read-only** (o *Metadata: Read-only* é automático).
+   - *Permissions → Repository*: **Issues: Read and write** (o *Metadata: Read-only* é automático). A escrita serve para marcar `cliente: visível` a partir do painel.
    - Guarde-o como `GITHUB_TOKEN` no `.env.local` e na Vercel. Ao aceitar um cliente novo, edite o token e acrescente o repositório.
 2. **Label** — em cada repositório, crie `cliente: visível` e aplique-a às issues que o cliente deve ver:
    ```bash
@@ -112,6 +114,17 @@ Os artefactos ficam guardados 90 dias.
 update projects set phase_map = '{"M3": 3}' where slug = 'candongueiro-pay';
 ```
 
-## O que ainda é de exemplo
+## 10. Avisos por email (Resend)
 
-- **Vários projetos por cliente**: o portal mostra o projeto mais recente.
+O cliente recebe um email quando o administrador **responde a uma mensagem**, **marca ou altera uma reunião** ou **regista uma demo nova**. Cada formulário tem a caixa “Avisar o cliente por email” (desmarcada por defeito ao editar uma reunião existente). As respostas do cliente a estes emails vão para o email do perfil (`lib/data.ts`).
+
+1. Crie conta em [resend.com](https://resend.com) (plano gratuito).
+2. **Domains → Add Domain** → `joao-pereira.dev`. Adicione no seu fornecedor de DNS os registos que o Resend mostrar (MX e TXT de SPF, TXT de DKIM) e espere pelo estado **Verified**.
+3. **API Keys → Create API Key** com permissão *Sending access*, limitada ao domínio.
+4. Na Vercel: `RESEND_API_KEY` (Secret, Production) e, se quiser outro remetente, `EMAIL_FROM`. Faça redeploy.
+
+Sem `RESEND_API_KEY`, a caixa aparece desativada e nada é enviado.
+
+## Vários projetos por cliente
+
+Com mais de um projeto, o cartão do projeto na barra lateral do portal vira um seletor. O portal abre no projeto ativo mais recente e lembra a última escolha do cliente (cookie `jp_portal_project`).

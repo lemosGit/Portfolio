@@ -13,6 +13,8 @@ import { loadPortal } from "./supabase-repo";
 import type { Feedback } from "./types";
 
 export const SESSION_COOKIE = "jp_portal_session";
+/** Projeto escolhido no seletor da barra lateral (só o id; a RLS impede ver projetos alheios). */
+export const PROJECT_COOKIE = "jp_portal_project";
 
 /** Respostas do João depois da última mensagem do cliente. */
 function countUnread(feedback: Feedback[]) {
@@ -29,10 +31,17 @@ export const requirePortal = cache(async () => {
     } = await sb.auth.getUser();
     if (!user) redirect("/cliente/sair");
 
-    const data = await loadPortal(sb, user.id);
+    const preferred = (await cookies()).get(PROJECT_COOKIE)?.value;
+    const data = await loadPortal(sb, user.id, preferred);
     if (!data || !data.project) redirect("/cliente/sair?motivo=sem-projeto");
     if (data.mustChangePassword) redirect("/cliente/nova-senha");
-    return { client: data.client, project: data.project, feedback: data.feedback, unread: countUnread(data.feedback) };
+    return {
+      client: data.client,
+      project: data.project,
+      projects: data.projects,
+      feedback: data.feedback,
+      unread: countUnread(data.feedback),
+    };
   }
 
   const id = (await cookies()).get(SESSION_COOKIE)?.value;
@@ -41,5 +50,6 @@ export const requirePortal = cache(async () => {
   const project = await getActiveProject(client.id);
   if (!project) redirect("/cliente/sair?motivo=sem-projeto");
   const feedback = await listFeedback(project.id);
-  return { client, project, feedback, unread: countUnread(feedback) };
+  const projects = [{ id: project.id, name: project.name, status: "ativo" as const }];
+  return { client, project, projects, feedback, unread: countUnread(feedback) };
 });

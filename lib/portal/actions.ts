@@ -8,7 +8,7 @@ import { supabaseEnabled } from "@/lib/supabase/config";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { addFeedback, findClientByEmail } from "./data";
 import { DEMO_CREDENTIALS } from "./mock-data";
-import { requirePortal, SESSION_COOKIE } from "./session";
+import { PROJECT_COOKIE, requirePortal, SESSION_COOKIE } from "./session";
 import type { Feedback } from "./types";
 
 /* ───────────── Login ───────────── */
@@ -54,7 +54,9 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
 
 export async function logout() {
   if (supabaseEnabled) await (await createSupabaseServer()).auth.signOut();
-  (await cookies()).delete(SESSION_COOKIE);
+  const store = await cookies();
+  store.delete(SESSION_COOKIE);
+  store.delete(PROJECT_COOKIE);
   redirect("/cliente/login");
 }
 
@@ -114,4 +116,24 @@ export async function sendFeedback(_prev: FeedbackState, form: FormData): Promis
 
   revalidatePath("/cliente", "layout");
   return { ok: true };
+}
+
+/* ───────────── Seletor de projeto ───────────── */
+
+export async function selectProject(form: FormData) {
+  const { projects } = await requirePortal();
+  const id = String(form.get("projeto") ?? "");
+  // Só aceita projetos do próprio cliente (a lista já vem filtrada pela RLS).
+  if (projects.some((p) => p.id === id)) {
+    (await cookies()).set(PROJECT_COOKIE, id, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 180,
+    });
+  }
+  const back = String(form.get("voltar") ?? "/cliente");
+  revalidatePath("/cliente", "layout");
+  redirect(back.startsWith("/cliente") ? back : "/cliente");
 }

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
-  const { client, project, unread } = await requirePortal();
+  const { client, project, projects, unread } = await requirePortal();
 
   return (
     <div className="relative min-h-dvh overflow-x-clip">
@@ -26,7 +26,8 @@ export default async function PortalLayout({ children }: { children: React.React
 
       <Sidebar
         client={{ name: client.name, initials: client.initials }}
-        project={{ name: project.name, percent: project.percent }}
+        project={{ id: project.id, name: project.name, percent: project.percent }}
+        projects={projects}
         unread={unread}
       />
 

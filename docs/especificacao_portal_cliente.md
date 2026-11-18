@@ -158,7 +158,7 @@ Um cliente pode ter **vários projetos em simultâneo**. O modelo de dados já o
 
 - O cliente escreve uma mensagem **geral**, **sobre uma fase** (1–6) ou **sobre uma tarefa** (nº da issue).
 - O administrador responde (no painel `/admin/mensagens`), e o cliente vê a resposta no portal.
-- **Notificação por email** (Resend) ao administrador quando há mensagem nova e ao cliente quando há resposta — por fazer.
+- **Notificação por email** (Resend) ao cliente quando há resposta, reunião marcada/alterada ou demo nova — feito (2026-11-18). Aviso ao administrador por mensagem nova: por fazer.
 
 ### 5.6 Jornada do cliente
 
@@ -269,7 +269,7 @@ O portal segue as convenções do **roteiro de engenharia** já aplicado no Cand
 | Disponibilidade | Cron diário da Vercel (`/api/keepalive`) contra a pausa do plano Free | ✔ |
 | Cópias de segurança | GitHub Action semanal, `pg_dump` cifrado (o repositório do portfólio é público) | ✔ |
 | Dados de progresso | GitHub REST API + webhook | ✔ |
-| Emails | Resend | ○ |
+| Emails | Resend | ✔ (avisos ao cliente) |
 | Alojamento | Vercel + `joao-pereira.dev` | ✔ |
 
 ### 8.1 Modelo de dados (Supabase)
@@ -324,7 +324,7 @@ Conforme `supabase/migrations/0001_portal.sql`:
 | **2. Interface do portal** | Visão geral, fases, entregas (QR), agenda, mensagens — com dados de exemplo | ✔ |
 | **3. Supabase** | Auth, troca obrigatória de senha, RLS, mensagens reais, keepalive, backups, `npm run portal` | ✔ código · ○ projeto Supabase por criar |
 | **4. Integração GitHub** | Leitura de milestones/issues, agrupamento M0–M10 → 6 fases, label `cliente: visível`, cache + webhook | ✔ (testado com `candongueiro_pay`) |
-| **5. Vários projetos** | `/cliente/[projeto]/…`, lista de projetos, seletor na barra lateral | ○ **próxima** |
+| **5. Vários projetos** | Seletor na barra lateral (escolha guardada em cookie) | ✔ |
 | **6. Admin** | `/admin`: clientes, projetos, demos, reuniões, respostas | ✔ |
 | **7. Emails** | Resend: mensagem nova, resposta, nova demo, recuperação de senha | ○ |
 | **8. Extras** | Aprovações por *gate*, ficheiros, changelog, pedidos de alteração | ○ |
@@ -385,4 +385,4 @@ O Candongueiro Pay é o projeto ideal para o primeiro teste real:
    - Fechar uma issue atualiza o portal (webhook ou, no máximo, 10 minutos depois)?
    - As mensagens chegam ao `npm run portal -- mensagens`?
 
-Depois do piloto, seguem-se a etapa 5 (vários projetos) e a etapa 6 (`/admin`).
+As etapas 5 (vários projetos) e 6 (`/admin`) ficaram concluídas em 2026-11-18. Seguem-se os avisos por email (Resend).

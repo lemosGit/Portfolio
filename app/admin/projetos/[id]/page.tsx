@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, Globe, MessageSquare, Smartphone, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, Globe, MessageSquare, Smartphone, Trash2 } from "lucide-react";
 import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
@@ -8,7 +8,7 @@ import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field, inputCls } from "../../_components/forms";
 import { ProjectFields } from "../../_components/ProjectFields";
-import { AdminHeader, Badge, Empty, Progress, Section } from "../../_components/ui";
+import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
 
 export const metadata = { title: "Projeto" };
 
@@ -63,9 +63,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         }
         actions={
           repo ? (
-            <a href={`https://github.com/${repo}/issues`} target="_blank" rel="noreferrer" className="btn-quiet h-9 py-0 text-[13px]">
-              Issues <ExternalLink size={13} aria-hidden />
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/admin/projetos/${p.id}/tarefas`} className="btn-violet h-9 py-0 text-[13px]">
+                <Eye size={14} aria-hidden /> Tarefas visíveis
+              </Link>
+              <a href={`https://github.com/${repo}/issues`} target="_blank" rel="noreferrer" className="btn-quiet h-9 py-0 text-[13px]">
+                Issues <ExternalLink size={13} aria-hidden />
+              </a>
+            </div>
           ) : undefined
         }
       >
@@ -183,6 +188,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   <input name="notas" className={inputCls} placeholder="O que mudou nesta versão" />
                 </Field>
               </div>
+              <NotifyClient />
             </ActionForm>
           </div>
         </Section>
@@ -270,6 +276,8 @@ function MeetingForm({ projectId, m }: { projectId: string; m?: Meeting }) {
           </Field>
         )}
       </div>
+      {/* Ao editar (ex.: só acrescentar o resumo), o aviso fica desmarcado por defeito. */}
+      <NotifyClient defaultChecked={!m} />
     </ActionForm>
   );
 }
