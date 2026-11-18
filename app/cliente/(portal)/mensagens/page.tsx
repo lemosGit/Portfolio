@@ -28,7 +28,7 @@ export default async function MessagesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader section="Mensagens" title="Conversa com a JP Studio" unread={unread} syncedAt={project.syncedAt} source={project.source} />
+      <PageHeader section="Mensagens" title="Conversa com a GeniusFrela" unread={unread} syncedAt={project.syncedAt} source={project.source} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="thread-title" className="panel p-5 sm:p-7">
@@ -54,7 +54,7 @@ export default async function MessagesPage() {
                     )}
                     <div className={cn("max-w-[78%]", mine && "text-right")}>
                       <p className="text-[11px] text-ink-faint">
-                        <span className="font-semibold text-ink-dim">{mine ? "Você" : "João · JP Studio"}</span>
+                        <span className="font-semibold text-ink-dim">{mine ? "Você" : "João · GeniusFrela"}</span>
                         {" · "}
                         <time dateTime={f.createdAt} title={longDate(f.createdAt)}>
                           {relative(f.createdAt)}

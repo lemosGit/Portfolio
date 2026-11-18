@@ -49,7 +49,7 @@ export function icsHref(m: Meeting) {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//JP Studio//Portal//PT",
+    "PRODID:-//GeniusFrela//Portal//PT",
     "BEGIN:VEVENT",
     `UID:${m.id}@jpstudio`,
     `DTSTART:${f(m.startsAt)}`,

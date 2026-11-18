@@ -9,7 +9,7 @@ import { PhoneOrbit } from "../_components/Visuals";
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Entrar · Área do cliente · JP Studio",
+  title: "Entrar · Área do cliente · GeniusFrela",
   robots: { index: false, follow: false },
 };
 
@@ -20,7 +20,7 @@ const FEATURES = [
 ];
 
 const MOTIVOS: Record<string, string> = {
-  "sem-projeto": "A sua conta ainda não tem um projeto associado. Fale com a JP Studio para o ativar.",
+  "sem-projeto": "A sua conta ainda não tem um projeto associado. Fale com a GeniusFrela para o ativar.",
 };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ motivo?: string }> }) {
@@ -37,7 +37,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
       <section className="relative flex flex-col px-6 py-8 sm:px-12 lg:px-16">
         <div className="flex items-center justify-between">
-          <Link href="/" aria-label="JP Studio — página inicial" className="rounded-xl">
+          <Link href="/" aria-label="GeniusFrela — página inicial" className="rounded-xl">
             <BrandLockup />
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 text-[13px] text-ink-faint transition-colors hover:text-ink">
@@ -50,7 +50,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             Área do cliente
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-ink-dim">
-            Entre com o email e a senha que recebeu da JP Studio para acompanhar o seu projeto.
+            Entre com o email e a senha que recebeu da GeniusFrela para acompanhar o seu projeto.
           </p>
           {notice && (
             <p role="status" className="mt-6 rounded-xl border border-accent/25 bg-accent/[0.07] px-4 py-3 text-[13px] text-ink-dim">

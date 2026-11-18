@@ -117,7 +117,7 @@ function Status({ state }: { state: AdminState }) {
 /** Mostra a senha temporária uma única vez, com botão para copiar a mensagem para o cliente. */
 function Credentials({ email, password }: { email: string; password: string }) {
   const [copied, setCopied] = useState(false);
-  const text = `Acesso à Área do Cliente JP Studio\n\nEndereço: https://joao-pereira.dev/cliente/login\nEmail: ${email}\nSenha temporária: ${password}\n\nNo primeiro acesso vai definir uma senha nova.`;
+  const text = `Acesso à Área do Cliente GeniusFrela\n\nEndereço: https://joao-pereira.dev/cliente/login\nEmail: ${email}\nSenha temporária: ${password}\n\nNo primeiro acesso vai definir uma senha nova.`;
 
   return (
     <div className="rounded-2xl border border-accent/30 bg-accent/[0.07] p-4">

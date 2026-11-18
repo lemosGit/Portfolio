@@ -9,7 +9,7 @@ if (typeof window !== "undefined") throw new Error("lib/email/send.ts só pode c
 export const emailEnabled = Boolean(process.env.RESEND_API_KEY);
 
 /** Remetente: tem de usar um domínio verificado no Resend. */
-const FROM = process.env.EMAIL_FROM ?? "JP Studio <portal@joao-pereira.dev>";
+const FROM = process.env.EMAIL_FROM ?? "GeniusFrela <portal@joao-pereira.dev>";
 /** Base dos links nos emails. */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://joao-pereira.dev").replace(/\/$/, "");
 

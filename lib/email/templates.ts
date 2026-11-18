@@ -18,12 +18,16 @@ function layout({ preheader, title, body, cta }: { preheader: string; title: str
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
 <tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:1px solid #e6e1f7">
-<tr><td style="padding:28px 32px 0;font-size:13px;font-weight:700;letter-spacing:.08em;color:#6d4cff">JP STUDIO · ÁREA DO CLIENTE</td></tr>
+<tr><td style="padding:28px 32px 0"><table role="presentation" cellpadding="0" cellspacing="0"><tr>
+<td style="padding-right:12px;vertical-align:middle"><img src="${SITE_URL}/brand/mark-96.png" width="40" height="40" alt="" style="display:block;border:0;border-radius:10px"></td>
+<td style="vertical-align:middle"><div style="font-size:18px;font-weight:700;letter-spacing:-.01em;color:#1c1830">Genius<span style="color:#7c8cf8">Frela</span></div>
+<div style="font-size:10px;font-weight:600;letter-spacing:.18em;color:#8a85a3;text-transform:uppercase">Área do cliente</div></td>
+</tr></table></td></tr>
 <tr><td style="padding:12px 32px 0"><h1 style="margin:0;font-size:22px;line-height:1.3;color:#1c1830">${esc(title)}</h1></td></tr>
 <tr><td style="padding:16px 32px 0;font-size:15px;line-height:1.6;color:#3d3854">${body}</td></tr>
 <tr><td style="padding:24px 32px 32px"><a href="${esc(cta.href)}" style="display:inline-block;background:#6d4cff;color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 20px;border-radius:10px">${esc(cta.label)}</a></td></tr>
 </table>
-<p style="max-width:560px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#8a85a3">Recebe este email porque tem um projeto em acompanhamento na JP Studio. Pode responder diretamente a este email.</p>
+<p style="max-width:560px;margin:16px auto 0;font-size:12px;line-height:1.5;color:#8a85a3">Recebe este email porque tem um projeto em acompanhamento na GeniusFrela. Pode responder diretamente a este email.</p>
 </td></tr></table></body></html>`;
 }
 

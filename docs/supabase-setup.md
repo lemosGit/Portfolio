@@ -28,7 +28,7 @@ Copie `.env.example` para `.env.local` e preencha com os valores de **Project Se
 | `GITHUB_TOKEN` | `.env.local` e Vercel | **Sim** |
 | `GITHUB_WEBHOOK_SECRET` | `.env.local` e Vercel | **Sim** |
 | `RESEND_API_KEY` | Vercel (e `.env.local` para testar) | **Sim** |
-| `EMAIL_FROM` | Vercel (opcional) | Não — por defeito `JP Studio <portal@joao-pereira.dev>` |
+| `EMAIL_FROM` | Vercel (opcional) | Não — por defeito `GeniusFrela <portal@joao-pereira.dev>` |
 
 ## 4. A sua conta de administrador
 

@@ -97,7 +97,7 @@ function Body({ name, awaiting, group }: Props & { group: string }) {
   const pathname = usePathname();
   return (
     <>
-      <Link href="/admin" className="rounded-xl" aria-label="JP Studio — Administração">
+      <Link href="/admin" className="rounded-xl" aria-label="GeniusFrela — Administração">
         <BrandLockup />
       </Link>
 

@@ -32,7 +32,7 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
         error: tooMany
           ? "Demasiadas tentativas. Aguarde um minuto e tente de novo."
           : banned
-            ? "Este acesso está suspenso. Fale com a JP Studio para o reativar."
+            ? "Este acesso está suspenso. Fale com a GeniusFrela para o reativar."
             : WRONG_CREDENTIALS,
         email,
       };
