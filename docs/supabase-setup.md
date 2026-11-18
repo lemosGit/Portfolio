@@ -22,7 +22,7 @@ Copie `.env.example` para `.env.local` e preencha com os valores de **Project Se
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` e Vercel | Não |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `.env.local` e Vercel | Não (protegida pelas regras RLS) |
-| `SUPABASE_SECRET_KEY` | **só** `.env.local` (script) | **Sim — nunca na Vercel nem no Git** |
+| `SUPABASE_SECRET_KEY` | `.env.local` e Vercel (tipo **Secret**, só servidor) | **Sim — nunca com prefixo `NEXT_PUBLIC_` nem no Git** |
 | `ADMIN_EMAIL` | `.env.local` | Não |
 | `CRON_SECRET` | Vercel | Sim |
 | `GITHUB_TOKEN` | `.env.local` e Vercel | **Sim** |
@@ -33,7 +33,20 @@ Copie `.env.example` para `.env.local` e preencha com os valores de **Project Se
 1. **Authentication → Users → Add user**, com o seu email e uma senha forte, e *Auto confirm* ligado.
 2. `npm run portal -- admin --email o-seu-email@exemplo.com`
 
-## 5. Criar um cliente
+## 5. Painel de administração (`/admin`)
+
+Entre em `/cliente/login` com a conta de administrador: o portal abre o painel `/admin` em vez da área do cliente.
+
+| Secção | O que faz |
+|---|---|
+| **Visão geral** | Progresso de cada projeto ativo (lido do GitHub), mensagens por responder e próximas reuniões |
+| **Clientes e projetos** | Criar cliente (mostra a senha temporária uma vez), editar dados, gerar senha nova, suspender/reativar, apagar; criar e editar projetos (repo, datas, estado, mapa de fases) |
+| **Projeto** | Registar/remover demos, marcar/editar reuniões e o resumo de cada uma |
+| **Mensagens** | Caixa de entrada com as conversas por responder em primeiro lugar, e resposta ao cliente |
+
+As tabelas são lidas e escritas com a sessão do administrador (regras RLS). A `SUPABASE_SECRET_KEY` só é usada no servidor para as contas: criar, redefinir senha, suspender e apagar. Sem ela, o painel mostra um aviso e essas ações ficam indisponíveis.
+
+## 6. Criar um cliente pelo terminal (alternativa)
 
 ```bash
 npm run portal -- cliente --nome "Alex Martins" --email alex@empresa.ao \
@@ -54,7 +67,7 @@ npm run portal -- mensagens --projeto nova-app-mobile
 npm run portal -- responder --projeto nova-app-mobile --mensagem "Já está corrigido na 0.9.1."
 ```
 
-## 6. Evitar a pausa do plano gratuito
+## 7. Evitar a pausa do plano gratuito
 
 Um projeto Free sem atividade durante uma semana é **pausado**. Os dados não são apagados, mas o portal deixa de funcionar até o reativar.
 
@@ -62,7 +75,7 @@ Um projeto Free sem atividade durante uma semana é **pausado**. Os dados não s
 - Na Vercel, defina `CRON_SECRET`. A Vercel envia-o automaticamente ao cron, e sem ele a rota responde 401.
 - Para verificar: **Vercel → Settings → Cron Jobs → Run**. A resposta deve ser `{"ok":true,...}`.
 
-## 7. Cópia de segurança semanal
+## 8. Cópia de segurança semanal
 
 O workflow [`.github/workflows/backup-supabase.yml`](../.github/workflows/backup-supabase.yml) exporta a base de dados todos os domingos. Como o repositório é **público**, o ficheiro é **cifrado** antes de ser guardado.
 
@@ -75,7 +88,7 @@ O workflow [`.github/workflows/backup-supabase.yml`](../.github/workflows/backup
 
 Os artefactos ficam guardados 90 dias.
 
-## 8. Ligar o GitHub (fases e tarefas)
+## 9. Ligar o GitHub (fases e tarefas)
 
 1. **Token** — GitHub → Settings → Developer settings → **Fine-grained tokens** → *Generate new token*:
    - *Resource owner*: `lemosGit` · *Repository access*: **Only select repositories** (ex.: `candongueiro_pay`).
@@ -101,5 +114,4 @@ update projects set phase_map = '{"M3": 3}' where slug = 'candongueiro-pay';
 
 ## O que ainda é de exemplo
 
-- **Painel `/admin`**: até existir, use o `npm run portal`.
 - **Vários projetos por cliente**: o portal mostra o projeto mais recente.

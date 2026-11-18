@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { isAdminUser } from "@/lib/admin/role";
 import { supabaseEnabled } from "@/lib/supabase/config";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { addFeedback, findClientByEmail } from "./data";
@@ -23,12 +24,20 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
 
   if (supabaseEnabled) {
     const sb = await createSupabaseServer();
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) {
       const tooMany = error.status === 429;
-      return { error: tooMany ? "Demasiadas tentativas. Aguarde um minuto e tente de novo." : WRONG_CREDENTIALS, email };
+      const banned = error.code === "user_banned";
+      return {
+        error: tooMany
+          ? "Demasiadas tentativas. Aguarde um minuto e tente de novo."
+          : banned
+            ? "Este acesso está suspenso. Fale com a JP Studio para o reativar."
+            : WRONG_CREDENTIALS,
+        email,
+      };
     }
-    redirect("/cliente");
+    redirect(isAdminUser(data.user) ? "/admin" : "/cliente");
   }
 
   const client = await findClientByEmail(email);

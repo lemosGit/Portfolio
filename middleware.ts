@@ -1,12 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { SUPABASE_KEY, SUPABASE_URL, supabaseEnabled } from "@/lib/supabase/config";
+import { isAdminUser } from "@/lib/admin/role";
 
 const DEMO_COOKIE = "jp_portal_session";
 
 /**
- * Protege a Área do Cliente e (com Supabase) renova a sessão a cada pedido.
- * A validação completa é feita no servidor por requirePortal().
+ * Protege a Área do Cliente e o painel /admin e (com Supabase) renova a sessão a cada pedido.
+ * Encaminha cada conta para a sua área: administrador → /admin, cliente → /cliente.
+ * A validação completa é feita no servidor por requirePortal() e requireAdmin().
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -14,6 +16,7 @@ export async function middleware(req: NextRequest) {
 
   let res = NextResponse.next({ request: req });
   let signedIn: boolean;
+  let admin = false;
 
   if (supabaseEnabled) {
     const sb = createServerClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -30,12 +33,18 @@ export async function middleware(req: NextRequest) {
       data: { user },
     } = await sb.auth.getUser();
     signedIn = Boolean(user);
+    admin = isAdminUser(user);
   } else {
     signedIn = Boolean(req.cookies.get(DEMO_COOKIE)?.value);
   }
 
   const isLogin = pathname === "/cliente/login";
-  const target = !signedIn && !isLogin ? "/cliente/login" : signedIn && isLogin ? "/cliente" : null;
+  const isAdminArea = pathname === "/admin" || pathname.startsWith("/admin/");
+  const home = admin ? "/admin" : "/cliente";
+  let target: string | null = null;
+  if (!signedIn) target = isLogin ? null : "/cliente/login";
+  else if (isLogin) target = home;
+  else if (isAdminArea !== admin) target = home;
   if (!target) return res;
 
   // Redireciona sem perder os cookies de sessão renovados.
@@ -44,4 +53,4 @@ export async function middleware(req: NextRequest) {
   return redirect;
 }
 
-export const config = { matcher: ["/cliente", "/cliente/:path*"] };
+export const config = { matcher: ["/cliente", "/cliente/:path*", "/admin", "/admin/:path*"] };
