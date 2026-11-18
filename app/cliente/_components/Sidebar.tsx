@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarDays,
+  Check,
+  ChevronsUpDown,
   FolderOpen,
   House,
   LayoutGrid,
@@ -17,7 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { BrandLockup } from "@/components/BrandMark";
-import { logout } from "@/lib/portal/actions";
+import { logout, selectProject } from "@/lib/portal/actions";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -30,7 +32,8 @@ const NAV = [
 
 type Props = {
   client: { name: string; initials: string };
-  project: { name: string; percent: number };
+  project: { id: string; name: string; percent: number };
+  projects: { id: string; name: string; status: "ativo" | "entregue" | "pausado" }[];
   unread: number;
 };
 
@@ -111,7 +114,7 @@ export function Sidebar(props: Props) {
   );
 }
 
-function SidebarBody({ client, project, unread, layoutGroup }: Props & { layoutGroup: string }) {
+function SidebarBody({ client, project, projects, unread, layoutGroup }: Props & { layoutGroup: string }) {
   const pathname = usePathname();
   return (
     <>
@@ -164,30 +167,16 @@ function SidebarBody({ client, project, unread, layoutGroup }: Props & { layoutG
       </nav>
 
       <div className="mt-auto space-y-5">
-        <Link
-          href="/cliente/projeto"
-          className="block rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors duration-200 hover:border-accent/30"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs text-ink-faint">Projeto ativo</p>
-              <p className="mt-2 font-display font-semibold text-ink">{project.name}</p>
-            </div>
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent-soft">
-              <Sparkles size={18} aria-hidden />
-            </span>
-          </div>
-          <div className="mt-6 h-1 overflow-hidden rounded-full bg-white/[0.07]">
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
-            />
-          </div>
-          <div className="mt-3 flex justify-between text-xs">
-            <span className="text-ink-faint">Progresso</span>
-            <span className="font-semibold text-accent-soft">{project.percent}%</span>
-          </div>
-        </Link>
+        {projects.length > 1 ? (
+          <ProjectSwitcher project={project} projects={projects} />
+        ) : (
+          <Link
+            href="/cliente/projeto"
+            className="block rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors duration-200 hover:border-accent/30"
+          >
+            <ProjectCard project={project} />
+          </Link>
+        )}
 
         <UserRow client={client} />
       </div>
@@ -248,6 +237,105 @@ function UserRow({ client }: { client: Props["client"] }) {
               </button>
             </form>
           </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function ProjectCard({ project, switcher }: { project: Props["project"]; switcher?: boolean }) {
+  return (
+    <>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 text-left">
+          <p className="text-xs text-ink-faint">{switcher ? "Projeto · trocar" : "Projeto ativo"}</p>
+          <p className="mt-2 truncate font-display font-semibold text-ink">{project.name}</p>
+        </div>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent-soft">
+          {switcher ? <ChevronsUpDown size={18} aria-hidden /> : <Sparkles size={18} aria-hidden />}
+        </span>
+      </div>
+      <div className="mt-6 h-1 overflow-hidden rounded-full bg-white/[0.07]">
+        <div
+          className="h-full rounded-full"
+          style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
+        />
+      </div>
+      <div className="mt-3 flex justify-between text-xs">
+        <span className="text-ink-faint">Progresso</span>
+        <span className="font-semibold text-accent-soft">{project.percent}%</span>
+      </div>
+    </>
+  );
+}
+
+const STATUS_LABEL = { ativo: "Em curso", pausado: "Pausado", entregue: "Entregue" } as const;
+
+/** Cartão do projeto que abre uma lista para trocar de projeto (só com 2+ projetos). */
+function ProjectSwitcher({ project, projects }: { project: Props["project"]; projects: Props["projects"] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label={`Projeto ${project.name}. Trocar de projeto`}
+        className="block w-full rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors duration-200 hover:border-accent/30"
+      >
+        <ProjectCard project={project} switcher />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            role="listbox"
+            aria-label="Os seus projetos"
+            initial={{ opacity: 0, y: 6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
+            transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+            style={{ transformOrigin: "bottom center" }}
+            className="absolute bottom-[calc(100%+8px)] left-0 right-0 z-10 max-h-72 overflow-y-auto rounded-xl border border-line bg-[#141026] p-1.5 shadow-2xl"
+          >
+            {projects.map((p) => {
+              const current = p.id === project.id;
+              return (
+                <li key={p.id} role="option" aria-selected={current}>
+                  <form action={selectProject}>
+                    <input type="hidden" name="projeto" value={p.id} />
+                    <input type="hidden" name="voltar" value={pathname} />
+                    <button
+                      type="submit"
+                      disabled={current}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-ink-dim transition-colors hover:bg-white/5 hover:text-ink disabled:cursor-default disabled:text-ink"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-medium">{p.name}</span>
+                        <span className="block text-xs text-ink-faint">{STATUS_LABEL[p.status]}</span>
+                      </span>
+                      {current && <Check size={16} className="text-accent-soft" aria-hidden />}
+                    </button>
+                  </form>
+                </li>
+              );
+            })}
+          </motion.ul>
         )}
       </AnimatePresence>
     </div>

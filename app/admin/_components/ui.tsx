@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { AdminClient, ProjectStatus } from "@/lib/admin/data";
+import { emailEnabled } from "@/lib/email/send";
 import { cn } from "@/lib/utils";
 
 export function AdminHeader({
@@ -143,4 +144,22 @@ export function AccessBadge({ c }: { c: AdminClient }) {
   if (c.account?.suspended) return <Badge tone="danger">Suspenso</Badge>;
   if (c.mustChangePassword) return <Badge tone="warn">Aguarda 1.º acesso</Badge>;
   return <Badge tone="ok">Ativo</Badge>;
+}
+
+/** Caixa "avisar o cliente por email" (campo `avisar`), marcada por defeito. */
+export function NotifyClient({ defaultChecked = true }: { defaultChecked?: boolean }) {
+  return (
+    <label className="flex items-center gap-2.5 text-[13px] text-ink-dim">
+      <input
+        type="checkbox"
+        name="avisar"
+        value="1"
+        defaultChecked={emailEnabled && defaultChecked}
+        disabled={!emailEnabled}
+        className="h-4 w-4 rounded border-line accent-[#8b6cff]"
+      />
+      Avisar o cliente por email
+      {!emailEnabled && <span className="text-ink-faint">(desligado: falta RESEND_API_KEY)</span>}
+    </label>
+  );
 }

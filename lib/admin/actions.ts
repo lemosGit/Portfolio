@@ -5,8 +5,11 @@
  * Tabelas: sessão do administrador (RLS). Contas: chave secreta (createSupabaseAdmin).
  */
 import { randomBytes } from "node:crypto";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
+import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
+import { demoEmail, meetingEmail, replyEmail } from "@/lib/email/templates";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "./session";
 
@@ -109,6 +112,29 @@ function readProject(f: FormData, nameKey = "projeto"): ProjectFields | { error:
     started_on: started,
     due_on: due,
   };
+}
+
+/** Nome e email do cliente de um projeto, para os avisos. */
+async function contactOf(sb: Awaited<ReturnType<typeof requireAdmin>>["sb"], projectId: string) {
+  const { data } = await sb
+    .from("projects")
+    .select("name, clients (name, email)")
+    .eq("id", projectId)
+    .single<{ name: string; clients: { name: string; email: string } | null }>();
+  return data?.clients ? { projectName: data.name, clientName: data.clients.name, email: data.clients.email } : undefined;
+}
+
+/** Envia o aviso se a caixa "Avisar o cliente" estiver marcada. Nunca faz falhar a ação. */
+async function notify(
+  f: FormData,
+  sb: Awaited<ReturnType<typeof requireAdmin>>["sb"],
+  projectId: string,
+  build: (c: { projectName: string; clientName: string }) => { subject: string; html: string; text: string },
+): Promise<SendResult | undefined> {
+  if (str(f, "avisar") !== "1") return undefined;
+  const c = await contactOf(sb, projectId);
+  if (!c) return { sent: false, reason: "não encontrei o email do cliente" };
+  return sendEmail({ to: c.email, ...build(c) });
 }
 
 const slugTaken = (e: { code?: string; message: string }) => e.code === "23505" && e.message.includes("slug");
@@ -339,12 +365,15 @@ export async function addDemo(_p: AdminState, f: FormData): Promise<AdminState> 
   if (!isUrl(url)) return { error: "Link inválido. Deve começar por https://" };
   if (!/^\d+\.\d+\.\d+([-.+][\w.]+)?$/.test(version)) return { error: "Versão inválida. Use o formato 1.2.3." };
 
-  const { error } = await sb
-    .from("demo_links")
-    .insert({ project_id: str(f, "projeto"), kind, url, version, notes: str(f, "notas") });
+  const projectId = str(f, "projeto");
+  const notes = str(f, "notas");
+  const { error } = await sb.from("demo_links").insert({ project_id: projectId, kind, url, version, notes });
   if (error) return { error: `Não foi possível registar: ${error.message}` };
   refresh();
-  return { ok: true, message: `Demo ${kind} v${version} registada.` };
+  const mail = await notify(f, sb, projectId, (c) =>
+    demoEmail({ ...c, kind: kind as "web" | "android" | "ios", version, notes }),
+  );
+  return { ok: true, message: `Demo ${kind} v${version} registada.${emailNote(mail)}` };
 }
 
 export async function deleteDemo(_p: AdminState, f: FormData): Promise<AdminState> {
@@ -386,12 +415,24 @@ export async function saveMeeting(_p: AdminState, f: FormData): Promise<AdminSta
   if ("error" in m) return { error: m.error };
 
   const id = str(f, "id");
+  const projectId = str(f, "projeto");
   const { error } = id
     ? await sb.from("meetings").update(m).eq("id", id)
-    : await sb.from("meetings").insert({ ...m, project_id: str(f, "projeto") });
+    : await sb.from("meetings").insert({ ...m, project_id: projectId });
   if (error) return { error: `Não foi possível guardar: ${error.message}` };
   refresh();
-  return { ok: true, message: id ? "Reunião atualizada." : "Reunião marcada." };
+  const mail = await notify(f, sb, projectId, (c) =>
+    meetingEmail({
+      ...c,
+      title: m.title,
+      startsAt: m.starts_at,
+      endsAt: m.ends_at,
+      callUrl: m.call_url,
+      agenda: m.agenda,
+      updated: Boolean(id),
+    }),
+  );
+  return { ok: true, message: `${id ? "Reunião atualizada." : "Reunião marcada."}${emailNote(mail)}` };
 }
 
 export async function deleteMeeting(_p: AdminState, f: FormData): Promise<AdminState> {
@@ -411,8 +452,42 @@ export async function replyToClient(_p: AdminState, f: FormData): Promise<AdminS
   if (body.length > 2000) return { error: "A resposta tem mais de 2000 caracteres. Divida-a em duas." };
 
   // author_id fica com auth.uid() (o administrador), por defeito na tabela.
-  const { error } = await sb.from("feedback").insert({ project_id: str(f, "projeto"), author_role: "admin", body });
+  const projectId = str(f, "projeto");
+  const { error } = await sb.from("feedback").insert({ project_id: projectId, author_role: "admin", body });
   if (error) return { error: `A resposta não foi enviada: ${error.message}` };
   refresh();
-  return { ok: true, message: "Resposta enviada." };
+  const mail = await notify(f, sb, projectId, (c) => replyEmail({ ...c, body }));
+  return { ok: true, message: `Resposta enviada.${emailNote(mail)}` };
+}
+
+/* ───────────── Tarefas visíveis (label no GitHub) ───────────── */
+
+export async function setTasksVisible(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const numbers = str(f, "issues")
+    .split(",")
+    .map((n) => Number(n))
+    .filter((n) => Number.isInteger(n) && n > 0);
+  if (numbers.length === 0) return { error: "Nenhuma issue selecionada." };
+  const visible = str(f, "visivel") === "1";
+
+  const { data: p, error: pe } = await sb.from("projects").select("github_owner, github_repo").eq("id", str(f, "projeto")).single();
+  if (pe || !p.github_owner || !p.github_repo) return { error: "Este projeto não tem repositório GitHub associado." };
+
+  try {
+    await setIssueVisible(p.github_owner, p.github_repo, numbers, visible);
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Não foi possível alterar a label no GitHub." };
+  } finally {
+    // Mesmo com falha a meio, algumas issues podem ter mudado.
+    revalidateTag(githubTag(p.github_owner, p.github_repo));
+    refresh();
+  }
+  const many = numbers.length > 1;
+  return {
+    ok: true,
+    message: visible
+      ? `${many ? `${numbers.length} tarefas passaram` : "A tarefa passou"} a estar visíve${many ? "is" : "l"} para o cliente.`
+      : `${many ? `${numbers.length} tarefas deixaram` : "A tarefa deixou"} de estar visíve${many ? "is" : "l"} para o cliente.`,
+  };
 }

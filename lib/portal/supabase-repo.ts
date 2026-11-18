@@ -48,10 +48,14 @@ type FeedbackRow = {
   created_at: string;
 };
 
+export type ProjectOption = { id: string; name: string; status: "ativo" | "entregue" | "pausado" };
+
 export type PortalData = {
   client: Client;
   mustChangePassword: boolean;
   project?: ProjectView;
+  /** Todos os projetos do cliente (para o seletor), do mais recente para o mais antigo. */
+  projects: ProjectOption[];
   feedback: Feedback[];
 };
 
@@ -64,7 +68,11 @@ const initials = (name: string) =>
     .join("")
     .toUpperCase();
 
-export async function loadPortal(sb: SupabaseClient, userId: string): Promise<PortalData | undefined> {
+export async function loadPortal(
+  sb: SupabaseClient,
+  userId: string,
+  preferredProjectId?: string,
+): Promise<PortalData | undefined> {
   const { data: c, error: ce } = await sb
     .from("clients")
     .select("id, name, company, email, must_change_password")
@@ -81,17 +89,28 @@ export async function loadPortal(sb: SupabaseClient, userId: string): Promise<Po
     initials: initials(c.name),
   };
 
+  const { data: list, error: le } = await sb
+    .from("projects")
+    .select("id, name, status")
+    .eq("client_id", c.id)
+    .order("created_at", { ascending: false })
+    .returns<ProjectOption[]>();
+  if (le) throw new Error(`Supabase (projects): ${le.message}`);
+  const projects = list ?? [];
+  // Escolha guardada pelo cliente; senão, o projeto ativo mais recente; senão, o mais recente.
+  const chosen =
+    projects.find((x) => x.id === preferredProjectId) ?? projects.find((x) => x.status === "ativo") ?? projects[0];
+  if (!chosen) return { client, mustChangePassword: c.must_change_password, projects, feedback: [] };
+
   const { data: p, error: pe } = await sb
     .from("projects")
     .select(
       "id, slug, client_id, name, tagline, description, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
     )
-    .eq("client_id", c.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
+    .eq("id", chosen.id)
     .maybeSingle<ProjectRow>();
   if (pe) throw new Error(`Supabase (projects): ${pe.message}`);
-  if (!p) return { client, mustChangePassword: c.must_change_password, feedback: [] };
+  if (!p) return { client, mustChangePassword: c.must_change_password, projects, feedback: [] };
 
   const now = new Date().toISOString();
   // Fases e tarefas vêm do GitHub (github_owner/github_repo), em paralelo com o feedback.
@@ -149,5 +168,5 @@ export async function loadPortal(sb: SupabaseClient, userId: string): Promise<Po
     createdAt: r.created_at,
   }));
 
-  return { client, mustChangePassword: c.must_change_password, project: toView(project), feedback };
+  return { client, mustChangePassword: c.must_change_password, project: toView(project), projects, feedback };
 }

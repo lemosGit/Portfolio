@@ -188,3 +188,92 @@ export async function loadRepoPhases(
 export function emptyPhases(): Phase[] {
   return PHASES.map((def) => ({ ...def, closed: false, tasks: [], counts: { total: 0, closedAt: [] } }));
 }
+
+/* ───────────── Painel /admin ───────────── */
+
+export type AdminIssue = {
+  number: number;
+  title: string;
+  state: "open" | "closed";
+  phase: number | null; // 1–6, ou null se a issue não tem milestone mapeado
+  milestone: string | null;
+  labels: string[];
+  /** Tem a label `cliente: visível`. */
+  labelled: boolean;
+  /** O cliente vê esta issue hoje (pela label, ou pela regra provisória). */
+  visible: boolean;
+};
+
+/** Todas as issues do repositório, com a fase e a visibilidade para o cliente. */
+export async function loadRepoIssues(
+  owner: string,
+  repo: string,
+  phaseMap: Record<string, number> | null = null,
+): Promise<{ issues: AdminIssue[]; visibleRule: "label" | "fallback" }> {
+  const base = `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
+  const dates: string[] = [];
+  const [milestones, items] = await Promise.all([
+    listAll<GhMilestone & { title: string }>(`${base}/milestones?state=all`, owner, repo, dates),
+    listAll<GhIssue & { milestone: { number: number; title: string } | null }>(`${base}/issues?state=all`, owner, repo, dates),
+  ]);
+  const map = { ...DEFAULT_PHASE_MAP, ...(phaseMap ?? {}) };
+  const phaseOf = new Map<number, number>();
+  for (const m of milestones) {
+    const code = milestoneCode(m.title);
+    if (code && map[code]) phaseOf.set(m.number, map[code]);
+  }
+  const issues = items.filter((i) => !i.pull_request);
+  const anyLabelled = issues.some((i) => labelNames(i).includes(VISIBLE));
+
+  return {
+    visibleRule: anyLabelled ? "label" : "fallback",
+    issues: issues
+      .map((i) => {
+        const labels = labelNames(i);
+        const labelled = labels.includes(VISIBLE);
+        return {
+          number: i.number,
+          title: i.title,
+          state: i.state,
+          phase: i.milestone ? (phaseOf.get(i.milestone.number) ?? null) : null,
+          milestone: i.milestone?.title ?? null,
+          labels: i.labels.map((l) => (typeof l === "string" ? l : l.name)),
+          labelled,
+          visible: anyLabelled ? labelled : labels.includes("tipo: feature") || labels.includes("tipo: bug"),
+        };
+      })
+      .sort((a, b) => (a.phase ?? 99) - (b.phase ?? 99) || a.number - b.number),
+  };
+}
+
+/** Adiciona ou remove a label `cliente: visível` (o token precisa de Issues: Read and write). */
+export async function setIssueVisible(owner: string, repo: string, numbers: number[], visible: boolean) {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) throw new GithubError("Falta GITHUB_TOKEN nas variáveis de ambiente.");
+  const headers = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  const base = `${API}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues`;
+  for (const n of numbers) {
+    const res = visible
+      ? await fetch(`${base}/${n}/labels`, {
+          method: "POST",
+          headers: { ...headers, "Content-Type": "application/json" },
+          body: JSON.stringify({ labels: [VISIBLE_LABEL] }),
+          cache: "no-store",
+        })
+      : await fetch(`${base}/${n}/labels/${encodeURIComponent(VISIBLE_LABEL)}`, { method: "DELETE", headers, cache: "no-store" });
+    // 404 ao remover = a issue já não tinha a label.
+    if (!res.ok && !(res.status === 404 && !visible)) {
+      const hint =
+        res.status === 403
+          ? "o token não tem permissão de escrita (Issues: Read and write)"
+          : res.status === 401
+            ? "token inválido ou expirado"
+            : res.statusText;
+      throw new GithubError(`GitHub ${res.status} na issue #${n}: ${hint}.`, res.status);
+    }
+  }
+}
