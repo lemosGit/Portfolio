@@ -5,7 +5,7 @@ import { accountsEnabled } from "@/lib/supabase/admin";
 import { AdminSidebar } from "./_components/AdminSidebar";
 
 export const metadata: Metadata = {
-  title: { template: "%s · Administração · JP Studio", default: "Administração · JP Studio" },
+  title: { template: "%s · Administração · GeniusFrela", default: "Administração · GeniusFrela" },
   robots: { index: false, follow: false },
 };
 

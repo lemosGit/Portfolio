@@ -3,7 +3,7 @@ import { requirePortal } from "@/lib/portal/session";
 import { Sidebar } from "../_components/Sidebar";
 
 export const metadata: Metadata = {
-  title: { template: "%s · Área do cliente · JP Studio", default: "Área do cliente · JP Studio" },
+  title: { template: "%s · Área do cliente · GeniusFrela", default: "Área do cliente · GeniusFrela" },
   robots: { index: false, follow: false },
 };
 
@@ -36,7 +36,7 @@ export default async function PortalLayout({ children }: { children: React.React
           {children}
         </main>
         <footer className="mx-auto flex max-w-[1560px] flex-wrap items-center justify-between gap-3 px-4 pb-8 text-[11px] text-ink-faint sm:px-6 lg:px-10">
-          <p>JP Studio · Área do cliente v1.0</p>
+          <p>GeniusFrela · Área do cliente v1.0</p>
           <p className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden /> Todos os serviços a funcionar
           </p>

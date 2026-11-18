@@ -3,7 +3,7 @@ import { BrandLockup } from "@/components/BrandMark";
 import { PasswordForm } from "./PasswordForm";
 
 export const metadata: Metadata = {
-  title: "Definir senha · Área do cliente · JP Studio",
+  title: "Definir senha · Área do cliente · GeniusFrela",
   robots: { index: false, follow: false },
 };
 

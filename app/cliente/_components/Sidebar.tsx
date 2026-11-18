@@ -118,7 +118,7 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
   const pathname = usePathname();
   return (
     <>
-      <Link href="/cliente" className="rounded-xl" aria-label="JP Studio — Visão geral">
+      <Link href="/cliente" className="rounded-xl" aria-label="GeniusFrela — Visão geral">
         <BrandLockup />
       </Link>
 

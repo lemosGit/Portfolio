@@ -1,5 +1,5 @@
 /**
- * As seis fases da metodologia JP Studio e a forma como os milestones do roteiro
+ * As seis fases da metodologia GeniusFrela e a forma como os milestones do roteiro
  * de engenharia (M0–M11) se agrupam nelas. Ver docs/especificacao_portal_cliente.md §4.
  */
 

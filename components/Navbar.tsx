@@ -46,7 +46,7 @@ export function Navbar() {
         aria-label="Navegação principal"
         className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-5"
       >
-        <a href="#inicio" className="rounded-xl" aria-label="JP Studio — início">
+        <a href="#inicio" className="rounded-xl" aria-label="GeniusFrela — início">
           <BrandLockup />
         </a>
 

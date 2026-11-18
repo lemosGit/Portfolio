@@ -7,7 +7,9 @@ import { Providers } from "@/components/Providers";
 import { profile } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: `JP Studio — ${profile.name}, ${profile.role}`,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://joao-pereira.dev"),
+  applicationName: "GeniusFrela",
+  title: `GeniusFrela — ${profile.name}, ${profile.role}`,
   description:
     "Engenheiro de sistemas e programador focado em criar soluções digitais robustas, escaláveis e pensadas para o mundo real.",
   openGraph: {
@@ -15,7 +17,9 @@ export const metadata: Metadata = {
     description: "Construo sistemas que transformam ideias em impacto.",
     type: "website",
     locale: "pt_PT",
+    siteName: "GeniusFrela",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
