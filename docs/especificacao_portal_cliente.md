@@ -65,7 +65,7 @@ PORTAL DO CLIENTE
 /cliente/sair                    Termina a sessão                                                ✔ feito
 
 ADMINISTRAÇÃO
-/admin                           Clientes, projetos, demos, reuniões, respostas                  ○ por fazer (hoje: npm run portal)
+/admin                           Clientes, projetos, demos, reuniões, respostas                  ✔ feito (2026-11-18)
 /api/keepalive                   Cron diário que evita a pausa do Supabase Free                  ✔ feito
 /api/github/webhook              Invalida a cache quando o GitHub muda                           ✔ feito
 ```
@@ -150,14 +150,14 @@ Um cliente pode ter **vários projetos em simultâneo**. O modelo de dados já o
 
 ### 5.4 Reuniões (marcação manual)
 
-- O administrador marca cada reunião à mão: hoje com `npm run portal -- reuniao …`, mais tarde em `/admin`.
+- O administrador marca cada reunião à mão: no painel `/admin` (ou com `npm run portal -- reuniao …`).
 - Campos: título, início e fim (hora de Luanda), link da videochamada, pauta e notas pós-reunião.
 - O cliente pode adicionar a reunião ao seu calendário através de um ficheiro `.ics` gerado pelo portal (✔ feito). Não há sincronização com calendários externos.
 
 ### 5.5 Feedback (mensagens assíncronas)
 
 - O cliente escreve uma mensagem **geral**, **sobre uma fase** (1–6) ou **sobre uma tarefa** (nº da issue).
-- O administrador responde (hoje com `npm run portal -- responder`, mais tarde em `/admin`), e o cliente vê a resposta no portal.
+- O administrador responde (no painel `/admin/mensagens`), e o cliente vê a resposta no portal.
 - **Notificação por email** (Resend) ao administrador quando há mensagem nova e ao cliente quando há resposta — por fazer.
 
 ### 5.6 Jornada do cliente
@@ -325,7 +325,7 @@ Conforme `supabase/migrations/0001_portal.sql`:
 | **3. Supabase** | Auth, troca obrigatória de senha, RLS, mensagens reais, keepalive, backups, `npm run portal` | ✔ código · ○ projeto Supabase por criar |
 | **4. Integração GitHub** | Leitura de milestones/issues, agrupamento M0–M10 → 6 fases, label `cliente: visível`, cache + webhook | ✔ (testado com `candongueiro_pay`) |
 | **5. Vários projetos** | `/cliente/[projeto]/…`, lista de projetos, seletor na barra lateral | ○ **próxima** |
-| **6. Admin** | `/admin`: clientes, projetos, demos, reuniões, respostas | ○ |
+| **6. Admin** | `/admin`: clientes, projetos, demos, reuniões, respostas | ✔ |
 | **7. Emails** | Resend: mensagem nova, resposta, nova demo, recuperação de senha | ○ |
 | **8. Extras** | Aprovações por *gate*, ficheiros, changelog, pedidos de alteração | ○ |
 
