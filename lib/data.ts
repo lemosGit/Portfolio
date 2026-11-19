@@ -12,7 +12,15 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/jo%C3%A3o-lemos-pereira-3013932a0/?isSelfProfile=true", // ← o teu perfil
   github: "https://github.com/lemosGit/", // ← o teu perfil
   photo: "/perfil.png", // ← fotografia de apresentação em public/perfil.png
+  whatsapp: "244957392400", // ← indicativo + número, só dígitos (Angola +244)
 };
+
+/** Mensagem que já aparece escrita quando o visitante abre o WhatsApp. */
+export const projectRequestMessage =
+  "Olá, João! Vim pelo teu portfólio e gostava de pedir um projeto. Podemos conversar para acertar os detalhes?";
+
+/** Link wa.me que abre a conversa com a mensagem preenchida (app no telemóvel, WhatsApp Web no computador). */
+export const whatsappLink = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(projectRequestMessage)}`;
 
 export const navLinks = [
   { id: "sobre", label: "Sobre" },

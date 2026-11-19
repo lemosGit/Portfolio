@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { ArrowRight, Check, Copy } from "lucide-react";
-import { profile } from "@/lib/data";
-import { GithubIcon, LinkedinIcon } from "./Icons";
+import { profile, whatsappLink } from "@/lib/data";
+import { GithubIcon, LinkedinIcon, WhatsappIcon } from "./Icons";
 import { Reveal } from "./Reveal";
 
 export function Contact() {
@@ -40,6 +40,20 @@ export function Contact() {
         </Reveal>
 
         <Reveal delay={0.15} className="mt-10 flex flex-col items-center gap-6">
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Pedir um projeto pelo WhatsApp (abre numa nova janela)"
+            className="btn-primary !px-8 !py-4"
+          >
+            <WhatsappIcon className="h-4 w-4" /> Pedir um projeto
+            <ArrowRight size={14} />
+          </a>
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            Resposta pelo WhatsApp · ou por email
+          </p>
+
           <div className="flex items-center gap-3">
             <a
               href={`mailto:${profile.email}`}
