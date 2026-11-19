@@ -37,6 +37,14 @@ const config: Config = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(400%)" },
         },
+        breathe: {
+          "0%,100%": { transform: "scale(1.06)" },
+          "50%": { transform: "scale(1.12)" },
+        },
+        sheen: {
+          "0%,60%": { backgroundPosition: "150% 0" },
+          "100%": { backgroundPosition: "-50% 0" },
+        },
       },
       animation: {
         float: "float 7s ease-in-out infinite",
@@ -45,6 +53,9 @@ const config: Config = {
         "pulse-glow": "pulseGlow 3.2s ease-in-out infinite",
         marquee: "marquee 38s linear infinite",
         scan: "scan 7s linear infinite",
+        breathe: "breathe 14s ease-in-out infinite",
+        sheen: "sheen 8s ease-in-out infinite",
+        "spin-energy": "spinSlow 8s linear infinite",
       },
     },
   },
