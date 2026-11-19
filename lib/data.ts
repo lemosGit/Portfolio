@@ -11,7 +11,7 @@ export const profile = {
   coords: "8°50′S · 13°14′E",
   linkedin: "https://www.linkedin.com/in/jo%C3%A3o-lemos-pereira-3013932a0/?isSelfProfile=true", // ← o teu perfil
   github: "https://github.com/lemosGit/", // ← o teu perfil
-  photo: "/foto.jpg", // ← coloca a tua fotografia em public/foto.jpg
+  photo: "/perfil.png", // ← fotografia de apresentação em public/perfil.png
 };
 
 export const navLinks = [

@@ -15,12 +15,12 @@ npm run build && npm start
 | O quê | Onde |
 |---|---|
 | Email, LinkedIn, GitHub | `lib/data.ts` → `profile` |
-| Fotografia | colocar em `public/foto.jpg` (vertical, ~1200×1500, rosto no terço superior) |
+| Fotografia | `public/perfil.png` (caminho em `lib/data.ts`; enquadramento ajustável em `components/ProfilePhoto.tsx`) |
 | Capturas dos projetos | `public/projects/<id>.png` (ids: `priceguard`, `girassol`, `candongueiro-pay`, `barcode-bridge`) |
 | Textos, projetos, percurso | `lib/data.ts` |
 | Cores | `tailwind.config.ts` (`accent`, `bg`, `ink`) |
 
-Sem `foto.jpg` aparece um monograma "JL"; sem captura aparece um placeholder geométrico. Ambos desaparecem sozinhos quando adicionares os ficheiros.
+Sem a fotografia aparece um monograma "JL"; sem captura aparece um placeholder geométrico. Ambos desaparecem sozinhos quando adicionares os ficheiros.
 
 ## Estrutura
 
