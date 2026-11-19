@@ -16,7 +16,7 @@ const lines: Array<Array<{ t: string; a?: boolean }>> = [
 
 export function Hero() {
   return (
-    <section id="inicio" className="relative flex min-h-[100svh] items-center pb-16 pt-28">
+    <section id="inicio" className="relative flex min-h-[100svh] overflow-x-clip items-center pb-16 pt-28">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-16 px-5 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <motion.p
