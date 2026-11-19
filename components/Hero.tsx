@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { EASE } from "@/lib/utils";
-import { projects } from "@/lib/data";
+import { projects, whatsappLink } from "@/lib/data";
 import { Counter } from "./Counter";
+import { WhatsappIcon } from "./Icons";
 import { ProfilePhoto } from "./ProfilePhoto";
 
 const lines: Array<Array<{ t: string; a?: boolean }>> = [
@@ -63,11 +64,17 @@ export function Hero() {
             transition={{ duration: 0.9, delay: 1.1, ease: EASE }}
             className="mt-9 flex flex-wrap gap-4"
           >
-            <a href="#projetos" className="btn-primary">
-              Explorar projetos <ArrowRight size={14} />
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Pedir um projeto pelo WhatsApp (abre numa nova janela)"
+              className="btn-primary"
+            >
+              <WhatsappIcon className="h-4 w-4" /> Pedir um projeto
             </a>
-            <a href="#contacto" className="btn-ghost">
-              Entrar em contacto
+            <a href="#projetos" className="btn-ghost">
+              Explorar projetos <ArrowRight size={14} />
             </a>
           </motion.div>
 
