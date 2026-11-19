@@ -9,6 +9,7 @@ import { Journey } from "@/components/Journey";
 import { ClientAccess } from "@/components/ClientAccess";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { WhatsappFloat } from "@/components/WhatsappFloat";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <WhatsappFloat />
     </>
   );
 }

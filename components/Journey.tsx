@@ -12,7 +12,7 @@ export function Journey() {
   const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 26 });
 
   return (
-    <section id="percurso" className="py-28 md:py-32">
+    <section id="percurso" className="overflow-x-clip py-28 md:py-32">
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1fr_1.1fr]">
         <Reveal>
           <p className="eyebrow mb-5">
