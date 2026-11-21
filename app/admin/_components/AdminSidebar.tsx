@@ -35,11 +35,11 @@ export function AdminSidebar(props: Props) {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] flex-col border-r border-line bg-bg/60 px-5 pb-5 pt-7 backdrop-blur-xl lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] flex-col overflow-y-auto border-r border-line bg-bg/70 px-5 backdrop-blur-xl pb-5 pt-7 lg:flex">
         <Body {...props} group="desk" />
       </aside>
 
-      <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-line bg-bg/80 px-4 backdrop-blur-xl lg:hidden">
+      <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-line bg-bg/95 px-4 backdrop-blur lg:hidden">
         <Link href="/admin" aria-label="Visão geral">
           <BrandLockup className="origin-left scale-90" />
         </Link>
@@ -71,7 +71,7 @@ export function AdminSidebar(props: Props) {
               role="dialog"
               aria-modal="true"
               aria-label="Menu"
-              className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-[#0c0918] px-5 pb-5 pt-6 lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-surface px-5 pb-5 pt-6 lg:hidden"
               initial={{ x: "-100%" }}
               animate={{ x: 0, transition: { type: "spring", stiffness: 420, damping: 42 } }}
               exit={{ x: "-100%", transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
@@ -101,11 +101,11 @@ function Body({ name, awaiting, group }: Props & { group: string }) {
         <BrandLockup />
       </Link>
 
-      <nav aria-label="Administração" className="mt-12">
-        <p className="kicker mb-4 flex items-center gap-2 px-3">
-          <ShieldCheck size={13} aria-hidden /> Administração
+      <nav aria-label="Administração" className="mt-10">
+        <p className="kicker kicker-plain mb-3 flex items-center gap-2 px-3">
+          <ShieldCheck size={13} aria-hidden /> Gerir
         </p>
-        <ul className="space-y-1.5">
+        <ul className="space-y-1">
           {NAV.map(({ href, label, icon: Icon, ...rest }) => {
             const active =
               href === "/admin"
@@ -118,30 +118,28 @@ function Body({ name, awaiting, group }: Props & { group: string }) {
                   href={href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "relative flex h-[50px] items-center gap-3.5 rounded-2xl px-4 text-[15px] transition-colors duration-200",
-                    active ? "text-ink" : "text-ink-dim hover:text-ink",
+                    "relative flex h-12 items-center gap-3 rounded-xl px-3.5 text-sm transition-colors duration-200",
+                    active ? "text-ink" : "text-ink-dim hover:bg-white/[0.03] hover:text-ink",
                   )}
                 >
                   {active && (
                     <motion.span
                       layoutId={`admin-nav-${group}`}
-                      className="absolute inset-0 rounded-2xl border border-accent/40"
-                      style={{
-                        background: "linear-gradient(90deg, rgba(139,108,255,0.22), rgba(139,108,255,0.06))",
-                        boxShadow: "inset 3px 0 0 #8b6cff",
-                      }}
-                      transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                      className="absolute inset-0 rounded-xl border border-white/[0.09] bg-white/[0.05] before:absolute before:inset-y-3 before:left-0 before:w-[2px] before:rounded-full before:bg-gradient-to-b before:from-[#a78bfa] before:to-[#5fd4e8]"
+                      transition={{ type: "spring", stiffness: 420, damping: 40 }}
                     />
                   )}
-                  <Icon size={19} strokeWidth={1.7} className="relative" aria-hidden />
+                  <Icon size={18} strokeWidth={1.6} className="relative" aria-hidden />
                   <span className="relative">{label}</span>
-                  {badge && (
+                  {badge ? (
                     <span
-                      className="relative ml-auto grid h-6 min-w-6 place-items-center rounded-lg bg-accent px-1.5 text-[11px] font-bold text-white"
+                      className="relative ml-auto grid h-5 min-w-5 place-items-center rounded-md bg-white/[0.08] px-1.5 text-xs font-medium text-ink"
                       aria-label={`${awaiting} por responder`}
                     >
                       {awaiting}
                     </span>
+                  ) : (
+                    active && <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-[#b59fe1]" aria-hidden />
                   )}
                 </Link>
               </li>
@@ -159,7 +157,7 @@ function Body({ name, awaiting, group }: Props & { group: string }) {
           <ExternalLink size={15} aria-hidden /> Ver o site público
         </Link>
         <div className="flex items-center gap-3 border-t border-line px-1 pt-5">
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-[#3a2d6e] to-[#211a3f] text-sm font-semibold text-accent-soft">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.07] text-[13px] font-semibold text-ink">
             JP
           </span>
           <div className="min-w-0 flex-1">

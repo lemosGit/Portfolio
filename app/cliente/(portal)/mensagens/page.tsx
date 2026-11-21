@@ -28,7 +28,7 @@ export default async function MessagesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader section="Mensagens" title="Conversa com a GeniusFrela" unread={unread} syncedAt={project.syncedAt} source={project.source} />
+      <PageHeader section="Mensagens" eyebrow="Canal direto" title="Conversa com a GeniusFrela" subtitle="Dúvidas, ideias ou pedidos. Fica tudo aqui, organizado por etapa." unread={unread} syncedAt={project.syncedAt} source={project.source} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="thread-title" className="panel p-5 sm:p-7">
@@ -46,14 +46,14 @@ export default async function MessagesPage() {
                 return (
                   <li key={f.id} className={cn("flex gap-3", mine && "flex-row-reverse")}>
                     {mine ? (
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#3a2d6e] to-[#211a3f] text-[11px] font-semibold text-accent-soft">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/[0.07] text-xs font-semibold text-ink">
                         {client.initials}
                       </span>
                     ) : (
-                      <BrandMark className="h-9 w-9 rounded-xl text-[11px]" />
+                      <BrandMark className="h-9 w-9 rounded-xl text-xs" />
                     )}
                     <div className={cn("max-w-[78%]", mine && "text-right")}>
-                      <p className="text-[11px] text-ink-faint">
+                      <p className="text-xs text-ink-faint">
                         <span className="font-semibold text-ink-dim">{mine ? "Você" : "João · GeniusFrela"}</span>
                         {" · "}
                         <time dateTime={f.createdAt} title={longDate(f.createdAt)}>
@@ -62,7 +62,7 @@ export default async function MessagesPage() {
                       </p>
                       <div
                         className={cn(
-                          "mt-1.5 inline-block rounded-2xl px-4 py-3 text-left text-[14px] leading-relaxed",
+                          "mt-1.5 inline-block rounded-2xl px-4 py-3 text-left text-sm leading-relaxed",
                           mine
                             ? "rounded-tr-md bg-accent/[0.18] text-ink"
                             : "rounded-tl-md border border-line bg-white/[0.035] text-ink",
@@ -70,7 +70,7 @@ export default async function MessagesPage() {
                       >
                         {f.body}
                       </div>
-                      <p className="mt-1.5 text-[11px] text-ink-faint">Sobre: {targetLabel(f.target)}</p>
+                      <p className="mt-1.5 text-xs text-ink-faint">Sobre: {targetLabel(f.target)}</p>
                     </div>
                   </li>
                 );
@@ -81,7 +81,7 @@ export default async function MessagesPage() {
 
         <section aria-labelledby="new-title" className="panel h-fit p-7 xl:sticky xl:top-8">
           <p className="kicker">Canal direto</p>
-          <h2 id="new-title" className="mt-2.5 font-display text-[19px] font-semibold text-ink">
+          <h2 id="new-title" className="mt-2.5 text-base font-medium text-ink">
             Nova mensagem
           </h2>
           <p className="mt-4 text-[13px] leading-relaxed text-ink-dim">

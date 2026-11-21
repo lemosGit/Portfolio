@@ -21,7 +21,7 @@ export function PanelHead({
     <div className="flex items-start justify-between gap-4">
       <div>
         <p className="kicker">{kicker}</p>
-        <h2 id={id} className="mt-2.5 font-display text-[19px] font-semibold tracking-[-0.01em] text-ink">{title}</h2>
+        <h2 id={id} className="mt-2.5 text-base font-medium tracking-[-0.01em] text-ink">{title}</h2>
       </div>
       {action}
     </div>
@@ -76,18 +76,17 @@ export function NextMeeting({ meeting }: { meeting?: Meeting }) {
   return (
     <div className="flex h-full gap-6 p-5 sm:p-6">
       <div
-        className="flex w-[108px] shrink-0 flex-col items-center justify-center rounded-[20px] border border-line text-center"
-        style={{ background: "linear-gradient(180deg, rgba(139,108,255,0.03), rgba(139,108,255,0.16))" }}
+        className="flex w-[76px] shrink-0 flex-col items-center justify-center self-center rounded-2xl border border-[#b59fe1]/25 bg-[#b59fe1]/[0.06] py-3.5 text-center"
       >
-        <p className="text-[11px] font-semibold tracking-[0.2em] text-ink-dim">{d.month}</p>
-        <p className="font-display text-[44px] font-semibold leading-none text-ink">{d.day}</p>
-        <p className="mt-2 text-[11px] text-ink-faint">{d.weekday}</p>
+        <p className="lav text-[11px] font-semibold uppercase tracking-[0.12em]">{d.month}</p>
+        <p className="lav mt-0.5 font-display text-[30px] font-normal leading-none">{d.day}</p>
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center py-2">
         <p className="kicker">Próxima reunião</p>
-        <h2 className="mt-2.5 font-display text-[19px] font-semibold text-ink">{meeting.title}</h2>
-        <p className="mt-3 flex items-center gap-2 text-[13px] text-ink-dim">
-          <Clock size={16} aria-hidden />
+        <h2 className="mt-2.5 text-base font-medium text-ink">{meeting.title}</h2>
+        <p className="mt-1 text-xs text-ink-faint">{d.weekday}</p>
+        <p className="mt-2 flex items-center gap-2 text-[13px] text-ink-dim">
+          <Clock size={15} aria-hidden />
           {time(meeting.startsAt)} – {time(meeting.endsAt)} <span className="text-ink-faint">WAT</span>
         </p>
         <div className="mt-5 flex gap-2.5">
@@ -119,20 +118,20 @@ export function GithubFeed({ items, limit = 3 }: { items: ProjectView["recentAct
         return (
           <li key={t.number}>
             <Link
-              href={`/cliente/projeto#tarefa-${t.number}`}
+              href={`/cliente/projeto?vista=tarefas#tarefa-${t.number}`}
               className="group flex items-center gap-4 py-4 transition-colors"
             >
               <span
                 className={cn(
                   "grid h-9 w-9 shrink-0 place-items-center rounded-xl border",
-                  done ? "border-ok/20 bg-ok/10 text-ok" : "border-line bg-white/[0.03] text-accent-soft",
+                  done ? "border-ok/20 bg-ok/10 text-ok" : "border-transparent bg-accent/15 text-[#a99bf0]",
                 )}
               >
                 {done ? <Check size={16} strokeWidth={2.4} aria-hidden /> : <LoaderCircle size={16} aria-hidden />}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-semibold text-ink">{t.title}</span>
-                <span className="mt-1 block text-[11px] text-ink-faint">
+                <span className="block truncate text-[13px] font-medium text-ink">{t.title}</span>
+                <span className="mt-1 block text-xs text-ink-faint">
                   {t.area} · {done ? "concluída" : "em curso"} {dayLabel(t.updatedAt)}
                 </span>
               </span>
@@ -153,7 +152,7 @@ export function GithubBadge() {
   return (
     <span className="relative text-ink-dim" aria-hidden>
       <GithubIcon className="h-6 w-6" />
-      <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-ok ring-2 ring-[#120e22]" />
+      <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-ok ring-2 ring-surface" />
     </span>
   );
 }
@@ -171,14 +170,14 @@ export function PreviewWindow({ demo, projectName }: { demo?: DemoLink; projectN
   const host = demo.url.replace(/^https?:\/\//, "");
   return (
     <div className="flex h-full flex-col p-4 sm:p-6">
-      <div className="overflow-hidden rounded-2xl border border-line bg-[#0a0816]">
+      <div className="overflow-hidden rounded-2xl border border-line bg-bg">
         <div className="flex items-center gap-3 border-b border-line px-4 py-3">
           <span className="flex gap-1.5" aria-hidden>
             <span className="h-2 w-2 rounded-full bg-[#ff6b8a]/70" />
             <span className="h-2 w-2 rounded-full bg-[#ffc46b]/70" />
             <span className="h-2 w-2 rounded-full bg-ok/70" />
           </span>
-          <span className="mx-auto max-w-[60%] truncate rounded-md bg-white/[0.04] px-6 py-1 text-[11px] text-ink-faint sm:px-16">
+          <span className="mx-auto max-w-[60%] truncate rounded-md bg-white/[0.04] px-6 py-1 text-xs text-ink-faint sm:px-16">
             {host}
           </span>
           <a
@@ -197,10 +196,10 @@ export function PreviewWindow({ demo, projectName }: { demo?: DemoLink; projectN
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3 px-1">
         <div className="flex items-center gap-3">
-          <span className="h-2 w-2 rounded-full bg-ok shadow-[0_0_10px_#3ddc97]" aria-hidden />
+          <span className="h-2 w-2 rounded-full bg-ok" aria-hidden />
           <div>
             <p className="text-[13px] font-semibold text-ink">Preview online · v{demo.version}</p>
-            <p className="text-[11px] text-ink-faint">Atualizado {relative(demo.createdAt)}</p>
+            <p className="text-xs text-ink-faint">Atualizado {relative(demo.createdAt)}</p>
           </div>
         </div>
         <TextLink href={demo.url} external>

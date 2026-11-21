@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarDays,
   Check,
+  ArrowRight,
   ChevronsUpDown,
   FolderOpen,
   House,
@@ -56,12 +57,12 @@ export function Sidebar(props: Props) {
   return (
     <>
       {/* Desktop */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[288px] flex-col border-r border-line bg-bg/60 px-5 pb-5 pt-7 backdrop-blur-xl lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[288px] flex-col overflow-y-auto border-r border-line bg-bg/70 px-5 backdrop-blur-xl pb-5 pt-7 lg:flex">
         <SidebarBody {...props} layoutGroup="desk" />
       </aside>
 
       {/* Mobile: barra superior + gaveta */}
-      <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-line bg-bg/80 px-4 backdrop-blur-xl lg:hidden">
+      <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-line bg-bg/95 px-4 backdrop-blur lg:hidden">
         <Link href="/cliente" aria-label="Visão geral">
           <BrandLockup className="scale-90 origin-left" />
         </Link>
@@ -92,7 +93,7 @@ export function Sidebar(props: Props) {
               role="dialog"
               aria-modal="true"
               aria-label="Menu"
-              className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-[#0c0918] px-5 pb-5 pt-6 lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-surface px-5 pb-5 pt-6 lg:hidden"
               initial={{ x: "-100%" }}
               animate={{ x: 0, transition: { type: "spring", stiffness: 420, damping: 42 } }}
               exit={{ x: "-100%", transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
@@ -122,9 +123,22 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
         <BrandLockup />
       </Link>
 
-      <nav aria-label="Área do cliente" className="mt-14">
-        <p className="kicker mb-4 px-3">Workspace</p>
-        <ul className="space-y-1.5">
+      <div className="mt-8">
+        {projects.length > 1 ? (
+          <ProjectSwitcher project={project} projects={projects} />
+        ) : (
+          <Link
+            href="/cliente/projeto"
+            className="block rounded-2xl border border-line bg-white/[0.02] p-3.5 transition-colors duration-200 hover:border-white/15 hover:bg-white/[0.04]"
+          >
+            <ProjectCard project={project} />
+          </Link>
+        )}
+      </div>
+
+      <nav aria-label="Área do cliente" className="mt-9">
+        <p className="kicker kicker-plain mb-3 px-3">Acompanhar</p>
+        <ul className="space-y-1">
           {NAV.map(({ href, label, icon: Icon, ...rest }) => {
             const active = href === "/cliente" ? pathname === href : pathname.startsWith(href);
             const showBadge = "badge" in rest && unread > 0;
@@ -134,30 +148,28 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
                   href={href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "group relative flex h-[52px] items-center gap-3.5 rounded-2xl px-4 text-[15px] transition-colors duration-200",
-                    active ? "text-ink" : "text-ink-dim hover:text-ink",
+                    "group relative flex h-12 items-center gap-3 rounded-xl px-3.5 text-sm transition-colors duration-200",
+                    active ? "text-ink" : "text-ink-dim hover:bg-white/[0.03] hover:text-ink",
                   )}
                 >
                   {active && (
                     <motion.span
                       layoutId={`nav-active-${layoutGroup}`}
-                      className="absolute inset-0 rounded-2xl border border-accent/40"
-                      style={{
-                        background: "linear-gradient(90deg, rgba(139,108,255,0.22), rgba(139,108,255,0.06))",
-                        boxShadow: "inset 3px 0 0 #8b6cff",
-                      }}
-                      transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                      className="absolute inset-0 rounded-xl border border-white/[0.09] bg-white/[0.05] before:absolute before:inset-y-3 before:left-0 before:w-[2px] before:rounded-full before:bg-gradient-to-b before:from-[#a78bfa] before:to-[#5fd4e8]"
+                      transition={{ type: "spring", stiffness: 420, damping: 40 }}
                     />
                   )}
-                  <Icon size={20} strokeWidth={1.7} className="relative" aria-hidden />
+                  <Icon size={18} strokeWidth={1.6} className="relative" aria-hidden />
                   <span className="relative">{label}</span>
-                  {showBadge && (
+                  {showBadge ? (
                     <span
-                      className="relative ml-auto grid h-6 min-w-6 place-items-center rounded-lg bg-accent px-1.5 text-[11px] font-bold text-white"
+                      className="relative ml-auto grid h-5 min-w-5 place-items-center rounded-md bg-white/[0.08] px-1.5 text-xs font-medium text-ink"
                       aria-label={`${unread} ${unread === 1 ? "resposta nova" : "respostas novas"}`}
                     >
                       {unread}
                     </span>
+                  ) : (
+                    active && <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-[#b59fe1]" aria-hidden />
                   )}
                 </Link>
               </li>
@@ -166,17 +178,19 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
         </ul>
       </nav>
 
-      <div className="mt-auto space-y-5">
-        {projects.length > 1 ? (
-          <ProjectSwitcher project={project} projects={projects} />
-        ) : (
-          <Link
-            href="/cliente/projeto"
-            className="block rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors duration-200 hover:border-accent/30"
-          >
-            <ProjectCard project={project} />
-          </Link>
-        )}
+      <div className="mt-auto space-y-5 pt-8">
+        <Link
+          href="/cliente/mensagens"
+          className="group relative block overflow-hidden rounded-2xl border border-line bg-white/[0.02] p-5 [@media(max-height:780px)]:hidden transition-colors duration-200 hover:border-white/15"
+        >
+          <span aria-hidden className="absolute -right-10 -top-10 h-24 w-24 rounded-full border border-white/[0.06]" />
+          <Sparkles size={18} className="lav" aria-hidden />
+          <p className="mt-4 text-[15px] leading-snug text-ink">Boas ideias começam com uma conversa.</p>
+          <p className="mt-3 flex items-center justify-between text-[13px] text-ink-dim transition-colors group-hover:text-ink">
+            Falar com o João
+            <ArrowRight size={15} className="transition-transform duration-300 ease-out group-hover:translate-x-0.5" aria-hidden />
+          </p>
+        </Link>
 
         <UserRow client={client} />
       </div>
@@ -202,7 +216,7 @@ function UserRow({ client }: { client: Props["client"] }) {
 
   return (
     <div ref={ref} className="relative flex items-center gap-3 border-t border-line px-1 pt-5">
-      <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-[#3a2d6e] to-[#211a3f] text-sm font-semibold text-accent-soft">
+      <span className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.07] text-[13px] font-semibold text-ink">
         {client.initials}
       </span>
       <div className="min-w-0 flex-1">
@@ -226,7 +240,7 @@ function UserRow({ client }: { client: Props["client"] }) {
             exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
             transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
             style={{ transformOrigin: "bottom right" }}
-            className="absolute bottom-[calc(100%+8px)] right-0 w-48 rounded-xl border border-line bg-[#141026] p-1.5 shadow-2xl"
+            className="absolute bottom-[calc(100%+8px)] right-0 w-48 rounded-xl border border-line bg-raised p-1.5 shadow-xl shadow-black/40"
           >
             <form action={logout}>
               <button
@@ -245,27 +259,20 @@ function UserRow({ client }: { client: Props["client"] }) {
 
 function ProjectCard({ project, switcher }: { project: Props["project"]; switcher?: boolean }) {
   return (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 text-left">
-          <p className="text-xs text-ink-faint">{switcher ? "Projeto · trocar" : "Projeto ativo"}</p>
-          <p className="mt-2 truncate font-display font-semibold text-ink">{project.name}</p>
-        </div>
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent-soft">
-          {switcher ? <ChevronsUpDown size={18} aria-hidden /> : <Sparkles size={18} aria-hidden />}
-        </span>
-      </div>
-      <div className="mt-6 h-1 overflow-hidden rounded-full bg-white/[0.07]">
-        <div
-          className="h-full rounded-full"
-          style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
-        />
-      </div>
-      <div className="mt-3 flex justify-between text-xs">
-        <span className="text-ink-faint">Progresso</span>
-        <span className="font-semibold text-accent-soft">{project.percent}%</span>
-      </div>
-    </>
+    <span className="flex items-center gap-3 text-left">
+      <span className="icon-tile">
+        <FolderOpen size={17} strokeWidth={1.7} aria-hidden />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[13px] font-medium text-ink">{project.name}</span>
+        <span className="mt-0.5 block text-xs text-ink-faint">{project.percent}% do caminho feito</span>
+      </span>
+      {switcher ? (
+        <ChevronsUpDown size={15} className="shrink-0 text-ink-faint" aria-hidden />
+      ) : (
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ok" aria-hidden />
+      )}
+    </span>
   );
 }
 
@@ -297,7 +304,7 @@ function ProjectSwitcher({ project, projects }: { project: Props["project"]; pro
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Projeto ${project.name}. Trocar de projeto`}
-        className="block w-full rounded-2xl border border-line bg-white/[0.02] p-5 transition-colors duration-200 hover:border-accent/30"
+        className="block w-full rounded-2xl border border-line bg-white/[0.02] p-3.5 transition-colors duration-200 hover:border-white/15 hover:bg-white/[0.04]"
       >
         <ProjectCard project={project} switcher />
       </button>
@@ -306,12 +313,12 @@ function ProjectSwitcher({ project, projects }: { project: Props["project"]; pro
           <motion.ul
             role="listbox"
             aria-label="Os seus projetos"
-            initial={{ opacity: 0, y: 6, scale: 0.97 }}
+            initial={{ opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
+            exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.12 } }}
             transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-            style={{ transformOrigin: "bottom center" }}
-            className="absolute bottom-[calc(100%+8px)] left-0 right-0 z-10 max-h-72 overflow-y-auto rounded-xl border border-line bg-[#141026] p-1.5 shadow-2xl"
+            style={{ transformOrigin: "top center" }}
+            className="absolute top-[calc(100%+8px)] left-0 right-0 z-10 max-h-72 overflow-y-auto rounded-xl border border-line bg-raised p-1.5 shadow-xl shadow-black/40"
           >
             {projects.map((p) => {
               const current = p.id === project.id;

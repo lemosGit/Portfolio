@@ -42,19 +42,19 @@ export default async function AdminHome() {
       <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map(({ label, value, icon: Icon, href, hot }) => (
           <li key={label}>
-            <Link href={href} className="panel flex items-center justify-between gap-3 p-5 transition-colors hover:border-accent/30">
+            <Link href={href} className="panel flex items-center justify-between gap-3 p-5 transition-colors ">
               <div>
                 <p className="text-xs text-ink-faint">{label}</p>
-                <p className="mt-2 font-display text-[28px] font-semibold tabular-nums text-ink">{value}</p>
+                <p className="mt-1.5 font-display text-2xl font-semibold tabular-nums text-ink">{value}</p>
               </div>
               <span
                 className={
                   hot
-                    ? "grid h-11 w-11 place-items-center rounded-2xl bg-accent text-white"
-                    : "grid h-11 w-11 place-items-center rounded-2xl border border-line bg-white/[0.03] text-accent-soft"
+                    ? "icon-tile h-9 w-9 ring-1 ring-[#a78bfa]/40"
+                    : "icon-tile h-9 w-9"
                 }
               >
-                <Icon size={19} aria-hidden />
+                <Icon size={17} aria-hidden />
               </span>
             </Link>
           </li>
@@ -84,7 +84,7 @@ export default async function AdminHome() {
                     </div>
                     <div className="flex items-center gap-3 sm:w-56">
                       <Progress percent={v.percent} className="flex-1" />
-                      <span className="w-10 text-right text-sm font-semibold tabular-nums text-accent-soft">{v.percent}%</span>
+                      <span className="w-10 text-right text-sm font-medium tabular-nums text-ink">{v.percent}%</span>
                       <ArrowRight size={16} className="text-ink-faint transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </div>
                   </Link>
@@ -133,7 +133,7 @@ export default async function AdminHome() {
                 {meetings.map((m) => (
                   <li key={m.id} className="flex items-center gap-3">
                     <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-white/[0.03] text-center leading-tight">
-                      <span className="text-[11px] text-ink-dim">{shortDate(m.startsAt)}</span>
+                      <span className="text-xs text-ink-dim">{shortDate(m.startsAt)}</span>
                     </div>
                     <Link href={`/admin/projetos/${m.projectId}#reunioes`} className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-ink">{m.title}</p>

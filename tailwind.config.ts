@@ -5,13 +5,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#08060f",
-        surface: "#110d1f",
-        ink: { DEFAULT: "#efedf8", dim: "#a6a2bd", faint: "#6f6a8c" },
+        // Valores em variáveis CSS: o portfólio usa os de :root, o portal/admin os de .app (globals.css).
+        bg: "rgb(var(--c-bg) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        raised: "rgb(var(--c-raised) / <alpha-value>)",
+        ink: {
+          DEFAULT: "rgb(var(--c-ink) / <alpha-value>)",
+          dim: "rgb(var(--c-ink-dim) / <alpha-value>)",
+          faint: "rgb(var(--c-ink-faint) / <alpha-value>)",
+        },
         accent: { DEFAULT: "#8b6cff", deep: "#6d4cff", soft: "#b9a6ff" },
         aqua: "#5fd4e8",
         ok: "#3ddc97",
-        line: "rgba(167, 139, 250, 0.12)",
+        line: "var(--c-line)",
       },
       fontFamily: {
         sans: ['"Manrope Variable"', "system-ui", "sans-serif"],

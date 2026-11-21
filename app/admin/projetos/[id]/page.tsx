@@ -117,9 +117,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Estado" hint="Projetos pausados ou entregues saem da visão geral.">
               <select name="estado" defaultValue={p.status} className={inputCls}>
-                <option value="ativo" className="bg-[#141026]">Ativo</option>
-                <option value="pausado" className="bg-[#141026]">Pausado</option>
-                <option value="entregue" className="bg-[#141026]">Entregue</option>
+                <option value="ativo" className="bg-raised">Ativo</option>
+                <option value="pausado" className="bg-raised">Pausado</option>
+                <option value="entregue" className="bg-raised">Entregue</option>
               </select>
             </Field>
             <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
@@ -173,9 +173,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <div className="grid gap-4 sm:grid-cols-[140px_1fr]">
                 <Field label="Tipo">
                   <select name="tipo" defaultValue="web" className={inputCls}>
-                    <option value="web" className="bg-[#141026]">Web</option>
-                    <option value="android" className="bg-[#141026]">Android</option>
-                    <option value="ios" className="bg-[#141026]">iOS</option>
+                    <option value="web" className="bg-raised">Web</option>
+                    <option value="android" className="bg-raised">Android</option>
+                    <option value="ios" className="bg-raised">iOS</option>
                   </select>
                 </Field>
                 <Field label="Link">
@@ -222,7 +222,7 @@ function MeetingItem({ m, past, projectId }: { m: Meeting; past: boolean; projec
     <li className="rounded-2xl border border-line bg-white/[0.015]">
       <details>
         <summary className="flex cursor-pointer list-none items-center gap-3 p-3">
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-white/[0.03] text-[11px] text-ink-dim">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-line bg-white/[0.03] text-xs text-ink-dim">
             {shortDate(m.startsAt)}
           </div>
           <div className="min-w-0 flex-1">

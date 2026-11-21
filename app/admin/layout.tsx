@@ -14,12 +14,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const awaiting = await countAwaiting(sb).catch(() => 0);
 
   return (
-    <div className="relative min-h-dvh overflow-x-clip">
-      <div aria-hidden className="pointer-events-none fixed inset-0">
-        <div
-          className="absolute -top-[30%] left-[30%] h-[65vh] w-[60vw] rounded-full opacity-60"
-          style={{ background: "radial-gradient(closest-side, rgba(109,76,255,0.18), transparent)" }}
-        />
+    <div className="app relative min-h-dvh overflow-x-clip">
+      <div aria-hidden className="app-ambient">
+        <i />
+        <i />
       </div>
 
       <AdminSidebar name={name} awaiting={awaiting} />
