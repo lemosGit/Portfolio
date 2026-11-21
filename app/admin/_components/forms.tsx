@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 
 type Action = (prev: AdminState, form: FormData) => Promise<AdminState>;
 
-export const inputCls =
-  "h-11 w-full rounded-xl border border-line bg-white/[0.03] px-3.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-accent/60 focus:bg-white/[0.05]";
+/** Campo de formulário do design system (ver `.app .field` em globals.css). */
+export const inputCls = "field h-11";
 
 /** Formulário ligado a uma Server Action, com mensagens de erro/sucesso e credenciais únicas. */
 export function ActionForm({

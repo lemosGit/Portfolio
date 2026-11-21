@@ -1,23 +1,22 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Lock } from "lucide-react";
 import { changePassword, type PasswordState } from "@/lib/portal/actions";
 
 export function PasswordForm() {
   const [state, action, pending] = useActionState<PasswordState, FormData>(changePassword, {});
   const [show, setShow] = useState(false);
   const errId = state.error ? "pw-error" : undefined;
-  const input =
-    "h-[52px] w-full rounded-xl border border-line bg-white/[0.03] px-4 text-[15px] text-ink outline-none transition-colors focus:border-accent/60 focus:bg-white/[0.05]";
 
   return (
     <form action={action} className="space-y-5" noValidate>
       <div>
-        <label htmlFor="password" className="mb-2 block text-[13px] font-medium text-ink-dim">
+        <label htmlFor="password" className="field-label">
           Nova senha
         </label>
-        <div className="relative">
+        <span className="field-wrap">
+          <Lock aria-hidden />
           <input
             id="password"
             name="password"
@@ -27,28 +26,30 @@ export function PasswordForm() {
             required
             aria-invalid={Boolean(state.error)}
             aria-describedby={["pw-hint", errId].filter(Boolean).join(" ")}
-            className={`${input} pr-14`}
+            className="field pr-12"
           />
           <button
             type="button"
             onClick={() => setShow((v) => !v)}
             aria-label={show ? "Esconder senhas" : "Mostrar senhas"}
             aria-pressed={show}
-            className="absolute right-1.5 top-1.5 grid h-10 w-10 place-items-center rounded-lg text-ink-faint transition-colors hover:text-ink"
+            className="absolute right-1.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-ink-faint transition-colors hover:text-ink"
           >
-            {show ? <EyeOff size={18} aria-hidden /> : <Eye size={18} aria-hidden />}
+            {show ? <EyeOff size={17} aria-hidden /> : <Eye size={17} aria-hidden />}
           </button>
-        </div>
+        </span>
         <p id="pw-hint" className="mt-2 text-xs text-ink-faint">
           Pelo menos 8 caracteres.
         </p>
       </div>
 
       <div>
-        <label htmlFor="confirm" className="mb-2 block text-[13px] font-medium text-ink-dim">
+        <label htmlFor="confirm" className="field-label">
           Repetir a nova senha
         </label>
-        <input
+        <span className="field-wrap">
+          <KeyRound aria-hidden />
+          <input
           id="confirm"
           name="confirm"
           type={show ? "text" : "password"}
@@ -56,8 +57,9 @@ export function PasswordForm() {
           required
           aria-invalid={Boolean(state.error)}
           aria-describedby={errId}
-          className={input}
-        />
+          className="field"
+          />
+        </span>
       </div>
 
       {state.error && (
@@ -66,7 +68,7 @@ export function PasswordForm() {
         </p>
       )}
 
-      <button type="submit" disabled={pending} className="btn-violet h-[52px] w-full text-[15px]">
+      <button type="submit" disabled={pending} className="btn-violet h-12 w-full text-sm">
         {pending ? "A guardar…" : "Guardar senha e continuar"}
       </button>
     </form>

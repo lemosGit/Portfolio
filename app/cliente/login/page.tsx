@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, GitBranch, Smartphone } from "lucide-react";
+import { ArrowLeft, CalendarDays, Check, GitBranch, Smartphone, Sparkles } from "lucide-react";
 import { BrandLockup } from "@/components/BrandMark";
 import { profile } from "@/lib/data";
 import { DEMO_CREDENTIALS } from "@/lib/portal/mock-data";
@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 };
 
 const FEATURES = [
-  { icon: GitBranch, text: "Etapas e tarefas atualizadas a partir do GitHub" },
-  { icon: Smartphone, text: "Demonstração web e app para instalar por QR code" },
-  { icon: CalendarDays, text: "Reuniões marcadas e resumo de cada uma" },
+  { icon: GitBranch, title: "Etapa a etapa", text: "Progresso com clareza" },
+  { icon: Smartphone, title: "Do lado de dentro", text: "Experimente o projeto" },
+  { icon: CalendarDays, title: "Sempre alinhados", text: "Conversas e encontros" },
 ];
 
 const MOTIVOS: Record<string, string> = {
@@ -26,16 +26,16 @@ const MOTIVOS: Record<string, string> = {
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ motivo?: string }> }) {
   const { motivo } = await searchParams;
   const notice = motivo ? MOTIVOS[motivo] : undefined;
-  return (
-    <main id="conteudo" className="relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-      <div aria-hidden className="pointer-events-none fixed inset-0">
-        <div
-          className="absolute -left-[10%] -top-[20%] h-[60vh] w-[60vw] rounded-full"
-          style={{ background: "radial-gradient(closest-side, rgba(109,76,255,0.18), transparent)" }}
-        />
-      </div>
+  const help = `mailto:${profile.email}?subject=Recuperar%20acesso%20%C3%A0%20%C3%A1rea%20do%20cliente`;
 
-      <section className="relative flex flex-col px-6 py-8 sm:px-12 lg:px-16">
+  return (
+    <main id="conteudo" className="app relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+      <div aria-hidden className="app-ambient">
+        <i />
+        <i />
+      </div>
+      {/* Formulário */}
+      <section className="relative z-[1] flex flex-col px-6 py-8 sm:px-12 lg:px-16">
         <div className="flex items-center justify-between">
           <Link href="/" aria-label="GeniusFrela — página inicial" className="rounded-xl">
             <BrandLockup />
@@ -45,49 +45,107 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           </Link>
         </div>
 
-        <div className="mx-auto my-auto w-full max-w-[400px] py-16">
-          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.03em] text-ink">
-            Área do cliente
+        <div className="rise mx-auto my-auto w-full max-w-[380px] py-14">
+          <p className="kicker">Área do cliente</p>
+          <h1 className="mt-6 font-display text-[40px] font-normal leading-[1.08] tracking-[-0.035em] text-ink sm:text-[46px]">
+            O seu projeto,
+            <br />
+            <span className="aurora">mais perto.</span>
           </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-dim">
-            Entre com o email e a senha que recebeu da GeniusFrela para acompanhar o seu projeto.
+          <p className="mt-5 max-w-[34ch] text-sm leading-relaxed text-ink-dim">
+            Um espaço para acompanhar, conversar e ver a sua ideia ganhar vida.
           </p>
           {notice && (
             <p role="status" className="mt-6 rounded-xl border border-accent/25 bg-accent/[0.07] px-4 py-3 text-[13px] text-ink-dim">
               {notice}
             </p>
           )}
-          <div className="mt-10">
-            <LoginForm demo={supabaseEnabled ? undefined : DEMO_CREDENTIALS} />
+          <div className="mt-9">
+            <LoginForm helpHref={help} />
           </div>
-          <p className="mt-8 text-[13px] text-ink-faint">
-            Esqueceu a senha?{" "}
-            <a href={`mailto:${profile.email}?subject=Recuperar%20acesso%20%C3%A0%20%C3%A1rea%20do%20cliente`} className="text-accent-soft underline-offset-4 hover:underline">
-              Peça um novo acesso
-            </a>
-          </p>
+
+          <div className="mt-9 border-t border-line pt-6 text-center">
+            {supabaseEnabled ? (
+              <p className="text-[13px] text-ink-faint">
+                Ainda não tem acesso?{" "}
+                <a href={help} className="text-ink-dim underline-offset-4 transition-colors hover:text-ink hover:underline">
+                  Fale com a GeniusFrela
+                </a>
+              </p>
+            ) : (
+              <p className="text-xs leading-relaxed text-ink-faint">
+                Acesso de demonstração: <span className="text-ink-dim">{DEMO_CREDENTIALS.email}</span>, senha{" "}
+                <span className="text-ink-dim">{DEMO_CREDENTIALS.password}</span>
+              </p>
+            )}
+          </div>
         </div>
       </section>
 
-      <aside className="relative hidden overflow-hidden border-l border-line lg:block" aria-label="O que encontra na área do cliente">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 60% 40%, rgba(109,76,255,0.28), transparent 70%), linear-gradient(160deg, #120d26, #08060f)",
-          }}
-        />
-        <div className="relative flex h-full flex-col items-center justify-center px-16">
-          <div className="w-full max-w-[360px]">
+      {/* Ilustração */}
+      <aside
+        className="relative hidden h-dvh flex-col justify-between overflow-hidden border-l border-line px-12 py-8 lg:sticky lg:top-0 lg:flex"
+        aria-label="O que encontra na área do cliente"
+        style={{
+          background:
+            "radial-gradient(70% 55% at 50% 38%, rgba(110,80,230,0.2), transparent 70%), radial-gradient(40% 30% at 85% 90%, rgba(95,212,232,0.07), transparent 70%), linear-gradient(180deg, #1d1730, #151122)",
+        }}
+      >
+        <p className="kicker">Clareza em cada etapa</p>
+
+        <div className="relative mx-auto my-4 h-[44vh] max-h-[400px] min-h-[260px] w-full max-w-[540px]">
+          <div className="absolute left-1/2 top-1/2 aspect-square h-full -translate-x-1/2 -translate-y-1/2">
             <PhoneOrbit />
           </div>
-          <ul className="mt-14 w-full max-w-[420px] space-y-4">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-4 text-[14px] text-ink-dim">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line bg-white/[0.03] text-accent-soft">
-                  <Icon size={18} aria-hidden />
+
+          <div aria-hidden className="glass-card float-soft absolute left-0 top-[22%] w-[210px] p-4">
+            <div className="flex items-center gap-3">
+              <span className="icon-tile h-9 w-9">
+                <GitBranch size={16} aria-hidden />
+              </span>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint">O seu projeto</p>
+                <p className="text-[13px] font-medium text-ink">A ganhar forma</p>
+              </div>
+            </div>
+            <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-[64%] rounded-full" style={{ background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }} />
+            </div>
+            <p className="mt-2 flex justify-between text-[11px] text-ink-faint">
+              <span>Desenvolvimento</span>
+              <span className="text-ink-dim">64%</span>
+            </p>
+          </div>
+
+          <div aria-hidden className="glass-card float-soft-late absolute right-0 top-[62%] flex w-[260px] items-center gap-3 p-4">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 text-ink-dim">
+              <Check size={15} aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium text-ink">Mais uma etapa concluída.</p>
+              <p className="text-[11px] text-ink-faint">Cada detalhe faz a diferença.</p>
+            </div>
+            <Sparkles size={15} className="shrink-0 text-ink-faint" aria-hidden />
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-[520px] text-center">
+          <p className="kicker kicker-plain">Da primeira ideia ao lançamento</p>
+          <p className="mt-3 font-display text-[30px] font-normal leading-[1.15] tracking-[-0.03em] text-ink">
+            Um processo claro.
+            <br />
+            Uma experiência <span className="aurora">próxima.</span>
+          </p>
+          <p className="mt-4 text-[13px] text-ink-faint">Menos dúvidas. Mais partilha. Tudo no mesmo lugar.</p>
+
+          <ul className="mt-7 grid grid-cols-3 gap-4 border-t border-line pt-5 text-left">
+            {FEATURES.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="flex items-start gap-3">
+                <Icon size={17} className="mt-0.5 shrink-0 text-[#a99bf0]" aria-hidden />
+                <span>
+                  <span className="block text-[13px] text-ink">{title}</span>
+                  <span className="block text-[11px] text-ink-faint">{text}</span>
                 </span>
-                {text}
               </li>
             ))}
           </ul>

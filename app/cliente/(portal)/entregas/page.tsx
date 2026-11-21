@@ -18,7 +18,9 @@ export default async function DeliveriesPage() {
     <div className="space-y-6">
       <PageHeader
         section="Entregas"
+        eyebrow="Do lado de dentro"
         title="Experimente a versão mais recente"
+        subtitle="Abra a demonstração web ou instale a app no telemóvel. Cada versão nova aparece aqui."
         unread={unread}
         syncedAt={project.syncedAt} source={project.source}
       />
@@ -27,7 +29,7 @@ export default async function DeliveriesPage() {
         <section aria-labelledby="web-title" className="panel">
           <div className="px-7 pt-7">
             <p className="kicker">Demonstração web</p>
-            <h2 id="web-title" className="mt-2.5 font-display text-[19px] font-semibold text-ink">
+            <h2 id="web-title" className="mt-2.5 text-base font-medium text-ink">
               Painel do operador
             </h2>
           </div>
@@ -36,7 +38,7 @@ export default async function DeliveriesPage() {
 
         <section aria-labelledby="app-title" className="panel flex flex-col p-7">
           <p className="kicker">App mobile</p>
-          <h2 id="app-title" className="mt-2.5 font-display text-[19px] font-semibold text-ink">
+          <h2 id="app-title" className="mt-2.5 text-base font-medium text-ink">
             Instalar no telemóvel
           </h2>
           {app ? (
@@ -52,7 +54,7 @@ export default async function DeliveriesPage() {
               <a href={app.url} target="_blank" rel="noreferrer" className="btn-quiet mt-6 w-full">
                 <Download size={16} aria-hidden /> Abrir link da build
               </a>
-              <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
+              <p className="mt-4 text-xs leading-relaxed text-ink-faint">
                 No iPhone a instalação é feita por convite TestFlight, enviado por email.
               </p>
             </>
@@ -64,7 +66,7 @@ export default async function DeliveriesPage() {
 
       <section aria-labelledby="hist-title" className="panel p-7">
         <p className="kicker">Histórico</p>
-        <h2 id="hist-title" className="mt-2.5 font-display text-[19px] font-semibold text-ink">
+        <h2 id="hist-title" className="mt-2.5 text-base font-medium text-ink">
           Todas as versões
         </h2>
         <ul className="mt-6 divide-y divide-line border-t border-line">
@@ -72,7 +74,7 @@ export default async function DeliveriesPage() {
             const Icon = d.kind === "web" ? Globe : Smartphone;
             return (
               <li key={d.id} className="flex flex-wrap items-center gap-4 py-4">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-line bg-white/[0.03] text-accent-soft">
+                <span className="icon-tile">
                   <Icon size={17} aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -81,7 +83,7 @@ export default async function DeliveriesPage() {
                   </p>
                   <p className="mt-0.5 text-[12px] text-ink-dim">{d.notes}</p>
                 </div>
-                <time dateTime={d.createdAt} title={longDate(d.createdAt)} className="text-[11px] text-ink-faint">
+                <time dateTime={d.createdAt} title={longDate(d.createdAt)} className="text-xs text-ink-faint">
                   {relative(d.createdAt)}
                 </time>
                 <a

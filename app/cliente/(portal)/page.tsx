@@ -20,12 +20,14 @@ export default async function Overview() {
     <div className="space-y-6">
       <PageHeader
         section="Visão geral"
+        eyebrow="Vamos construir algo bom"
+        subtitle="O projeto está a evoluir. Veja onde estamos, o que mudou e o que vem a seguir."
         unread={unread}
         syncedAt={project.syncedAt}
         source={project.source}
         title={
           <>
-            Olá, {firstName}. <span className="font-normal text-ink-faint">O projeto está a evoluir.</span>
+            Olá, <span className="aurora">{firstName}.</span>
           </>
         }
       />
@@ -33,7 +35,7 @@ export default async function Overview() {
       {project.needsClient.length > 0 && (
         <section
           aria-labelledby="needs-title"
-          className="flex flex-col gap-4 rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] p-5 sm:flex-row sm:items-center"
+          className="flex flex-col gap-4 rounded-2xl border border-amber-300/20 bg-amber-300/[0.045] p-4 sm:flex-row sm:items-center sm:px-5"
         >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-300/15 text-amber-300">
             <Hand size={18} aria-hidden />
@@ -47,7 +49,7 @@ export default async function Overview() {
             <ul className="mt-1 text-[13px] text-ink-dim">
               {project.needsClient.slice(0, 3).map((t) => (
                 <li key={t.number}>
-                  <Link href={`/cliente/projeto#tarefa-${t.number}`} className="underline-offset-4 hover:text-ink hover:underline">
+                  <Link href={`/cliente/projeto?vista=tarefas#tarefa-${t.number}`} className="underline-offset-4 hover:text-ink hover:underline">
                     {t.title}
                   </Link>
                 </li>
@@ -62,36 +64,33 @@ export default async function Overview() {
 
       {/* Linha 1: destaque + progresso */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <section aria-labelledby="hero-title" className="panel overflow-hidden">
-          <div className="grid items-center gap-4 p-7 md:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] md:p-12">
+        <section aria-labelledby="hero-title" className="panel panel-glow">
+          <div className="grid items-center gap-4 p-7 md:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] md:p-9">
             <div className="relative z-10">
-              <p className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white/[0.03] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-dim">
-                <span className="h-1.5 w-1.5 rounded-full bg-ok shadow-[0_0_8px_#3ddc97]" aria-hidden />
+              <p className="inline-flex items-center gap-2.5 rounded-full border border-line px-3 py-1 text-xs font-medium text-ink-dim">
+                <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
                 {statusLabel}
               </p>
               <h2
                 id="hero-title"
-                className="mt-8 font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[42px]"
+                className="mt-5 font-display text-[28px] font-normal leading-[1.12] tracking-[-0.03em] text-ink sm:text-[32px]"
               >
                 {project.name},
                 <br />
-                <span className="text-gradient">mais perto da entrega.</span>
+                <span className="aurora">mais perto da entrega.</span>
               </h2>
-              <p className="mt-6 max-w-[46ch] text-[15px] leading-relaxed text-ink-dim">
+              <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-ink-dim">
                 Acompanhe cada etapa, reveja os últimos avanços e partilhe feedback diretamente com a equipa.
               </p>
-              <div className="mt-9 flex flex-wrap items-center gap-6">
-                <Link href="/cliente/entregas" className="btn-violet h-[52px] px-6">
+              <div className="mt-7 flex flex-wrap items-center gap-6">
+                <Link href="/cliente/entregas" className="btn-violet h-12 px-6">
                   <Play size={15} fill="currentColor" aria-hidden /> Ver demonstração
                 </Link>
                 <TextLink href="/cliente/projeto">Detalhes do projeto</TextLink>
               </div>
             </div>
-            <div className="relative mx-auto hidden w-full max-w-[330px] md:block">
+            <div className="relative mx-auto hidden w-full max-w-[260px] md:block">
               <PhoneOrbit />
-              <p className="absolute -bottom-2 right-0 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-ink-faint">
-                <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden /> Live preview
-              </p>
             </div>
           </div>
         </section>
@@ -115,7 +114,7 @@ export default async function Overview() {
             <ProgressRing percent={project.percent} />
             <div className="min-w-0">
               <p className="text-xs text-ink-faint">Fase atual</p>
-              <p className="mt-1.5 font-display text-lg font-semibold text-ink">{cp.title}</p>
+              <p className="mt-1 text-base font-medium text-ink">{cp.title}</p>
               <p className="mt-1 text-xs leading-relaxed text-ink-dim">
                 {cp.closedCount} de {cp.total} tarefas concluídas
               </p>
@@ -125,18 +124,18 @@ export default async function Overview() {
                     <span
                       key={m.initials}
                       title={m.name}
-                      className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-[#6d4cff] to-[#3f2f8f] text-[10px] font-bold text-white ring-2 ring-[#120e22]"
+                      className="grid h-8 w-8 place-items-center rounded-full bg-white/[0.08] text-xs font-semibold text-ink ring-2 ring-surface"
                     >
                       {m.initials}
                     </span>
                   ))}
                   {project.team.length > 2 && (
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-[10px] font-semibold text-ink-dim ring-2 ring-[#120e22]">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-xs font-semibold text-ink-dim ring-2 ring-surface">
                       +{project.team.length - 2}
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] leading-tight text-ink-faint">Equipa ativa</span>
+                <span className="text-xs leading-tight text-ink-faint">Equipa ativa</span>
               </div>
             </div>
           </div>
@@ -159,7 +158,7 @@ export default async function Overview() {
             title="Etapas do projeto"
             action={<TextLink href="/cliente/projeto">Ver roadmap</TextLink>}
           />
-          <div className="mt-10">
+          <div className="mt-8">
             <Roadmap phases={project.phaseViews} />
           </div>
         </section>
@@ -169,7 +168,7 @@ export default async function Overview() {
         </section>
 
         <section aria-labelledby="gh-title" className="panel p-7">
-          <PanelHead id="gh-title" kicker="GitHub sync" title="Últimas atualizações" action={<GithubBadge />} />
+          <PanelHead id="gh-title" kicker="GitHub" title="Últimas atualizações" action={<GithubBadge />} />
           <div className="mt-6">
             <GithubFeed items={project.recentActivity} />
           </div>
@@ -186,12 +185,12 @@ export default async function Overview() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="kicker">Canal direto</p>
-              <h2 id="fb-title" className="mt-2.5 font-display text-[19px] font-semibold text-ink">
+              <h2 id="fb-title" className="mt-2.5 text-base font-medium text-ink">
                 Partilhe o seu feedback
               </h2>
             </div>
             {unread > 0 && (
-              <Link href="/cliente/mensagens" className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent/15 px-3 py-1 text-[11px] font-semibold text-accent-soft">
+              <Link href="/cliente/mensagens" className="flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent-soft">
                 {unread} {unread === 1 ? "resposta nova" : "respostas novas"} <ArrowRight size={12} aria-hidden />
               </Link>
             )}

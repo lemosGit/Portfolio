@@ -20,7 +20,6 @@ export function Roadmap({ phases, compact = false }: { phases: PhaseView[]; comp
     >
       {phases.map((ph, i) => {
         const next = phases[i + 1];
-        const lineLit = ph.status === "done" && next && next.status !== "pending";
         return (
           <li key={ph.number} className="relative flex gap-4 sm:block min-[1440px]:pr-4">
             {/* linha até à próxima etapa (desktop) */}
@@ -28,15 +27,14 @@ export function Roadmap({ phases, compact = false }: { phases: PhaseView[]; comp
               <span
                 aria-hidden
                 className={cn(
-                  "absolute left-[34px] right-0 top-[17px] hidden h-px min-[1440px]:block",
-                  lineLit ? "bg-accent" : "bg-white/10",
+                  "absolute left-[46px] right-3 top-[17px] hidden h-px min-[1440px]:block",
+                  ph.status === "done" ? "bg-white/20" : "border-t border-dashed border-white/15 bg-transparent",
                 )}
-                style={lineLit ? { boxShadow: "0 0 10px rgba(139,108,255,0.7)" } : undefined}
               />
             )}
             <StepDot status={ph.status} n={ph.number} />
             <div className="min-w-0 sm:mt-4 min-[1440px]:mt-6 min-[1440px]:pr-2">
-              <p className="font-display text-[15px] font-semibold leading-snug text-ink [overflow-wrap:anywhere]">{ph.title}</p>
+              <p className="text-sm font-medium leading-snug text-ink [overflow-wrap:anywhere]">{ph.title}</p>
               <p className="mt-1.5 text-xs text-ink-faint">
                 {ph.status === "current"
                   ? "Em curso"
@@ -47,7 +45,7 @@ export function Roadmap({ phases, compact = false }: { phases: PhaseView[]; comp
                       : "Por iniciar"}
               </p>
               {ph.status === "current" && (
-                <span className="mt-2.5 inline-block rounded-md bg-accent/20 px-2 py-0.5 text-[11px] font-semibold text-accent-soft">
+                <span className="mt-2.5 inline-block rounded-md bg-[#b59fe1]/10 px-2 py-0.5 text-xs font-medium text-[#cbbaf0]">
                   {ph.percent}%
                 </span>
               )}
@@ -63,26 +61,22 @@ function StepDot({ status, n }: { status: PhaseView["status"]; n: number }) {
   if (status === "done") {
     return (
       <span
-        className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full text-white"
-        style={{
-          background: "linear-gradient(160deg, #9d82ff, #6d4cff)",
-          boxShadow: "0 0 0 4px rgba(139,108,255,0.14), 0 0 18px rgba(139,108,255,0.6)",
-        }}
+        className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border border-white/15 bg-white/[0.03] text-ink-dim"
       >
-        <Check size={16} strokeWidth={2.6} aria-hidden />
+        <Check size={15} strokeWidth={2.2} aria-hidden />
+      </span>
+    );
+  }
+  if (status === "current") {
+    return (
+      <span className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border border-[#b59fe1]/70 bg-[#b59fe1]/10 ring-4 ring-[#b59fe1]/10">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#b59fe1]" aria-hidden />
       </span>
     );
   }
   return (
-    <span
-      className={cn(
-        "relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border bg-bg text-xs font-semibold",
-        status === "current"
-          ? "border-accent text-accent-soft shadow-[0_0_0_4px_rgba(139,108,255,0.12),0_0_16px_rgba(139,108,255,0.45)]"
-          : "border-white/15 text-ink-faint",
-      )}
-    >
-      {n}
+    <span className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border border-white/10 bg-surface text-[11px] font-medium text-ink-faint">
+      {String(n).padStart(2, "0")}
     </span>
   );
 }

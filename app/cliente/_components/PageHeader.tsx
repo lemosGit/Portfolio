@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, Bell } from "lucide-react";
+import { Bell, MessageCircle } from "lucide-react";
 import { relative } from "@/lib/portal/format";
 import type { ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 
 type Props = {
+  /** Nome da secção (aparece no sobretítulo se não houver `eyebrow`). */
   section: string;
+  eyebrow?: string;
   title: React.ReactNode;
+  subtitle?: React.ReactNode;
   syncedAt: string;
   source: ProjectView["source"];
   unread: number;
@@ -14,56 +17,41 @@ type Props = {
 
 const SYNC_LABEL: Record<Props["source"], string> = {
   github: "Sincronizado com GitHub",
-  exemplo: "Dados de demonstração",
+  exemplo: "Modo demonstração",
   erro: "Progresso indisponível",
 };
 
-export function PageHeader({ section, title, syncedAt, source, unread }: Props) {
+export function PageHeader({ section, eyebrow, title, subtitle, syncedAt, source, unread }: Props) {
   const ok = source !== "erro";
   return (
     <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-      <div>
-        <nav aria-label="Localização" className="text-[13px] font-medium tracking-wide text-ink-faint">
-          <Link href="/cliente" className="transition-colors hover:text-ink">
-            Área do cliente
-          </Link>
-          <span className="mx-3 text-ink-faint/60" aria-hidden>
-            /
-          </span>
-          <span className="text-ink-dim" aria-current="page">
-            {section}
-          </span>
-        </nav>
-        <h1 className="mt-3 font-display text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[30px]">
+      <div className="min-w-0">
+        <p className="kicker">{eyebrow ?? section}</p>
+        <h1 className="mt-4 font-display text-[28px] font-normal leading-[1.12] tracking-[-0.03em] text-ink md:text-[32px]">
           {title}
         </h1>
+        {subtitle && <p className="mt-2.5 max-w-[60ch] text-sm leading-relaxed text-ink-dim">{subtitle}</p>}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 md:gap-4">
+      <div className="flex flex-wrap items-center gap-3">
         <p
-          className="mr-1 flex items-center gap-2.5 text-[13px] text-ink-dim"
+          className="mr-1 flex items-center gap-2 text-xs text-ink-faint"
           title={ok ? `Última leitura: ${relative(syncedAt)}` : "Não foi possível ler o progresso. Tente mais tarde."}
         >
-          <span className="relative flex h-2 w-2">
-            {ok && (
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ok opacity-50 motion-reduce:hidden" />
-            )}
-            <span className={cn("relative inline-flex h-2 w-2 rounded-full", ok ? "bg-ok" : "bg-amber-400")} />
-          </span>
+          <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-ok" : "bg-amber-400")} aria-hidden />
           {SYNC_LABEL[source]}
         </p>
+        <span className="hidden h-6 w-px bg-line sm:block" aria-hidden />
         <Link
           href="/cliente/mensagens"
           aria-label={unread ? `Notificações: ${unread} novas` : "Notificações"}
-          className="relative grid h-12 w-12 place-items-center rounded-2xl border border-line bg-white/[0.02] text-ink-dim transition-[transform,color,border-color] duration-200 ease-out hover:border-accent/30 hover:text-ink active:scale-[0.95]"
+          className="relative grid h-11 w-11 place-items-center rounded-xl text-ink-dim transition-colors duration-200 hover:bg-white/[0.05] hover:text-ink"
         >
-          <Bell size={19} strokeWidth={1.8} aria-hidden />
-          {unread > 0 && (
-            <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-accent ring-2 ring-bg" aria-hidden />
-          )}
+          <Bell size={18} strokeWidth={1.7} aria-hidden />
+          {unread > 0 && <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-accent ring-2 ring-bg" aria-hidden />}
         </Link>
-        <Link href="/cliente/mensagens" className="btn-violet h-12 px-5">
-          Falar com João <ArrowRight size={17} aria-hidden />
+        <Link href="/cliente/mensagens" className="btn-quiet h-11 px-4 text-[13px]">
+          <MessageCircle size={16} aria-hidden /> Falar com o João
         </Link>
       </div>
     </header>

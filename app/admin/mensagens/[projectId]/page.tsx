@@ -54,7 +54,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ project
                     : { label: `${ABOUT[m.target.kind]}${m.target.kind === "fase" ? ` ${m.target.ref}` : m.target.ref}` };
               return (
                 <li key={m.id}>
-                  {newDay && <p className="mb-3 text-center text-[11px] uppercase tracking-[0.15em] text-ink-faint">{longDate(m.createdAt)}</p>}
+                  {newDay && <p className="mb-3 text-center text-xs text-ink-faint">{longDate(m.createdAt)}</p>}
                   <div className={cn("flex", mine ? "justify-end" : "justify-start")}>
                     <div
                       className={cn(
@@ -63,7 +63,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ project
                       )}
                     >
                       {about && (
-                        <p className="mb-1 text-[11px] font-semibold text-accent-soft">
+                        <p className="mb-1 text-xs font-semibold text-accent-soft">
                           Sobre:{" "}
                           {"href" in about && about.href ? (
                             <a href={about.href} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
@@ -75,7 +75,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ project
                         </p>
                       )}
                       <p className="whitespace-pre-wrap">{m.body}</p>
-                      <p className="mt-1.5 text-right text-[11px] text-ink-faint">
+                      <p className="mt-1.5 text-right text-xs text-ink-faint">
                         {mine ? "Você" : p.clientName.split(" ")[0]} · {time(m.createdAt)}
                       </p>
                     </div>
