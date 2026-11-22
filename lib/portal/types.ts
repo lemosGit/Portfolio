@@ -78,6 +78,8 @@ export type Project = {
   name: string;
   tagline: string;
   description: string;
+  /** Imagem de capa (Supabase Storage), ao fundo do resumo. */
+  coverUrl?: string;
   repo: { owner: string; name: string };
   startedOn: string;
   dueOn: string;

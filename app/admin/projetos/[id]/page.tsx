@@ -112,6 +112,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               dueOn: p.dueOn,
               tagline: p.tagline,
               description: p.description,
+              coverUrl: p.coverUrl,
             }}
           />
           <div className="grid gap-4 sm:grid-cols-2">

@@ -11,6 +11,8 @@ const nextConfig = {
     staleTimes: { dynamic: 30, static: 180 },
     // Importa só os ícones usados, em vez da biblioteca inteira.
     optimizePackageImports: ["lucide-react", "framer-motion"],
+    // A imagem de capa do projeto (até 5 MB) segue numa Server Action.
+    serverActions: { bodySizeLimit: "6mb" },
   },
   // O Candongueiro Pay está no GitHub Pages. As páginas levam barra final, para
   // o Pages não redirecionar o visitante para fora deste domínio.

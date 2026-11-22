@@ -21,6 +21,7 @@ type ProjectRow = {
   name: string;
   tagline: string | null;
   description: string | null;
+  cover_url: string | null;
   github_owner: string | null;
   github_repo: string | null;
   started_on: string | null;
@@ -102,7 +103,7 @@ export async function loadPortal(
     sb
       .from("projects")
       .select(
-        "id, slug, client_id, name, tagline, description, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
+        "id, slug, client_id, name, tagline, description, cover_url, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
       )
       .eq("id", chosen.id)
       .maybeSingle<ProjectRow>(),
@@ -128,6 +129,7 @@ export async function loadPortal(
     name: p.name,
     tagline: p.tagline ?? "",
     description: p.description ?? "",
+    coverUrl: p.cover_url ?? undefined,
     repo: { owner: p.github_owner ?? "", name: p.github_repo ?? "" },
     startedOn: p.started_on ?? now,
     dueOn: p.due_on ?? now,

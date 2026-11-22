@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, Hand, MoreHorizontal, Play } from "lucide-react";
+import { ArrowRight, Hand, Play } from "lucide-react";
 import { requirePortal } from "@/lib/portal/session";
+import { CoverBackdrop } from "../_components/Details";
 import { FeedbackComposer } from "../_components/Feedback";
 import { PageHeader } from "../_components/PageHeader";
 import { ProgressRing, WeekBars } from "../_components/Progress";
 import { Roadmap } from "../_components/Roadmap";
 import { PhoneOrbit } from "../_components/Visuals";
-import { GithubBadge, GithubFeed, NextMeeting, PanelHead, PreviewWindow, TextLink } from "../_components/Widgets";
+import { ActivityFeed, NextMeeting, PanelHead, PreviewWindow, TextLink } from "../_components/Widgets";
 
 export const metadata = { title: "Visão geral" };
 
@@ -21,9 +22,7 @@ export default async function Overview() {
       <PageHeader
         section="Visão geral"
         eyebrow="Vamos construir algo bom"
-        subtitle="O projeto está a evoluir. Veja onde estamos, o que mudou e o que vem a seguir."
         unread={unread}
-        syncedAt={project.syncedAt}
         source={project.source}
         title={
           <>
@@ -65,7 +64,8 @@ export default async function Overview() {
       {/* Linha 1: destaque + progresso */}
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="hero-title" className="panel panel-glow">
-          <div className="grid items-center gap-4 p-7 md:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] md:p-9">
+          <CoverBackdrop src={project.coverUrl} />
+          <div className="relative grid items-center gap-4 p-7 md:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)] md:p-9">
             <div className="relative z-10">
               <p className="inline-flex items-center gap-2.5 rounded-full border border-line px-3 py-1 text-xs font-medium text-ink-dim">
                 <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
@@ -79,9 +79,6 @@ export default async function Overview() {
                 <br />
                 <span className="aurora">mais perto da entrega.</span>
               </h2>
-              <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-ink-dim">
-                Acompanhe cada etapa, reveja os últimos avanços e partilhe feedback diretamente com a equipa.
-              </p>
               <div className="mt-7 flex flex-wrap items-center gap-6">
                 <Link href="/cliente/entregas" className="btn-violet h-12 px-6">
                   <Play size={15} fill="currentColor" aria-hidden /> Ver demonstração
@@ -89,9 +86,11 @@ export default async function Overview() {
                 <TextLink href="/cliente/projeto">Detalhes do projeto</TextLink>
               </div>
             </div>
-            <div className="relative mx-auto hidden w-full max-w-[260px] md:block">
-              <PhoneOrbit />
-            </div>
+            {!project.coverUrl && (
+              <div className="relative mx-auto hidden w-full max-w-[260px] md:block">
+                <PhoneOrbit />
+              </div>
+            )}
           </div>
         </section>
 
@@ -100,44 +99,10 @@ export default async function Overview() {
             id="progress-title"
             kicker="Estado geral"
             title="Progresso do projeto"
-            action={
-              <Link
-                href="/cliente/projeto"
-                aria-label="Ver todas as tarefas"
-                className="-mr-2 -mt-1 grid h-10 w-10 place-items-center rounded-xl text-ink-faint transition-colors hover:bg-white/5 hover:text-ink"
-              >
-                <MoreHorizontal size={20} aria-hidden />
-              </Link>
-            }
+            action={<TextLink href="/cliente/projeto">Ver detalhes</TextLink>}
           />
-          <div className="mt-8 flex items-center gap-7">
-            <ProgressRing percent={project.percent} />
-            <div className="min-w-0">
-              <p className="text-xs text-ink-faint">Fase atual</p>
-              <p className="mt-1 text-base font-medium text-ink">{cp.title}</p>
-              <p className="mt-1 text-xs leading-relaxed text-ink-dim">
-                {cp.closedCount} de {cp.total} tarefas concluídas
-              </p>
-              <div className="mt-5 flex items-center gap-2.5">
-                <div className="flex -space-x-2">
-                  {project.team.slice(0, 2).map((m) => (
-                    <span
-                      key={m.initials}
-                      title={m.name}
-                      className="grid h-8 w-8 place-items-center rounded-full bg-white/[0.08] text-xs font-semibold text-ink ring-2 ring-surface"
-                    >
-                      {m.initials}
-                    </span>
-                  ))}
-                  {project.team.length > 2 && (
-                    <span className="grid h-8 w-8 place-items-center rounded-full bg-white/10 text-xs font-semibold text-ink-dim ring-2 ring-surface">
-                      +{project.team.length - 2}
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs leading-tight text-ink-faint">Equipa ativa</span>
-              </div>
-            </div>
+          <div className="mt-8 flex justify-center">
+            <ProgressRing percent={project.percent} size={184} />
           </div>
           <div className="mt-auto pt-9">
             <div className="mb-4 flex items-center justify-between text-xs">
@@ -156,7 +121,7 @@ export default async function Overview() {
             id="roadmap-title"
             kicker="Roadmap"
             title="Etapas do projeto"
-            action={<TextLink href="/cliente/projeto">Ver roadmap</TextLink>}
+            action={<TextLink href="/cliente/projeto">Ver detalhes</TextLink>}
           />
           <div className="mt-8">
             <Roadmap phases={project.phaseViews} />
@@ -167,10 +132,10 @@ export default async function Overview() {
           <NextMeeting meeting={project.nextMeeting} />
         </section>
 
-        <section aria-labelledby="gh-title" className="panel p-7">
-          <PanelHead id="gh-title" kicker="GitHub" title="Últimas atualizações" action={<GithubBadge />} />
+        <section aria-labelledby="news-title" className="panel p-7">
+          <PanelHead id="news-title" kicker="Novidades" title="Últimas atualizações" />
           <div className="mt-6">
-            <GithubFeed items={project.recentActivity} />
+            <ActivityFeed items={project.recentActivity} />
           </div>
         </section>
       </div>
@@ -195,9 +160,6 @@ export default async function Overview() {
               </Link>
             )}
           </div>
-          <p className="mt-5 text-[13px] leading-relaxed text-ink-dim">
-            Tem uma sugestão ou encontrou algo a rever? Envie uma mensagem diretamente por aqui.
-          </p>
           <div className="mt-6">
             <FeedbackComposer compact />
           </div>

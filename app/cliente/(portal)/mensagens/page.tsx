@@ -28,7 +28,7 @@ export default async function MessagesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader section="Mensagens" eyebrow="Canal direto" title="Conversa com a GeniusFrela" subtitle="Dúvidas, ideias ou pedidos. Fica tudo aqui, organizado por etapa." unread={unread} syncedAt={project.syncedAt} source={project.source} />
+      <PageHeader section="Mensagens" eyebrow="Canal direto" title="Conversa com a GeniusFrela" unread={unread} source={project.source} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="thread-title" className="panel p-5 sm:p-7">
@@ -36,9 +36,7 @@ export default async function MessagesPage() {
             Histórico de mensagens
           </h2>
           {feedback.length === 0 ? (
-            <p className="py-16 text-center text-sm text-ink-dim">
-              Ainda não há mensagens. Escreva a primeira — uma dúvida, uma ideia ou algo a rever.
-            </p>
+            <p className="py-16 text-center text-sm text-ink-dim">Ainda não há mensagens.</p>
           ) : (
             <ol className="space-y-6">
               {feedback.map((f) => {
@@ -84,9 +82,6 @@ export default async function MessagesPage() {
           <h2 id="new-title" className="mt-2.5 text-base font-medium text-ink">
             Nova mensagem
           </h2>
-          <p className="mt-4 text-[13px] leading-relaxed text-ink-dim">
-            Escolha a etapa a que se refere para a resposta chegar mais depressa a quem está a trabalhar nela.
-          </p>
           <div className="mt-6">
             <FeedbackComposer targets={targets} />
           </div>

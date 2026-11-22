@@ -1,6 +1,7 @@
 import { CalendarPlus, Clock, Users } from "lucide-react";
 import { dayParts, longDate, time } from "@/lib/portal/format";
 import { requirePortal } from "@/lib/portal/session";
+import { Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
 import { icsHref, TextLink } from "../../_components/Widgets";
 
@@ -16,9 +17,7 @@ export default async function AgendaPage() {
         section="Agenda"
         eyebrow="Sempre alinhados"
         title="Reuniões"
-        subtitle="Um momento para conversar, alinhar e avançar."
         unread={unread}
-        syncedAt={project.syncedAt}
         source={project.source}
       />
 
@@ -39,21 +38,25 @@ export default async function AgendaPage() {
                 </h2>
                 <p className="mt-1.5 flex items-center gap-2 text-[13px] text-ink-dim">
                   <Clock size={14} aria-hidden />
-                  {dayParts(next.startsAt).weekday}, {time(next.startsAt)} – {time(next.endsAt)}
+                  {dayParts(next.startsAt).weekday}, {time(next.startsAt)} – {time(next.endsAt)}{" "}
+                  <span className="text-ink-faint">WAT</span>
                 </p>
               </div>
             </div>
 
-            <h3 className="mt-8 text-sm font-medium text-ink">O que vamos conversar</h3>
-            <ul className="mt-3 space-y-2.5">
-              {next.agenda.map((a) => (
-                <li key={a} className="flex items-center gap-3 text-sm text-ink-dim">
-                  <span className="h-1 w-1 shrink-0 rounded-full bg-[#b59fe1]" aria-hidden /> {a}
-                </li>
-              ))}
-            </ul>
+            {next.agenda.length > 0 && (
+              <Details label="O que vamos conversar" className="mt-6">
+                <ul className="space-y-2.5">
+                  {next.agenda.map((a) => (
+                    <li key={a} className="flex items-center gap-3 text-sm text-ink-dim">
+                      <span className="h-1 w-1 shrink-0 rounded-full bg-[#b59fe1]" aria-hidden /> {a}
+                    </li>
+                  ))}
+                </ul>
+              </Details>
+            )}
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <a href={next.callUrl} target="_blank" rel="noreferrer" className="btn-violet h-11 px-5">
                 <Users size={16} aria-hidden /> Entrar na reunião
               </a>
@@ -61,7 +64,6 @@ export default async function AgendaPage() {
                 <CalendarPlus size={16} aria-hidden /> Adicionar ao calendário
               </a>
             </div>
-            <p className="mt-4 text-xs text-ink-faint">Hora de Luanda (WAT).</p>
           </section>
         ) : (
           <section className="panel grid place-items-center p-9 text-center">
@@ -80,9 +82,7 @@ export default async function AgendaPage() {
             Já conversámos sobre
           </h2>
           {project.pastMeetings.length === 0 ? (
-            <p className="mt-6 border-t border-line pt-6 text-sm text-ink-dim">
-              Os resumos das reuniões aparecem aqui depois de cada encontro.
-            </p>
+            <p className="mt-6 border-t border-line pt-6 text-sm text-ink-dim">Ainda sem reuniões.</p>
           ) : (
             <ol className="mt-6 divide-y divide-line border-t border-line">
               {project.pastMeetings.map((m) => (
@@ -91,8 +91,11 @@ export default async function AgendaPage() {
                     {longDate(m.startsAt)}
                   </time>
                   <p className="mt-2 text-[15px] font-medium text-ink">{m.title}</p>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-ink-dim">{m.notes ?? "Resumo ainda não publicado."}</p>
-                  <span className="mt-3 inline-flex rounded-md bg-[#b59fe1]/10 px-2 py-0.5 text-xs text-[#cbbaf0]">Concluída</span>
+                  {m.notes && (
+                    <Details className="mt-1">
+                      <p className="text-[13px] leading-relaxed text-ink-dim">{m.notes}</p>
+                    </Details>
+                  )}
                 </li>
               ))}
             </ol>

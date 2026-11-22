@@ -10,7 +10,7 @@ Sem as variáveis do Supabase, o portal funciona em **modo de demonstração** c
 
 ## 2. Criar as tabelas
 
-**SQL Editor → New query** → cole o conteúdo de [`supabase/migrations/0001_portal.sql`](../supabase/migrations/0001_portal.sql) → **Run**. Repita, por ordem, com [`0002_phase_map.sql`](../supabase/migrations/0002_phase_map.sql) e [`0003_harden_functions.sql`](../supabase/migrations/0003_harden_functions.sql).
+**SQL Editor → New query** → cole o conteúdo de [`supabase/migrations/0001_portal.sql`](../supabase/migrations/0001_portal.sql) → **Run**. Repita, por ordem, com [`0002_phase_map.sql`](../supabase/migrations/0002_phase_map.sql) [`0003_harden_functions.sql`](../supabase/migrations/0003_harden_functions.sql) e [`0004_project_cover.sql`](../supabase/migrations/0004_project_cover.sql).
 
 O ficheiro cria 5 tabelas (`clients`, `projects`, `demo_links`, `meetings`, `feedback`) e as regras de segurança. Cada cliente só consegue ver e escrever no seu próprio projeto.
 

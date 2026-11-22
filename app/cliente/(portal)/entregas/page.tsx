@@ -2,6 +2,7 @@ import { Download, Globe, Smartphone } from "lucide-react";
 import { longDate, relative } from "@/lib/portal/format";
 import { requirePortal } from "@/lib/portal/session";
 import { AppQr } from "../../_components/AppQr";
+import { Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
 import { PreviewWindow } from "../../_components/Widgets";
 
@@ -20,9 +21,7 @@ export default async function DeliveriesPage() {
         section="Entregas"
         eyebrow="Do lado de dentro"
         title="Experimente a versão mais recente"
-        subtitle="Abra a demonstração web ou instale a app no telemóvel. Cada versão nova aparece aqui."
-        unread={unread}
-        syncedAt={project.syncedAt} source={project.source}
+        unread={unread} source={project.source}
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
@@ -46,20 +45,22 @@ export default async function DeliveriesPage() {
               <div className="mt-7 flex justify-center">
                 <AppQr url={app.url} />
               </div>
-              <ol className="mt-7 space-y-2.5 text-[13px] leading-relaxed text-ink-dim">
-                <li>1. Abra a câmara do telemóvel Android e aponte para o código.</li>
-                <li>2. Toque no link e instale a versão {app.version}.</li>
-                <li>3. Se o Android pedir, permita instalar apps desta origem.</li>
-              </ol>
-              <a href={app.url} target="_blank" rel="noreferrer" className="btn-quiet mt-6 w-full">
-                <Download size={16} aria-hidden /> Abrir link da build
+              <a href={app.url} target="_blank" rel="noreferrer" className="btn-quiet mt-7 w-full">
+                <Download size={16} aria-hidden /> Instalar v{app.version}
               </a>
-              <p className="mt-4 text-xs leading-relaxed text-ink-faint">
-                No iPhone a instalação é feita por convite TestFlight, enviado por email.
-              </p>
+              <Details label="Como instalar" className="mt-4">
+                <ol className="space-y-2.5 text-[13px] leading-relaxed text-ink-dim">
+                  <li>1. Abra a câmara do telemóvel Android e aponte para o código.</li>
+                  <li>2. Toque no link e instale a versão {app.version}.</li>
+                  <li>3. Se o Android pedir, permita instalar apps desta origem.</li>
+                </ol>
+                <p className="mt-3 text-xs leading-relaxed text-ink-faint">
+                  No iPhone a instalação é feita por convite TestFlight, enviado por email.
+                </p>
+              </Details>
             </>
           ) : (
-            <p className="mt-6 text-sm text-ink-dim">A primeira build da app aparece aqui assim que for gerada.</p>
+            <p className="mt-6 text-sm text-ink-dim">Ainda não disponível.</p>
           )}
         </section>
       </div>
@@ -81,7 +82,11 @@ export default async function DeliveriesPage() {
                   <p className="text-[13px] font-semibold text-ink">
                     {KIND[d.kind]} · v{d.version}
                   </p>
-                  <p className="mt-0.5 text-[12px] text-ink-dim">{d.notes}</p>
+                  {d.notes && (
+                    <Details className="mt-0.5">
+                      <p className="text-[12px] text-ink-dim">{d.notes}</p>
+                    </Details>
+                  )}
                 </div>
                 <time dateTime={d.createdAt} title={longDate(d.createdAt)} className="text-xs text-ink-faint">
                   {relative(d.createdAt)}

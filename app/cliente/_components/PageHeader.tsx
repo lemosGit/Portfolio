@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Bell, MessageCircle } from "lucide-react";
-import { relative } from "@/lib/portal/format";
 import type { ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 
@@ -10,18 +9,16 @@ type Props = {
   eyebrow?: string;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
-  syncedAt: string;
   source: ProjectView["source"];
   unread: number;
 };
 
-const SYNC_LABEL: Record<Props["source"], string> = {
-  github: "Sincronizado com GitHub",
+const SYNC_LABEL: Record<Exclude<Props["source"], "github">, string> = {
   exemplo: "Modo demonstração",
   erro: "Progresso indisponível",
 };
 
-export function PageHeader({ section, eyebrow, title, subtitle, syncedAt, source, unread }: Props) {
+export function PageHeader({ section, eyebrow, title, subtitle, source, unread }: Props) {
   const ok = source !== "erro";
   return (
     <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
@@ -34,14 +31,19 @@ export function PageHeader({ section, eyebrow, title, subtitle, syncedAt, source
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <p
-          className="mr-1 flex items-center gap-2 text-xs text-ink-faint"
-          title={ok ? `Última leitura: ${relative(syncedAt)}` : "Não foi possível ler o progresso. Tente mais tarde."}
-        >
-          <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-ok" : "bg-amber-400")} aria-hidden />
-          {SYNC_LABEL[source]}
-        </p>
-        <span className="hidden h-6 w-px bg-line sm:block" aria-hidden />
+        {/* A ligação ao GitHub é assunto do programador: só avisamos em modo demonstração ou se falhar. */}
+        {source !== "github" && (
+          <>
+            <p
+              className="mr-1 flex items-center gap-2 text-xs text-ink-faint"
+              title={ok ? undefined : "Não foi possível ler o progresso. Tente mais tarde."}
+            >
+              <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-ok" : "bg-amber-400")} aria-hidden />
+              {SYNC_LABEL[source]}
+            </p>
+            <span className="hidden h-6 w-px bg-line sm:block" aria-hidden />
+          </>
+        )}
         <Link
           href="/cliente/mensagens"
           aria-label={unread ? `Notificações: ${unread} novas` : "Notificações"}
