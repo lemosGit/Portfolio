@@ -4,7 +4,7 @@
  * Ações do painel /admin. Cada uma começa por requireAdmin().
  * Tabelas: sessão do administrador (RLS). Contas: chave secreta (createSupabaseAdmin).
  */
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
@@ -139,6 +139,48 @@ async function notify(
 
 const slugTaken = (e: { code?: string; message: string }) => e.code === "23505" && e.message.includes("slug");
 
+/* ───────────── Capa do projeto ───────────── */
+
+const COVER_BUCKET = "project-covers";
+const COVER_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/avif": "avif" };
+const COVER_MAX = 5 * 1024 * 1024;
+
+type Sb = Awaited<ReturnType<typeof requireAdmin>>["sb"];
+
+/** Valida o ficheiro "capa" do formulário. Sem ficheiro → undefined. */
+function readCover(f: FormData): File | undefined | { error: string } {
+  const file = f.get("capa");
+  if (!(file instanceof File) || file.size === 0) return undefined;
+  if (!COVER_TYPES[file.type]) return { error: "A imagem tem de ser JPG, PNG, WebP ou AVIF." };
+  if (file.size > COVER_MAX) return { error: "A imagem passa dos 5 MB. Escolha uma mais leve." };
+  return file;
+}
+
+/** Envia a capa para o Storage e devolve o URL público. */
+async function uploadCover(sb: Sb, projectId: string, file: File): Promise<string | { error: string }> {
+  const path = `${projectId}/${randomUUID()}.${COVER_TYPES[file.type]}`;
+  const { error } = await sb.storage.from(COVER_BUCKET).upload(path, file, { contentType: file.type, cacheControl: "31536000" });
+  if (error) return { error: `Não foi possível enviar a imagem: ${error.message}` };
+  return sb.storage.from(COVER_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+/** Apaga a capa antiga (se for deste bucket). Falhas não interrompem a ação. */
+async function removeCover(sb: Sb, url: string | null | undefined) {
+  const marker = `/object/public/${COVER_BUCKET}/`;
+  const i = url?.indexOf(marker) ?? -1;
+  if (!url || i < 0) return;
+  await sb.storage.from(COVER_BUCKET).remove([decodeURIComponent(url.slice(i + marker.length))]);
+}
+
+/** Capa num projeto acabado de criar. Devolve um aviso se falhar (o projeto fica criado). */
+async function attachCover(sb: Sb, projectId: string, file: File | undefined): Promise<string | undefined> {
+  if (!file) return undefined;
+  const url = await uploadCover(sb, projectId, file);
+  if (typeof url !== "string") return url.error;
+  const { error } = await sb.from("projects").update({ cover_url: url }).eq("id", projectId);
+  return error ? `Não foi possível guardar a imagem: ${error.message}` : undefined;
+}
+
 /* ───────────── Clientes ───────────── */
 
 export async function createClientAccount(_p: AdminState, f: FormData): Promise<AdminState> {
@@ -152,6 +194,8 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
   if (!EMAIL.test(email)) return { error: "Email inválido." };
   const project = readProject(f);
   if ("error" in project) return project;
+  const cover = readCover(f);
+  if (cover && "error" in cover) return cover;
 
   const password = tempPassword();
   const { data: created, error: ue } = await admin.auth.admin.createUser({
@@ -176,21 +220,27 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
     return { error: `Não foi possível guardar o cliente: ${ce.message}` };
   }
 
-  const { error: pe } = await sb.from("projects").insert({
-    ...project,
-    client_id: client.id,
-    started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
-    team: [{ initials: "JP", name: "João Pereira" }],
-  });
+  const { data: newProject, error: pe } = await sb
+    .from("projects")
+    .insert({
+      ...project,
+      client_id: client.id,
+      started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
+      team: [{ initials: "JP", name: "João Pereira" }],
+    })
+    .select("id")
+    .single();
   if (pe) {
     await admin.auth.admin.deleteUser(userId); // apaga também o cliente (on delete cascade)
     return { error: slugTaken(pe) ? `Já existe um projeto com o slug "${project.slug}".` : `Não foi possível criar o projeto: ${pe.message}` };
   }
 
+  const coverWarning = await attachCover(sb, newProject.id, cover);
+
   refresh();
   return {
     ok: true,
-    message: `Cliente ${name} criado com o projeto ${project.name}.`,
+    message: `Cliente ${name} criado com o projeto ${project.name}.${coverWarning ? ` ${coverWarning}` : ""}`,
     credentials: { email, password },
   };
 }
@@ -287,6 +337,8 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
   const { sb } = await requireAdmin();
   const project = readProject(f);
   if ("error" in project) return project;
+  const cover = readCover(f);
+  if (cover && "error" in cover) return cover;
 
   const { data, error } = await sb
     .from("projects")
@@ -301,6 +353,8 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
   if (error) {
     return { error: slugTaken(error) ? `Já existe um projeto com o slug "${project.slug}".` : `Não foi possível criar: ${error.message}` };
   }
+  // Se a imagem falhar, o projeto fica criado; a capa pode ser enviada depois na página do projeto.
+  await attachCover(sb, data.id, cover);
   refresh();
   redirect(`/admin/projetos/${data.id}`);
 }
@@ -330,13 +384,34 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
+  const id = str(f, "id");
+  const cover = readCover(f);
+  if (cover && "error" in cover) return cover;
+  const dropCover = str(f, "remover_capa") === "1";
+
+  let coverPatch: { cover_url: string | null } | undefined;
+  let oldCover: string | null = null;
+  if (cover || dropCover) {
+    const { data: current } = await sb.from("projects").select("cover_url").eq("id", id).single<{ cover_url: string | null }>();
+    oldCover = current?.cover_url ?? null;
+    if (cover) {
+      const url = await uploadCover(sb, id, cover);
+      if (typeof url !== "string") return url;
+      coverPatch = { cover_url: url };
+    } else {
+      coverPatch = { cover_url: null };
+    }
+  }
+
   const { error } = await sb
     .from("projects")
-    .update({ ...project, status, phase_map: phaseMap })
-    .eq("id", str(f, "id"));
+    .update({ ...project, status, phase_map: phaseMap, ...coverPatch })
+    .eq("id", id);
   if (error) {
+    if (coverPatch?.cover_url) await removeCover(sb, coverPatch.cover_url);
     return { error: slugTaken(error) ? `Já existe um projeto com o slug "${project.slug}".` : `Não foi possível guardar: ${error.message}` };
   }
+  if (coverPatch && oldCover) await removeCover(sb, oldCover);
   refresh();
   return { ok: true, message: "Projeto guardado." };
 }
@@ -344,12 +419,13 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
 export async function deleteProject(_p: AdminState, f: FormData): Promise<AdminState> {
   const { sb } = await requireAdmin();
   const id = str(f, "id");
-  const { data: p, error: ge } = await sb.from("projects").select("slug, client_id").eq("id", id).single();
+  const { data: p, error: ge } = await sb.from("projects").select("slug, client_id, cover_url").eq("id", id).single();
   if (ge) return { error: "Projeto não encontrado." };
   if (str(f, "confirmar") !== p.slug) return { error: "Escreva o slug do projeto para confirmar." };
 
   const { error } = await sb.from("projects").delete().eq("id", id);
   if (error) return { error: `Não foi possível apagar: ${error.message}` };
+  await removeCover(sb, p.cover_url);
   refresh();
   redirect(`/admin/clientes/${p.client_id}`);
 }

@@ -42,9 +42,12 @@ export function ProgressRing({ percent, size = 148 }: { percent: number; size?: 
       </svg>
       <div className="absolute inset-0 grid place-items-center text-center">
         <div>
-          <p className="font-display text-[28px] font-semibold leading-none tracking-tight text-ink">
+          <p
+            className="font-display font-semibold leading-none tracking-tight text-ink"
+            style={{ fontSize: Math.round(size * 0.24) }}
+          >
             {percent}
-            <span className="ml-0.5 text-sm text-ink-dim">%</span>
+            <span className="ml-0.5 text-[0.45em] text-ink-dim">%</span>
           </p>
           <p className="mt-1.5 text-xs text-ink-faint">Concluído</p>
         </div>

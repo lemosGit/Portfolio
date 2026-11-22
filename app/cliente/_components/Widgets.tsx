@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, CalendarPlus, Check, Clock, ExternalLink, LoaderCircle, Users } from "lucide-react";
-import { GithubIcon } from "@/components/Icons";
 import { dayLabel, dayParts, relative, time } from "@/lib/portal/format";
 import type { DemoLink, Meeting, ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
@@ -108,9 +107,9 @@ export function NextMeeting({ meeting }: { meeting?: Meeting }) {
   );
 }
 
-/* ---------- Atualizações do GitHub ---------- */
+/* ---------- Últimas atualizações ---------- */
 
-export function GithubFeed({ items, limit = 3 }: { items: ProjectView["recentActivity"]; limit?: number }) {
+export function ActivityFeed({ items, limit = 3 }: { items: ProjectView["recentActivity"]; limit?: number }) {
   return (
     <ul className="divide-y divide-line border-t border-line">
       {items.slice(0, limit).map((t) => {
@@ -145,15 +144,6 @@ export function GithubFeed({ items, limit = 3 }: { items: ProjectView["recentAct
         );
       })}
     </ul>
-  );
-}
-
-export function GithubBadge() {
-  return (
-    <span className="relative text-ink-dim" aria-hidden>
-      <GithubIcon className="h-6 w-6" />
-      <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-ok ring-2 ring-surface" />
-    </span>
   );
 }
 

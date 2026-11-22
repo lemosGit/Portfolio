@@ -18,6 +18,7 @@ import { relative, shortDate } from "@/lib/portal/format";
 import { requirePortal } from "@/lib/portal/session";
 import type { PhaseView, ProjectView, Task } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
+import { CoverBackdrop, Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
 
 export const metadata = { title: "Meu projeto" };
@@ -35,7 +36,7 @@ export default async function ProjectPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="space-y-8">
-      <PageHeader section="Meu projeto" eyebrow="Vamos construir algo bom" title="O meu projeto" subtitle="Da primeira ideia ao lançamento, uma etapa de cada vez." unread={unread} syncedAt={project.syncedAt} source={project.source} />
+      <PageHeader section="Meu projeto" eyebrow="Vamos construir algo bom" title="O meu projeto" unread={unread} source={project.source} />
 
       <Summary project={project} />
 
@@ -74,52 +75,54 @@ export default async function ProjectPage({ searchParams }: { searchParams: Prom
 
 function Summary({ project }: { project: ProjectView }) {
   return (
-    <section aria-label="Resumo do projeto" className="panel panel-glow p-6 md:p-8">
-      <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-        <div className="min-w-0">
-          <span className="inline-flex items-center gap-2 rounded-full border border-line px-2.5 py-1 text-xs font-medium text-ink-dim">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
-            {project.percent >= 100 ? "Concluído" : `Em ${project.currentPhase.title.toLowerCase()}`}
-          </span>
-          <h2 className="mt-4 font-display text-[26px] font-normal leading-tight tracking-[-0.03em] text-ink md:text-[30px]">
-            {project.name}
-          </h2>
-          <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-ink-dim">{project.tagline}</p>
-        </div>
-        <div className="shrink-0 md:text-right">
-          <p className="aurora font-display text-[44px] font-normal leading-none tracking-[-0.04em]">
+    <section aria-label="Resumo do projeto" className="panel panel-glow">
+      <CoverBackdrop src={project.coverUrl} />
+      <div className="relative p-6 md:p-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 rounded-full border border-line px-2.5 py-1 text-xs font-medium text-ink-dim">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+              {project.percent >= 100 ? "Concluído" : `Em ${project.currentPhase.title.toLowerCase()}`}
+            </span>
+            <h2 className="mt-4 font-display text-[26px] font-normal leading-tight tracking-[-0.03em] text-ink md:text-[30px]">
+              {project.name}
+            </h2>
+          </div>
+          <p className="aurora shrink-0 font-display text-[44px] font-normal leading-none tracking-[-0.04em]">
             {project.percent}
             <span className="ml-0.5 text-lg text-ink-dim">%</span>
           </p>
-          <p className="mt-2 text-[12px] text-ink-faint">do caminho feito</p>
         </div>
-      </div>
 
-      <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" aria-hidden>
-        <div
-          className="bar-sheen h-full rounded-full"
-          style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
-        />
-      </div>
+        <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" aria-hidden>
+          <div
+            className="bar-sheen h-full rounded-full"
+            style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
+          />
+        </div>
 
-      <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-2 text-[12px] text-ink-faint">
-        <div className="flex items-center gap-1.5">
-          <CalendarCheck size={14} aria-hidden />
-          <dt>Início</dt>
-          <dd className="text-ink-dim">{shortDate(project.startedOn)}</dd>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <CalendarClock size={14} aria-hidden />
-          <dt>Entrega prevista</dt>
-          <dd className="text-ink-dim">{shortDate(project.dueOn)}</dd>
-        </div>
-        <div className="flex items-center gap-1.5 md:ml-auto">
-          <dt className="sr-only">Tarefas concluídas</dt>
-          <dd className="text-ink-dim">
-            {project.closedCount} de {project.total} tarefas
-          </dd>
-        </div>
-      </dl>
+        <Details className="mt-4">
+          {project.tagline && <p className="max-w-xl text-sm leading-relaxed text-ink-dim">{project.tagline}</p>}
+          <dl className="mt-3 flex flex-wrap gap-x-8 gap-y-2 text-[12px] text-ink-faint">
+            <div className="flex items-center gap-1.5">
+              <CalendarCheck size={14} aria-hidden />
+              <dt>Início</dt>
+              <dd className="text-ink-dim">{shortDate(project.startedOn)}</dd>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CalendarClock size={14} aria-hidden />
+              <dt>Entrega prevista</dt>
+              <dd className="text-ink-dim">{shortDate(project.dueOn)}</dd>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <dt className="sr-only">Tarefas concluídas</dt>
+              <dd className="text-ink-dim">
+                {project.closedCount} de {project.total} tarefas
+              </dd>
+            </div>
+          </dl>
+        </Details>
+      </div>
     </section>
   );
 }
@@ -138,7 +141,6 @@ function Stages({ phases }: { phases: PhaseView[] }) {
           </li>
         ))}
       </ol>
-      <p className="px-3 pb-4 pt-3 text-[12px] text-ink-faint sm:px-0">Toque numa etapa para ver o que inclui.</p>
     </section>
   );
 }
@@ -151,7 +153,7 @@ function StageRow({ phase }: { phase: PhaseView }) {
         ? `Até ${shortDate(phase.dueOn)}`
         : STATUS_LABEL[phase.status];
   return (
-    <details open={phase.status === "current"} className="group">
+    <details className="group">
       <summary className="flex cursor-pointer list-none items-center gap-4 rounded-xl px-3 py-5 transition-colors hover:bg-white/[0.02] [&::-webkit-details-marker]:hidden">
         <StageDot status={phase.status} n={phase.number} />
         <span className="min-w-0 flex-1">
@@ -163,7 +165,6 @@ function StageRow({ phase }: { phase: PhaseView }) {
               </span>
             )}
           </span>
-          <span className="mt-0.5 block text-[12px] text-ink-faint">{phase.description}</span>
         </span>
         <span className="hidden text-right text-[12px] text-ink-faint sm:block">{when}</span>
         <ChevronDown
@@ -174,6 +175,7 @@ function StageRow({ phase }: { phase: PhaseView }) {
       </summary>
 
       <div className="pb-5 pl-[60px] pr-3">
+        {phase.description && <p className="mb-3 text-[13px] text-ink-dim">{phase.description}</p>}
         <div className="flex items-center gap-3 text-[12px] text-ink-faint">
           <span className="block h-1 w-40 overflow-hidden rounded-full bg-white/[0.07]" aria-hidden>
             <span
@@ -269,44 +271,49 @@ function Tasks({ phases }: { phases: PhaseView[] }) {
 
   if (all.length === 0) {
     return (
-      <section className="panel p-7 text-[13px] text-ink-faint">As tarefas visíveis aparecem aqui assim que forem planeadas.</section>
+      <section className="panel p-7 text-[13px] text-ink-faint">Ainda sem tarefas.</section>
     );
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <TaskGroup title="Em aberto" hint="O que está a ser feito e o que falta" tasks={open} empty="Nada em aberto. Tudo feito!" />
-      <TaskGroup title="Concluídas" hint="Mais recentes primeiro" tasks={done} empty="Ainda nenhuma concluída." />
+      <TaskGroup title="Em aberto" tasks={open} empty="Nada em aberto. Tudo feito!" />
+      <TaskGroup title="Concluídas" tasks={done} empty="Ainda nenhuma concluída." collapsed />
     </div>
   );
 }
 
 function TaskGroup({
   title,
-  hint,
   tasks,
   empty,
+  collapsed,
 }: {
   title: string;
-  hint: string;
   tasks: (Task & { phase: string })[];
   empty: string;
+  /** Lista recolhida atrás de "Ver detalhes" (ex.: concluídas). */
+  collapsed?: boolean;
 }) {
+  const list = (
+    <ul className="space-y-1">
+      {tasks.map((t) => (
+        <TaskRow key={t.number} task={t} phase={t.phase} />
+      ))}
+    </ul>
+  );
   return (
-    <section className="panel p-6">
+    <section className="panel h-fit p-6">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-base font-medium text-ink">{title}</h2>
         <span className="text-[12px] text-ink-faint">{tasks.length}</span>
       </div>
-      <p className="mt-1 text-[12px] text-ink-faint">{hint}</p>
-      {tasks.length ? (
-        <ul className="mt-5 space-y-1">
-          {tasks.map((t) => (
-            <TaskRow key={t.number} task={t} phase={t.phase} />
-          ))}
-        </ul>
-      ) : (
+      {!tasks.length ? (
         <p className="mt-5 text-[13px] text-ink-faint">{empty}</p>
+      ) : collapsed ? (
+        <Details className="mt-3">{list}</Details>
+      ) : (
+        <div className="mt-5">{list}</div>
       )}
     </section>
   );
@@ -326,6 +333,7 @@ function TaskRow({ task, phase }: { task: Task; phase?: string }) {
   return (
     <li
       id={`tarefa-${task.number}`}
+      title={phase}
       className="flex scroll-mt-24 items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-white/[0.02] target:bg-accent/10"
     >
       <span
@@ -338,7 +346,6 @@ function TaskRow({ task, phase }: { task: Task; phase?: string }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className={cn("block text-[13px]", done ? "text-ink-dim" : "text-ink")}>{task.title}</span>
-        {phase && <span className="mt-0.5 block text-xs text-ink-faint">{phase}</span>}
       </span>
       <span
         className={cn(
@@ -356,8 +363,8 @@ function TaskRow({ task, phase }: { task: Task; phase?: string }) {
 
 function Demo({ project }: { project: ProjectView }) {
   const items = [
-    { demo: project.latestWeb, icon: Globe, title: "Versão web", empty: "A primeira versão web aparece aqui assim que estiver pronta." },
-    { demo: project.latestApp, icon: Smartphone, title: "App mobile", empty: "A primeira build da app aparece aqui assim que for gerada." },
+    { demo: project.latestWeb, icon: Globe, title: "Versão web", empty: "Ainda não disponível." },
+    { demo: project.latestApp, icon: Smartphone, title: "App mobile", empty: "Ainda não disponível." },
   ];
   return (
     <div className="space-y-6">
@@ -373,10 +380,14 @@ function Demo({ project }: { project: ProjectView }) {
                 <p className="mt-1 text-[12px] text-ink-faint">
                   v{demo.version} · {relative(demo.createdAt)}
                 </p>
-                <p className="mt-3 flex-1 text-[13px] leading-relaxed text-ink-dim">{demo.notes}</p>
                 <a href={demo.url} target="_blank" rel="noreferrer" className="btn-quiet mt-6 self-start">
                   Abrir <ExternalLink size={15} aria-hidden />
                 </a>
+                {demo.notes && (
+                  <Details className="mt-4">
+                    <p className="text-[13px] leading-relaxed text-ink-dim">{demo.notes}</p>
+                  </Details>
+                )}
               </>
             ) : (
               <p className="mt-3 text-[13px] text-ink-faint">{empty}</p>
@@ -388,7 +399,7 @@ function Demo({ project }: { project: ProjectView }) {
         href="/cliente/entregas"
         className="inline-flex items-center gap-2 text-[13px] text-accent-soft transition-colors hover:text-ink"
       >
-        Ver todas as versões e instruções de instalação <ArrowRight size={15} aria-hidden />
+        Todas as versões <ArrowRight size={15} aria-hidden />
       </Link>
     </div>
   );

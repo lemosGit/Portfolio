@@ -33,6 +33,7 @@ export type AdminProject = {
   name: string;
   tagline: string;
   description: string;
+  coverUrl: string | null;
   githubOwner: string | null;
   githubRepo: string | null;
   startedOn: string | null;
@@ -143,6 +144,7 @@ type ProjectRow = {
   name: string;
   tagline: string | null;
   description: string | null;
+  cover_url: string | null;
   github_owner: string | null;
   github_repo: string | null;
   started_on: string | null;
@@ -156,7 +158,7 @@ type ProjectRow = {
 };
 
 const PROJECT_COLS =
-  "id, slug, client_id, name, tagline, description, github_owner, github_repo, started_on, due_on, status, phase_map, created_at, clients (name, company), demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)";
+  "id, slug, client_id, name, tagline, description, cover_url, github_owner, github_repo, started_on, due_on, status, phase_map, created_at, clients (name, company), demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)";
 
 function toProject(r: ProjectRow): AdminProject {
   return {
@@ -168,6 +170,7 @@ function toProject(r: ProjectRow): AdminProject {
     name: r.name,
     tagline: r.tagline ?? "",
     description: r.description ?? "",
+    coverUrl: r.cover_url,
     githubOwner: r.github_owner,
     githubRepo: r.github_repo,
     startedOn: r.started_on,
@@ -219,6 +222,7 @@ export async function withProgress(p: AdminProject): Promise<ProjectView> {
     name: p.name,
     tagline: p.tagline,
     description: p.description,
+    coverUrl: p.coverUrl ?? undefined,
     repo: { owner: p.githubOwner ?? "", name: p.githubRepo ?? "" },
     startedOn: p.startedOn ?? now,
     dueOn: p.dueOn ?? now,

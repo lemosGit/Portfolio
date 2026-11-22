@@ -8,6 +8,7 @@ type Defaults = {
   dueOn?: string | null;
   tagline?: string;
   description?: string;
+  coverUrl?: string | null;
 };
 
 /** Campos de projeto partilhados por "novo cliente", "novo projeto" e "editar projeto". */
@@ -43,6 +44,32 @@ export function ProjectFields({ d = {}, showSlug }: { d?: Defaults; showSlug?: b
       <Field label="Descrição" className="sm:col-span-2">
         <textarea name="descricao" defaultValue={d.description} rows={3} className={`${inputCls} h-auto py-2.5`} />
       </Field>
+      <div className="sm:col-span-2">
+        <label htmlFor="capa" className="mb-1.5 block text-[13px] font-medium text-ink-dim">
+          Imagem do projeto
+        </label>
+        <div className="flex flex-wrap items-center gap-4">
+          {d.coverUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={d.coverUrl} alt="Imagem atual do projeto" className="h-16 w-28 shrink-0 rounded-lg border border-line object-cover" />
+          )}
+          <input
+            id="capa"
+            name="capa"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            className="min-w-0 flex-1 text-[13px] text-ink-dim file:mr-3 file:h-10 file:cursor-pointer file:rounded-lg file:border file:border-line file:bg-white/[0.04] file:px-4 file:text-[13px] file:text-ink"
+          />
+          {d.coverUrl && (
+            <label className="flex items-center gap-2 text-[13px] text-ink-dim">
+              <input type="checkbox" name="remover_capa" value="1" /> Remover imagem
+            </label>
+          )}
+        </div>
+        <span className="mt-1.5 block text-xs text-ink-faint">
+          Aparece ao fundo do resumo, na área do cliente. JPG, PNG ou WebP, até 5 MB.
+        </span>
+      </div>
     </div>
   );
 }
