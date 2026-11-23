@@ -11,5 +11,9 @@
 | Q-005 | 2026-11-23 | M1 | O que faz o bloco Pagamentos (a spec v1.2 punha-os fora de âmbito)? | Só mostrar; registo manual pelo admin, pagamento fora do portal | D-009, M5-11, visao-modulos.md §5.1 |
 | Q-006 | 2026-11-23 | M1 | O cliente pode enviar ficheiros no briefing e na revisão? | Sim, nas fases de briefing e revisão | D-010, M5-09, M3-03 |
 | Q-007 | 2026-11-23 | M1 | Como chega o link mágico ao cliente? | O admin copia ou usa "Abrir no WhatsApp" (wa.me), e há envio opcional por email (Resend) | D-011, M3-02, M5-12 |
+| Q-008 | 2026-11-23 | M1 | Quem é o cliente típico do Académico? | Ambos, sobretudo universitário | PER-03 (principal), PER-05 (secundária) |
+| Q-009 | 2026-11-23 | M1 | Quem é o cliente típico do Design? | Particular com evento | PER-04 |
+| Q-010 | 2026-11-23 | M1 | Que dispositivo e rede usam? | Telemóvel Android com dados móveis | M1-06, M7-02, M4 |
+| Q-011 | 2026-11-23 | M1 | Quem aprova e paga é quem acompanha? | Normalmente sim | D-012 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
