@@ -19,3 +19,9 @@
 | D-014 | 2026-11-23 | Fase "Estrutura" pode ser "não aplicável" e capítulos são opcionais (trabalhos curtos) | PER-05 | Capítulos obrigatórios | Assumida — confirmar no G1 |
 | D-015 | 2026-11-23 | Durante o desenvolvimento o cliente vê só o estado dos capítulos, sem ficheiros | Q-013 | Pré-visualização por capítulo | Aprovada |
 | D-016 | 2026-11-23 | Ajustes: N dias após a entrega (por omissão 7, editável por projeto); conclusão automática no fim sem pedidos abertos | Q-014 | Até à data da instituição; nº de pedidos | Aprovada (omissão 7 e conclusão automática assumidas) |
+| D-017 | 2026-11-23 | Design: rondas incluídas definidas por projeto (por omissão 2); esgotadas, o cliente pede uma ronda extra com valor registado como extra | Q-016 | Bloquear; 2 rondas fixas | Aprovada |
+| D-018 | 2026-11-23 | Design: sinal (por omissão 50%) antes do conceito; restante pago antes da produção | Q-017 | No levantamento; antes dos ficheiros finais | Aprovada (sinal de 50% assumido como no Académico) |
+| D-019 | 2026-11-23 | Design: um projeto por peça; várias peças do mesmo evento são projetos separados no seletor | Q-018 | Um projeto com várias peças | Aprovada |
+| D-020 | 2026-11-23 | Design: a ficha técnica indica se há impressão e ficheiros digitais; sem impressão, a fase 6 fica "não aplicável" | Q-019 | Sempre PDF+PNG; só peça física | Aprovada (salto da fase 6 assumido) |
+| D-021 | 2026-11-23 | O aviso de irreversibilidade repete os textos-chave da ficha (nomes, data, quantidade) antes de aprovar a arte | Personas (Implicações) | Só o aviso genérico | Assumida — confirmar no G1 |
+| D-022 | 2026-11-23 | Só o admin reabre uma aprovação de arte, com motivo obrigatório no histórico | PER-01 (permissões) | Irreversível sem exceção | Assumida — confirmar no G1 |

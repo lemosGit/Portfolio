@@ -19,5 +19,9 @@
 | Q-013 | 2026-11-23 | M1 | O cliente vê os capítulos à medida que ficam prontos? | Só o estado; o ficheiro só no fim | D-015, RF-10.42 |
 | Q-014 | 2026-11-23 | M1 | Como funcionam os ajustes? | Um prazo de dias após a entrega, definido por projeto | D-016, RF-10.64/70–74 |
 | Q-015 | 2026-11-23 | M1 | Formato da entrega final? | PDF e Word | RF-10.60 |
+| Q-016 | 2026-11-23 | M1 | Design: quantas rondas de revisão estão incluídas e o que acontece quando acabam? | Nº definido por projeto (por omissão 2); depois, ronda extra paga | D-017, RF-20.20/40–43 |
+| Q-017 | 2026-11-23 | M1 | Design: quando é pago o restante? | Antes da produção | D-018, RF-20.23/60 |
+| Q-018 | 2026-11-23 | M1 | Design: um evento com várias peças é um projeto ou vários? | Um projeto por peça | D-019, RF-20 (âmbito) |
+| Q-019 | 2026-11-23 | M1 | Design: que ficheiros finais recebe o cliente? | Depende da peça (indicado na ficha técnica) | D-020, RF-20.11/62/71 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
