@@ -30,3 +30,8 @@
 | D-025 | 2026-11-23 | Ficheiros apagados do Storage 90 dias após a conclusão (fica o registo); o admin é avisado 7 dias antes e pode adiar | Q-022 | Para sempre; manual | Aprovada (aviso e adiamento assumidos) |
 | D-026 | 2026-11-23 | Pagamentos com valor em Kz, data limite opcional e estado pendente / pago / em atraso (automático, fuso Africa/Luanda) | Q-023 | Só pendente/pago; com comprovativo | Aprovada |
 | D-027 | 2026-11-23 | Num projeto concluído, o cliente vê até quando pode descarregar os ficheiros | D-025 | Não mostrar | Assumida |
+| D-028 | 2026-11-23 | Meta de desempenho: LCP ≤ 2,5 s em 4G (Lighthouse mobile ≥ 80) e primeira vista ≤ 500 KB | Q-024 | 3G ≤ 4 s; sem meta | Aprovada |
+| D-029 | 2026-11-23 | Melhor esforço no plano gratuito; passar a pago com Storage/BD ≥ 80%, 10 projetos ativos ou 1.º incidente > 24 h | Q-025 | Sempre grátis; 99,5% | Aprovada (valores dos gatilhos assumidos) |
+| D-030 | 2026-11-23 | Política de privacidade (Lei 22/11), nada de clientes no portfólio sem autorização escrita, eliminação a pedido em ≤ 30 dias; emails sem dados sensíveis | Q-026 | Só a política; nada | Aprovada (prazo de 30 dias e regra dos emails assumidos) |
+| D-031 | 2026-11-23 | Backup da BD semanal (RPO 7 dias); Storage sem backup, originais guardados pelo admin | Q-027 | BD diária; BD + ficheiros | Aprovada |
+| D-032 | 2026-11-23 | Limite de 5 links mágicos por cliente por hora e URLs assinadas com validade ≤ 1 h | Assumido | Sem limite; URLs de 24 h | Assumida |
