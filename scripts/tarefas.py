@@ -48,7 +48,7 @@ task("M1-01", "Registar a visão e o âmbito dos módulos Académico e Design", 
          "Contradições com o código atual listadas (6 vs 7 fases, paleta, blocos inexistentes)"])
 task("M1-02", "Definir as personas dos novos serviços", "docs", "requisitos", "must", "S", ["M1-01"],
      ent="`docs/01-requisitos/personas.md`",
-     obj="PER-01 Admin GeniusFrela · PER-02 Cliente Tech (existente) · PER-03 Estudante/cliente académico · PER-04 Cliente de design (evento/empresa).",
+     obj="PER-01 Admin · PER-02 Cliente Tech (existente) · PER-03 Universitário · PER-05 Ensino médio · PER-04 Particular com evento.",
      ac=["Objetivos, dores, dispositivo principal e permissões por persona", "Jornada de cada persona do link de acesso à entrega"])
 task("M1-03", "Especificar os requisitos funcionais do Académico", "docs", "requisitos", "must", "M", ["M1-02"],
      ent="`docs/01-requisitos/requisitos-funcionais.md` (grupo RF-10)", refs=f"{DOC} §5.2", per=["PER-01", "PER-03"], mod="academico",
@@ -184,7 +184,7 @@ task("M5-08", "Gerir as fases do projeto no admin", "feature", ["frontend", "bac
          "Email ao cliente quando a fase muda (Resend)"])
 task("M5-09", "Implementar o bloco Ficheiros", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin: upload por fase · Cliente: download por URL assinada e upload de referências no briefing e na revisão (D-010)",
-     ac=["Cliente só carrega nas fases de briefing e revisão", "Limite de tamanho e tipos validados no servidor", "O cliente nunca vê ficheiros de outro projeto (teste)", "Versões ordenadas por data"])
+     ac=["Cliente só carrega nas fases de briefing e revisão", "Limite de tamanho e tipos validados no servidor", "O cliente nunca vê ficheiros de outro projeto (teste)", "Versões ordenadas por data", "Disponibilidade de um ficheiro pode depender de um pagamento marcado como pago (D-013)"])
 task("M5-10", "Implementar o bloco Aprovações", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin cria pedido · Cliente aprova ou pede alterações com comentário",
      ac=["Aprovação irreversível pelo cliente (só o admin reabre)", "Pendentes em destaque na visão geral", "Histórico com data e autor"])
@@ -212,13 +212,13 @@ task("M6-02", "Mostrar a contagem do prazo em destaque", "feature", "frontend", 
      ac=["Dias restantes em tamanho grande", "Cor muda a ≤ 3 dias (aguardar) e após o prazo (atrasado)", "Fuso Africa/Luanda"])
 task("M6-03", "Implementar o progresso por capítulos e secções", "feature", ["backend", "frontend"], "must", "M", ["M5-99"], mod="academico",
      ent="Admin gere capítulos · Cliente vê 'X de Y'",
-     ac=["Reordenar e marcar concluído no admin", "% da fase Desenvolvimento calculada pelos capítulos"])
+     ac=["Capítulos opcionais: sem capítulos, o progresso é o da fase (PER-05)", "Reordenar e marcar concluído no admin", "% da fase Desenvolvimento calculada pelos capítulos"])
 task("M6-04", "Ligar o orçamento e o aceite ao bloco Aprovações", "feature", "backend", "must", "S", ["M5-99"], mod="academico",
-     ent="Fase 2 — botão 'Aceitar'", ac=["Aceite avança para a fase Estrutura", "Valor e prazo vêm do bloco Pagamentos"])
+     ent="Fase 2 — botão 'Aceitar'", ac=["Fase Estrutura só começa com aceite + sinal pago (D-013)", "Valor, sinal (50% por omissão) e prazo vêm do bloco Pagamentos"])
 task("M6-05", "Permitir aprovar o índice proposto", "feature", ["backend", "frontend"], "must", "S", ["M6-03"], mod="academico",
      ent="Fase 3 — índice para aprovação", ac=["Índice gerado a partir dos capítulos", "Pedir alterações volta a 'em curso' com comentário"])
 task("M6-06", "Implementar a entrega final e o pedido de ajustes", "feature", ["backend", "frontend"], "must", "S", ["M5-99"], mod="academico",
-     ent="Fases 6 e 7", ac=["Ficheiro final PDF/Word no bloco Ficheiros", "Pedido de ajuste só dentro do prazo acordado (RN)", "Fora do prazo: encaminha para mensagens"])
+     ent="Fases 6 e 7", ac=["Ficheiro final em PDF e Word, disponível só com o restante pago (D-013)", "Prazo de ajustes = N dias após a entrega, por omissão 7 (D-016)", "Fora do prazo: encaminha para mensagens", "Conclusão automática sem pedidos abertos"])
 task("M6-07", "Compor o layout Académico na Área do Cliente", "feature", "frontend", "must", "M", ["M6-02", "M6-03", "M6-05", "M6-06"], mod="academico",
      ent="`SERVICE_LAYOUTS.academic`", refs="`docs/04-ux-ui/wireframes/academico.md`",
      ac=["Fiel ao wireframe aprovado (G2)", "Acento âmbar #F59E0B", "Mobile 360 px sem scroll horizontal"])
@@ -235,7 +235,7 @@ task("M7-01", "Implementar a ficha técnica da peça", "feature", ["backend", "f
      ent="Admin: formulário · Cliente: bloco 'Ficha técnica'",
      ac=["Tipo de peça (logótipo, convite, lona, camisola), medidas, material, quantidade, acabamento, textos, referências"])
 task("M7-02", "Implementar a galeria de provas", "feature", ["backend", "frontend"], "must", "M", ["M6-99"], mod="design",
-     ent="Bloco `ProofGallery`", ac=["V1, V2, V3… lado a lado (carrossel em mobile)", "Ampliar imagem", "Imagens servidas por URL assinada"])
+     ent="Bloco `ProofGallery`", ac=["V1, V2, V3… lado a lado (carrossel em mobile)", "Miniatura WebP comprimida; original só a pedido (dados móveis, Q-010)", "Ampliar imagem", "Imagens servidas por URL assinada"])
 task("M7-03", "Implementar as rondas de revisão com comentários", "feature", ["backend", "frontend"], "must", "M", ["M7-02"], mod="design",
      ent="Contador 'Ronda X de Y' + comentários por prova",
      ac=["Nº de rondas incluídas definido no orçamento", "Ronda extra assinalada como paga (RN) e gera pagamento 'extra'", "Comentário ligado à versão"])
