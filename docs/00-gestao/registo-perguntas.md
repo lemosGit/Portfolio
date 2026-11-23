@@ -27,5 +27,10 @@
 | Q-021 | 2026-11-23 | M1 | Que limites para os ficheiros enviados pelo cliente? | 10 MB; imagens (JPG/PNG/WebP/HEIC), PDF, Word; 10 por fase | D-024, RF-30.42, M3-03, M5-09 |
 | Q-022 | 2026-11-23 | M1 | Quanto tempo ficam guardados os ficheiros de um projeto concluído? | 90 dias, depois são apagados (fica o registo) | D-025, RF-30.47/48 |
 | Q-023 | 2026-11-23 | M1 | Que estados tem cada pagamento? | Pendente / pago / em atraso, com data limite opcional | D-026, RF-30.20/21 |
+| Q-024 | 2026-11-23 | M1 | Que meta de desempenho no telemóvel com dados móveis? | LCP ≤ 2,5 s em 4G (Lighthouse ≥ 80); 1.ª vista ≤ 500 KB | D-028, RNF-101/102 |
+| Q-025 | 2026-11-23 | M1 | Que nível de serviço com o plano gratuito? | Melhor esforço, com gatilhos para passar a plano pago | D-029, RNF-501…505 |
+| Q-026 | 2026-11-23 | M1 | O que se exige para a privacidade dos clientes? | Política de privacidade (Lei 22/11), confidencialidade no portfólio e eliminação a pedido | D-030, RNF-401…405 |
+| Q-027 | 2026-11-23 | M1 | Os ficheiros também precisam de backup? | Não; a BD continua com backup semanal, como hoje | D-031, RNF-601…603 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
+Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
