@@ -25,3 +25,8 @@
 | D-020 | 2026-11-23 | Design: a ficha técnica indica se há impressão e ficheiros digitais; sem impressão, a fase 6 fica "não aplicável" | Q-019 | Sempre PDF+PNG; só peça física | Aprovada (salto da fase 6 assumido) |
 | D-021 | 2026-11-23 | O aviso de irreversibilidade repete os textos-chave da ficha (nomes, data, quantidade) antes de aprovar a arte | Personas (Implicações) | Só o aviso genérico | Assumida — confirmar no G1 |
 | D-022 | 2026-11-23 | Só o admin reabre uma aprovação de arte, com motivo obrigatório no histórico | PER-01 (permissões) | Irreversível sem exceção | Assumida — confirmar no G1 |
+| D-023 | 2026-11-23 | Link mágico de uso único, válido 24 h; ao entrar o cliente fica com sessão longa e a senha é opcional; o admin pode criar clientes sem senha | Q-020 | 1 h; senha obrigatória | Aprovada |
+| D-024 | 2026-11-23 | Uploads do cliente: JPG, PNG, WebP, HEIC, PDF, DOC, DOCX; até 10 MB por ficheiro e 10 por fase | Q-021 | 25 MB + ZIP; 5 MB só imagens/PDF | Aprovada (limite de 10 por fase assumido) |
+| D-025 | 2026-11-23 | Ficheiros apagados do Storage 90 dias após a conclusão (fica o registo); o admin é avisado 7 dias antes e pode adiar | Q-022 | Para sempre; manual | Aprovada (aviso e adiamento assumidos) |
+| D-026 | 2026-11-23 | Pagamentos com valor em Kz, data limite opcional e estado pendente / pago / em atraso (automático, fuso Africa/Luanda) | Q-023 | Só pendente/pago; com comprovativo | Aprovada |
+| D-027 | 2026-11-23 | Num projeto concluído, o cliente vê até quando pode descarregar os ficheiros | D-025 | Não mostrar | Assumida |

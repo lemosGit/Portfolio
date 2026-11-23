@@ -1,12 +1,12 @@
 # Requisitos funcionais — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.1 (RF-10, RF-20) · Data: 2026-11-23
-> Depende de: `visao-modulos.md`, `personas.md`, `docs/references/1/GeniusFrela_Projeto_e_Layouts.md` §5.2 e §5.3 · Perguntas/decisões usadas: Q-005, Q-006, Q-008…Q-010, Q-012…Q-019, D-001, D-009, D-010, D-013…D-022
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.2 (RF-10, RF-20, RF-30) · Data: 2026-11-23
+> Depende de: `visao-modulos.md`, `personas.md`, `docs/references/1/GeniusFrela_Projeto_e_Layouts.md` §5.2 e §5.3 · Perguntas/decisões usadas: Q-005, Q-006, Q-008…Q-010, Q-012…Q-023, D-001, D-002, D-004, D-009…D-027
 
 ## Convenções
 - **Grupos:** RF-10 Académico · RF-20 Design (M1-04) · RF-30 Blocos comuns (M1-05).
 - **Prioridade** é provisória. A versão final sai da M1-08 (MoSCoW).
 - **Origem:** `L§x` = documento de layouts · `Q-NNN` = resposta registada · `PER` = implicação das personas.
-- Os RF que dependem de um bloco comum (Pagamentos, Aprovações, Ficheiros) remetem para o RF-30 correspondente, que será escrito na M1-05.
+- Os RF que dependem de um bloco comum (Pagamentos, Aprovações, Ficheiros) remetem para o RF-30 correspondente.
 
 ---
 
@@ -169,4 +169,76 @@ Fluxo: **1** Briefing → **2** Orçamento e sinal → **3** Conceito / esboço 
 | RF-20.84 | As provas não substituem as anteriores: uma versão nova nunca apaga a antiga | PER-01 | Must | RF-30 Ficheiros |
 
 ## RF-30 — Blocos comuns
-*Por escrever em M1-05 (#15). Referências antecipadas pelo RF-10: Pagamentos (sinal/restante, estado pago, valor), Aprovações (aceitar, aprovar/pedir alterações, autor e data), Ficheiros (upload do cliente na fase 1 e 5, upload do admin, versões, disponibilidade condicionada ao pagamento). Pelo RF-20: Pagamentos com valores design + impressão e **extras** (rondas adicionais); Aprovações com versão aprovada e reabertura só pelo admin; Ficheiros com provas versionadas (miniatura WebP + original).*
+
+Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvimento (PER-02), o fluxo atual não muda: ganha os blocos Pagamentos, Aprovações e Ficheiros e o link mágico (O5).
+
+### RF-30.0 Tipo de serviço e fases como dados
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.01 | Ao criar um projeto, o admin deve escolher o **tipo de serviço**: Desenvolvimento, Académico ou Design. O tipo não muda depois de criado | PER-01 | Must | visão §5.1 |
+| RF-30.02 | Só os projetos Desenvolvimento pedem o repositório GitHub. Os outros dois não mostram esse campo | PER-01 | Must | D-001 |
+| RF-30.03 | Em Académico e Design, o sistema cria as fases do projeto a partir do **modelo de fases** do serviço (nome, ordem, descrição curta) | PER-01 | Must | D-001, Q-001 |
+| RF-30.04 | O admin deve poder avançar uma fase, marcá-la como "a aguardar o cliente", "atrasada" ou "não aplicável", e escrever o **próximo passo** visível ao cliente | PER-01 | Must | L§4, RF-10.33, RF-20.62 |
+| RF-30.05 | O Desenvolvimento continua a ler as fases dos milestones do GitHub, sem alterações | PER-02 | Must | D-001, D-005 |
+
+### RF-30.1 Esqueleto comum e tema
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.10 | Todas as Áreas do Cliente partilham o mesmo esqueleto: etiqueta do serviço · prazo · estado · barra de fases · fase atual + próximo passo · blocos | PER-02, PER-03, PER-04 | Must | L§4 |
+| RF-30.11 | A cor de destaque (`--accent`, `--accent-2`) muda conforme o tipo de serviço, sobre a base visual atual | PER-02, PER-03, PER-04 | Must | D-004 |
+| RF-30.12 | A primeira vista mostra pouco texto. Os pormenores ficam atrás de "ver detalhes" | PER-03, PER-04 | Must | `docs/melhorar_designer.txt` |
+| RF-30.13 | Um cliente com vários projetos (ex.: várias peças de Design) alterna entre eles no seletor de projetos atual | PER-04 | Must | D-019, PR #3 |
+
+### RF-30.2 Pagamentos
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.20 | O admin deve registar os pagamentos de um projeto: tipo (**sinal**, **restante**, **extra**), descrição, valor em Kz e **data limite** opcional | PER-01 | Must | D-009, Q-023 |
+| RF-30.21 | Cada pagamento tem o estado **pendente**, **pago** ou **em atraso**. O estado passa a "em atraso" sozinho depois da data limite (fuso Africa/Luanda) | PER-01, PER-03, PER-04 | Must | Q-023, D-026 |
+| RF-30.22 | O admin marca um pagamento como pago com a **data do pagamento**. Pode desfazer essa marcação se se enganar, e a alteração fica no histórico | PER-01 | Must | D-009 |
+| RF-30.23 | O cliente vê só a leitura dos pagamentos: total, pago, em falta e a lista com o estado de cada um. Não há pagamento nem comprovativo no portal | PER-02, PER-03, PER-04 | Must | D-009 |
+| RF-30.24 | Um pagamento pendente que bloqueia uma fase (RF-10.23, RF-10.61, RF-20.23, RF-20.60) aparece como **próximo passo do cliente** ("Pagar o sinal", "Pagar o restante") com o valor | PER-03, PER-04 | Must | D-013, D-018 |
+| RF-30.25 | Os pagamentos extra (ex.: ronda de revisão adicional) têm de ser aceites pelo cliente antes de contarem → RF-30.3 Aprovações | PER-04 | Must | D-017, RF-20.43 |
+
+### RF-30.3 Aprovações
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.30 | O admin deve pedir uma aprovação ao cliente sobre um objeto: **orçamento**, **índice**, **prova/arte**, **extra** ou **entrega** | PER-01 | Must | visão §5.1, RF-10/RF-20 |
+| RF-30.31 | O cliente responde com **Aprovar** ou **Pedir alterações**. "Pedir alterações" exige um comentário | PER-02, PER-03, PER-04 | Must | visão §5.1 |
+| RF-30.32 | O sistema regista cada resposta com a data, a hora, o autor, a decisão, o comentário e a **versão** do objeto (ex.: V3) | PER-01 | Must | O2 (visão) |
+| RF-30.33 | Uma aprovação dada é **definitiva** para o cliente. Só o admin a pode reabrir, com motivo obrigatório | PER-01 | Must | visão §5.1, D-022 |
+| RF-30.34 | O cliente vê as **aprovações pendentes** em destaque na primeira vista e o histórico atrás de "ver detalhes" | PER-02, PER-03, PER-04 | Must | L§4 |
+| RF-30.35 | O admin recebe um aviso por email quando o cliente aprova ou pede alterações | PER-01 | Should | PER-01 (dores) |
+
+### RF-30.4 Ficheiros e entregáveis
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.40 | O admin deve carregar ficheiros num projeto, associados a uma fase e a um papel: **entregável**, **prova** ou **interno** | PER-01 | Must | visão §5.1 |
+| RF-30.41 | O cliente pode carregar **referências** apenas nas fases de briefing e revisão (Académico: fases 1 e 5; Design: fases 1 e 4) | PER-03, PER-04 | Must | D-010, Q-006 |
+| RF-30.42 | Limites do cliente: **JPG, PNG, WebP, HEIC, PDF, DOC, DOCX**; até **10 MB** por ficheiro e **10 ficheiros por fase**. Fora dos limites, aparece uma mensagem clara antes do envio | PER-03, PER-04 | Must | Q-021, D-024 |
+| RF-30.43 | Os ficheiros guardam **versões**: um ficheiro novo com o mesmo papel não apaga o anterior | PER-01 | Must | RF-10.73, RF-20.84 |
+| RF-30.44 | Um ficheiro pode ficar **bloqueado** até um pagamento estar pago (ex.: entrega final do Académico). O cliente vê que existe, mas não o descarrega | PER-01, PER-03 | Must | D-013 |
+| RF-30.45 | O cliente só descarrega ficheiros por **links temporários**. Nenhum ficheiro é público | PER-02, PER-03, PER-04 | Must | repo público, segurança (M3-03) |
+| RF-30.46 | Imagens mostram-se em **miniatura comprimida** e o original só abre a pedido | PER-03, PER-04 | Must | Q-010 |
+| RF-30.47 | **90 dias** depois de o projeto ser concluído, os ficheiros são apagados do armazenamento e fica só o registo (nome, data, autor). O admin é avisado 7 dias antes e pode adiar | PER-01 | Should | Q-022, D-025 |
+| RF-30.48 | O cliente vê, num projeto concluído, até quando pode descarregar os ficheiros | PER-03, PER-04 | Should | D-025, D-027 |
+| RF-30.49 | O admin vê o espaço ocupado no armazenamento, no total e por projeto | PER-01 | Could | plano gratuito (1 GB) |
+
+### RF-30.5 Link mágico e acesso
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.50 | O admin deve gerar um **link mágico** para o cliente de um projeto, em ≤ 2 cliques a partir do projeto | PER-01 | Must | D-011, PER-01 |
+| RF-30.51 | O link é de **uso único** e **expira em 24 horas**. Um link expirado ou já usado mostra "Este link já não é válido — peça um novo" com o botão do WhatsApp | PER-01, PER-03, PER-04 | Must | Q-020, D-023 |
+| RF-30.52 | O admin pode **Copiar** o link, **Abrir no WhatsApp** (`wa.me` com a mensagem e o link já preenchidos) ou **Enviar por email** (Resend) | PER-01 | Must | D-011 |
+| RF-30.53 | Ao abrir o link, o cliente entra direto na Área do Cliente do projeto e fica com **sessão longa** no telemóvel. **Não é obrigatório** definir uma senha | PER-03, PER-04 | Must | Q-020, D-023 |
+| RF-30.54 | O cliente pode **definir uma senha opcional** nas definições, para entrar depois com email e senha | PER-02, PER-03, PER-04 | Should | D-011 |
+| RF-30.55 | O acesso por **email + senha temporária** com troca no 1.º acesso continua a funcionar como alternativa | PER-02 | Must | D-011, spec §4 |
+| RF-30.56 | O admin pode criar um cliente **sem senha** (só com o link mágico) | PER-01 | Must | D-023 |
+| RF-30.57 | O sistema regista quando cada link foi gerado, por que canal e quando foi usado | PER-01 | Should | segurança (M3-06) |
+
+### RF-30.6 Mensagens e avisos
+| Código | Descrição | Persona | Prioridade | Origem |
+|---|---|---|---|---|
+| RF-30.60 | As mensagens assíncronas atuais passam a existir nos 3 serviços. Em Académico e Design, uma mensagem pode ser **geral** ou **sobre uma fase** | PER-02, PER-03, PER-04 | Must | spec §5.5, L§4 |
+| RF-30.61 | O cliente recebe email (Resend) quando: há resposta a uma mensagem, uma aprovação lhe é pedida, um pagamento fica pendente ou um ficheiro novo é disponibilizado | PER-02, PER-03, PER-04 | Should | `lib/email` (existente) |
+| RF-30.62 | O admin recebe email quando o cliente envia uma mensagem, um ficheiro ou responde a uma aprovação | PER-01 | Should | spec §5.5 ("por fazer") |
+

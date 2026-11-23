@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M1-04 Especificar os RF do Design | #14 | `docs/01-requisitos/requisitos-funcionais.md` (RF-20) |
-| ⏭️ Próxima | M1-05 Especificar os requisitos dos blocos comuns | #15 | `docs/01-requisitos/requisitos-funcionais.md` (RF-30) |
+| ✅ Última feita | M1-05 Especificar os requisitos dos blocos comuns | #15 | `docs/01-requisitos/requisitos-funcionais.md` (RF-30) |
+| ⏭️ Próxima | M1-06 Definir os requisitos não funcionais | #16 | `docs/01-requisitos/requisitos-nao-funcionais.md` |
 | ❓ Perguntas em aberto | Datas das milestones (depois do G1) · D-005, D-014, D-021, D-022 no G1 · PNG do diagrama de contexto por gerar | | |
 <!-- ESTADO:FIM -->
 
@@ -24,3 +24,4 @@
 | 2026-11-23 | M1-02 | #12 | Personas PER-01…PER-05 (Q-008…Q-011, D-012; issues M1-02/M6-03/M7-02 atualizadas) | `docs/01-requisitos/personas.md` |
 | 2026-11-23 | M1-03 | #13 | RF-10 Académico: 36 RF (Q-012…Q-015, D-013…D-016; issues M5-09/M6-04/M6-06 atualizadas) | `docs/01-requisitos/requisitos-funcionais.md` |
 | 2026-11-23 | M1-04 | #14 | RF-20 Design: 38 RF (Q-016…Q-019, D-017…D-022) | `docs/01-requisitos/requisitos-funcionais.md` |
+| 2026-11-23 | M1-05 | #15 | RF-30 Blocos comuns: 42 RF (Q-020…Q-023, D-023…D-027) | `docs/01-requisitos/requisitos-funcionais.md` |
