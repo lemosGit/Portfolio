@@ -15,5 +15,9 @@
 | Q-009 | 2026-11-23 | M1 | Quem é o cliente típico do Design? | Particular com evento | PER-04 |
 | Q-010 | 2026-11-23 | M1 | Que dispositivo e rede usam? | Telemóvel Android com dados móveis | M1-06, M7-02, M4 |
 | Q-011 | 2026-11-23 | M1 | Quem aprova e paga é quem acompanha? | Normalmente sim | D-012 |
+| Q-012 | 2026-11-23 | M1 | Académico: quando começa o trabalho? | Com o sinal pago (ex.: 50%); o restante antes da entrega final | D-013, RF-10.20/23/61 |
+| Q-013 | 2026-11-23 | M1 | O cliente vê os capítulos à medida que ficam prontos? | Só o estado; o ficheiro só no fim | D-015, RF-10.42 |
+| Q-014 | 2026-11-23 | M1 | Como funcionam os ajustes? | Um prazo de dias após a entrega, definido por projeto | D-016, RF-10.64/70–74 |
+| Q-015 | 2026-11-23 | M1 | Formato da entrega final? | PDF e Word | RF-10.60 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
