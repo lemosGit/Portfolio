@@ -35,6 +35,10 @@
 | Q-029 | 2026-11-23 | M1 | Se uma ação fica parada do lado do cliente, o prazo muda? | O prazo desliza os mesmos dias e o cliente recebe lembrete | D-034, RN-21…23 |
 | Q-030 | 2026-11-23 | M1 | O que conta como ajuste incluído e o que é trabalho novo? | O que cumpre a ficha está incluído; mudar tema, páginas, peça ou conceito é trabalho novo (extra) | D-035, RN-31/32 |
 | Q-031 | 2026-11-23 | M1 | Qual é o horário de atendimento e o que vê quem escreve fora dele? | Das 08h00 às 20h00, também aos fins de semana; fora de horas: "Entraremos em contacto assim que o horário de abertura estiver disponível." | D-036, RN-51/52, personas.md (PER-01) |
+| Q-032 | 2026-11-23 | M1 | Que critério define um Must na v1.1? | Só o que o piloto precisa para terminar, ou o que tem risco de segurança ou dinheiro | D-038, priorizacao-moscow.md |
+| Q-033 | 2026-11-23 | M1 | Que prioridade têm os emails de aviso? | Should | D-039 |
+| Q-034 | 2026-11-23 | M1 | As páginas públicas do Académico e do Design entram na v1.1? | Should | D-040, #61, #71 |
+| Q-035 | 2026-11-23 | M1 | Com que detalhe se escrevem as user stories? | Uma por passo do fluxo | D-041, user-stories.md |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
