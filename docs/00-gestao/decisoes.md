@@ -35,3 +35,8 @@
 | D-030 | 2026-11-23 | Política de privacidade (Lei 22/11), nada de clientes no portfólio sem autorização escrita, eliminação a pedido em ≤ 30 dias; emails sem dados sensíveis | Q-026 | Só a política; nada | Aprovada (prazo de 30 dias e regra dos emails assumidos) |
 | D-031 | 2026-11-23 | Backup da BD semanal (RPO 7 dias); Storage sem backup, originais guardados pelo admin | Q-027 | BD diária; BD + ficheiros | Aprovada |
 | D-032 | 2026-11-23 | Limite de 5 links mágicos por cliente por hora e URLs assinadas com validade ≤ 1 h | Assumido | Sem limite; URLs de 24 h | Assumida |
+| D-033 | 2026-11-23 | O sinal não é reembolsável; o projeto cancelado fica registado e a regra é mostrada antes do aceite | Q-028 | Reembolso parcial; caso a caso | Aprovada |
+| D-034 | 2026-11-23 | O tempo "a aguardar o cliente" desliza o prazo; lembrete ao cliente após 2 dias | Q-029 | Prazo fixo; ajuste manual | Aprovada |
+| D-035 | 2026-11-23 | Ajuste/revisão incluído = cumprir a ficha; mudar tema, páginas, peça, medidas ou conceito = trabalho novo | Q-030 | Tudo incluído; admin decide | Aprovada |
+| D-036 | 2026-11-23 | Atendimento todos os dias, 08h00–20h00; fora de horas, aviso "Entraremos em contacto assim que o horário de abertura estiver disponível." (substitui seg–sex 18h–21h) | Q-031 | — | Aprovada (mesmo horário ao fim de semana assumido) |
+| D-037 | 2026-11-23 | Reabrir uma arte aprovada só antes de a produção começar | Assumido | Reabrir em qualquer momento | Assumida — confirmar no G1 |
