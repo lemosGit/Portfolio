@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M1-02 Definir as personas dos novos serviços | #12 | `docs/01-requisitos/personas.md` |
-| ⏭️ Próxima | M1-03 Especificar os RF do Académico | #13 | `docs/01-requisitos/requisitos-funcionais.md` |
+| ✅ Última feita | M1-03 Especificar os RF do Académico | #13 | `docs/01-requisitos/requisitos-funcionais.md` (RF-10) |
+| ⏭️ Próxima | M1-04 Especificar os RF do Design | #14 | `docs/01-requisitos/requisitos-funcionais.md` (RF-20) |
 | ❓ Perguntas em aberto | Datas das milestones (depois do G1) · D-005 no G1 · PNG do diagrama de contexto por gerar | | |
 <!-- ESTADO:FIM -->
 
@@ -22,3 +22,4 @@
 |------|--------|-------|--------|-------------|
 | 2026-11-23 | M1-01 | #11 | Visão e âmbito (Q-005…Q-007, D-009…D-011; issues M5-09/M5-11/M5-12 atualizadas) | `docs/01-requisitos/visao-modulos.md`, `docs/01-requisitos/src/contexto-modulos.mmd` |
 | 2026-11-23 | M1-02 | #12 | Personas PER-01…PER-05 (Q-008…Q-011, D-012; issues M1-02/M6-03/M7-02 atualizadas) | `docs/01-requisitos/personas.md` |
+| 2026-11-23 | M1-03 | #13 | RF-10 Académico: 36 RF (Q-012…Q-015, D-013…D-016; issues M5-09/M6-04/M6-06 atualizadas) | `docs/01-requisitos/requisitos-funcionais.md` |
