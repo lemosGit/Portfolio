@@ -44,3 +44,9 @@
 | D-039 | 2026-11-23 | Todos os emails de aviso ao cliente e ao admin, incluindo o lembrete de 2 dias e o envio do link por email, são Should | Q-033 | Must; só os do admin | Aprovada |
 | D-040 | 2026-11-23 | Páginas públicas dos serviços Académico e Design ficam Should | Q-034 | Must; Won't | Aprovada |
 | D-041 | 2026-11-23 | 36 user stories, uma por passo do fluxo, geradas com a rastreabilidade por `scripts/gerar_us.py` | Q-035 | Uma por RF; só fluxos críticos | Aprovada |
+| D-042 | 2026-11-23 | `project_phases` copia nome, ordem, descrição e flags do modelo e guarda a ligação (`template_id`, on delete set null) | Q-042 | Referência viva ao modelo | Aprovada |
+| D-043 | 2026-11-23 | Histórico em `phase_events` (só inserção); dias de espera e prazo ajustado calculados a partir dele | Q-043 | Contadores na fase | Aprovada |
+| D-044 | 2026-11-23 | Prazo principal em `projects.due_on` (nunca reescrito); `project_phases.due_on` opcional | Q-044 | Só o projeto; todas as fases | Aprovada |
+| D-045 | 2026-11-23 | As fases são copiadas por trigger `after insert on projects`, na mesma transação | Q-045 | Server Action do admin | Aprovada |
+| D-046 | 2026-11-23 | "Atrasada" automática é calculada na leitura (due_on ultrapassado) sem mudar a linha; o admin também pode gravar `atrasada` | Assumido | Job diário que grava o estado | Assumida |
+| D-047 | 2026-11-23 | `projects.status` ganha `cancelado`; `completed_at` e `cancelled_at` preenchidos por trigger | RF-30.06, RN-08 | Tabela de estados do projeto | Assumida |

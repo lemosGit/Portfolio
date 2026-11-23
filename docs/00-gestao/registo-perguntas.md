@@ -45,6 +45,11 @@
 | Q-039 | 2026-11-23 | M1 (G1) | Confirma os valores assumidos (50%, 10 por fase, 7 dias, gatilhos, 30 dias, horário ao fim de semana, 5 links/h)? | Sim, todos | D-018, D-024, D-025, D-029, D-030, D-032, D-036 |
 | Q-040 | 2026-11-23 | M1 (G1) | Aprova os requisitos da v1.1? | Aprovado | actas/G1-requisitos.md |
 | Q-041 | 2026-11-23 | M1 (G1) | Como integrar os PRs da M1 na main? | Merge em cadeia pelo Claude, com confirmação antes de executar | PRs #84…#92 |
+| Q-042 | 2026-11-23 | M2 | Mudar o modelo de fases afeta os projetos existentes? | Não: cada projeto guarda uma cópia, ligada ao modelo | D-042, mer/fases-servicos.md §3.3 |
+| Q-043 | 2026-11-23 | M2 | Como guardar as mudanças de estado das fases? | Tabela de eventos `phase_events` | D-043, §3.4, §6 |
+| Q-044 | 2026-11-23 | M2 | Cada fase tem data-limite? | Só o projeto tem prazo; cada fase pode ter uma data opcional | D-044, §3.3 |
+| Q-045 | 2026-11-23 | M2 | Quem cria as fases de um projeto novo? | A base de dados, por trigger | D-045, §5 (B1) |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
+Permissão negada: `npx @mermaid-js/mermaid-cli` para gerar `docs/02-modelagem/img/mer-fases.png` (M2-01, 2026-11-23). A fonte `.mmd` fica no repositório.
