@@ -8,5 +8,8 @@
 | Q-002 | 2026-11-23 | M1 | Pagamentos, Aprovações, Ficheiros e Link mágico entram no roteiro? | Sim, como fundação partilhada pelos 3 serviços | D-002, milestone M5 |
 | Q-003 | 2026-11-23 | M1 | Que módulo sai primeiro? | Académico primeiro | D-003, M6 antes de M7 |
 | Q-004 | 2026-11-23 | M4 | Paleta do documento (#0B0F1A/#7C3AED) ou design system atual? | Manter a base atual (ameixa + lavanda), só acentos por serviço | D-004, M3-04, M4-06, M5-04 |
+| Q-005 | 2026-11-23 | M1 | O que faz o bloco Pagamentos (a spec v1.2 punha-os fora de âmbito)? | Só mostrar; registo manual pelo admin, pagamento fora do portal | D-009, M5-11, visao-modulos.md §5.1 |
+| Q-006 | 2026-11-23 | M1 | O cliente pode enviar ficheiros no briefing e na revisão? | Sim, nas fases de briefing e revisão | D-010, M5-09, M3-03 |
+| Q-007 | 2026-11-23 | M1 | Como chega o link mágico ao cliente? | O admin copia ou usa "Abrir no WhatsApp" (wa.me), e há envio opcional por email (Resend) | D-011, M3-02, M5-12 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.

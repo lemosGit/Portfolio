@@ -183,16 +183,16 @@ task("M5-08", "Gerir as fases do projeto no admin", "feature", ["frontend", "bac
      ac=["Avançar/recuar fase, marcar a aguardar o cliente/atrasada", "Nota visível ao cliente por fase", "Prazo por fase opcional",
          "Email ao cliente quando a fase muda (Resend)"])
 task("M5-09", "Implementar o bloco Ficheiros", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
-     ent="Admin: upload por fase · Cliente: lista e download por URL assinada",
-     ac=["Limite de tamanho e tipos validados no servidor", "O cliente nunca vê ficheiros de outro projeto (teste)", "Versões ordenadas por data"])
+     ent="Admin: upload por fase · Cliente: download por URL assinada e upload de referências no briefing e na revisão (D-010)",
+     ac=["Cliente só carrega nas fases de briefing e revisão", "Limite de tamanho e tipos validados no servidor", "O cliente nunca vê ficheiros de outro projeto (teste)", "Versões ordenadas por data"])
 task("M5-10", "Implementar o bloco Aprovações", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin cria pedido · Cliente aprova ou pede alterações com comentário",
      ac=["Aprovação irreversível pelo cliente (só o admin reabre)", "Pendentes em destaque na visão geral", "Histórico com data e autor"])
 task("M5-11", "Implementar o bloco Pagamentos", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin regista sinal/restante/extra · Cliente vê valores e estado",
-     ac=["Valores em Kz", "Estados pendente/pago/atrasado com cores de estado", "Sem pagamento online nesta versão (registo manual)"])
+     ac=["Valores em Kz", "Estados pendente/pago/atrasado com cores de estado", "Sem pagamento online nesta versão (registo manual, D-009)"])
 task("M5-12", "Gerar e enviar o link mágico pelo admin", "feature", ["backend", "frontend"], "must", "M", ["M3-02", "M5-06"],
-     ent="Admin: botão 'Gerar link' (copiar para WhatsApp / enviar por email) · rota de entrada no portal",
+     ent="Admin: botão 'Gerar link' com Copiar, Abrir no WhatsApp (wa.me) e Enviar por email (D-011) · rota de entrada no portal",
      ac=["Uso único e validade conforme RNF", "Ecrã de link expirado/usado", "Login por email + senha continua a funcionar", "Evento registado (quem gerou, quando)"])
 task("M5-13", "Testar as políticas RLS das novas tabelas", "test", ["database", "qa"], "must", "S", ["M5-03"],
      ent="`supabase/tests/` ou script em `scripts/`",

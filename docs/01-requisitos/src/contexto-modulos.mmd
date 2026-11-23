@@ -1,0 +1,29 @@
+flowchart LR
+  ADM["PER-01 Admin GeniusFrela"]
+  TECH["PER-02 Cliente<br/>Desenvolvimento"]
+  ACA["PER-03 Cliente<br/>Académico"]
+  DES["PER-04 Cliente<br/>Design"]
+  VIS["Visitante"]
+
+  subgraph SYS["Portal GeniusFrela · joao-pereira.dev (Next.js na Vercel)"]
+    PUB["Portal público<br/>serviços · portfólio · contacto"]
+    AREA["Área do Cliente<br/>layout por service_type"]
+    PAINEL["Painel /admin"]
+  end
+
+  SB[("Supabase<br/>Auth · Postgres + RLS · Storage")]
+  GH["GitHub<br/>milestones e issues"]
+  RS["Resend<br/>email"]
+  WA["WhatsApp<br/>(manual, wa.me)"]
+
+  VIS --> PUB
+  PUB -- "Fale connosco" --> WA
+  ADM --> PAINEL
+  TECH & ACA & DES -- "link mágico ou credenciais" --> AREA
+  PAINEL -- "Abrir no WhatsApp" --> WA
+  WA -. "link mágico" .-> TECH & ACA & DES
+  AREA <--> SB
+  PAINEL <--> SB
+  AREA -- "fases (só Desenvolvimento)" --> GH
+  PAINEL -- "avisos e link mágico" --> RS
+  RS -. email .-> TECH & ACA & DES

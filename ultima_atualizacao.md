@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M0 — Labels, 9 milestones, 73 issues e quadro criados | — | https://github.com/users/lemosGit/projects/9 |
-| ⏭️ Próxima | M1-01 Registar a visão e o âmbito dos módulos | #11 | `docs/01-requisitos/visao-modulos.md` |
-| ❓ Perguntas em aberto | Datas-limite das milestones (depois do G1) · D-005 (6 vs 7 fases do Tech) a confirmar no G1 | | |
+| ✅ Última feita | M1-01 Registar a visão e o âmbito dos módulos | #11 | `docs/01-requisitos/visao-modulos.md` |
+| ⏭️ Próxima | M1-02 Definir as personas dos novos serviços | #12 | `docs/01-requisitos/personas.md` |
+| ❓ Perguntas em aberto | Datas das milestones (depois do G1) · D-005 no G1 · PNG do diagrama de contexto por gerar | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -16,3 +16,8 @@
 | 2026-11-23 | M0 | — | Perguntas Q-001…Q-004 e decisões D-001…D-008 | `docs/00-gestao/registo-perguntas.md`, `docs/00-gestao/decisoes.md` |
 | 2026-11-23 | M0 | — | Backlog e scripts do GitHub (dry-run OK) | `scripts/tarefas.py`, `scripts/criar_issues.py`, `scripts/setup-github.sh`, `scripts/criar_quadro.py` |
 | 2026-11-23 | M0 | — | GitHub: 37 labels novas, 9 milestones, 73 issues com dependências, quadro #9 (contagens verificadas) | `scripts/setup-github.sh`, `criar_issues.py`, `criar_quadro.py` |
+
+## 🗒️ Registo — M1 Requisitos
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-23 | M1-01 | #11 | Visão e âmbito (Q-005…Q-007, D-009…D-011; issues M5-09/M5-11/M5-12 atualizadas) | `docs/01-requisitos/visao-modulos.md`, `docs/01-requisitos/src/contexto-modulos.mmd` |
