@@ -1,10 +1,10 @@
 # Requisitos funcionais — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.2 (RF-10, RF-20, RF-30) · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.3 (RF-10, RF-20, RF-30; prioridades revistas na M1-08) · Data: 2026-11-23
 > Depende de: `visao-modulos.md`, `personas.md`, `docs/references/1/GeniusFrela_Projeto_e_Layouts.md` §5.2 e §5.3 · Perguntas/decisões usadas: Q-005, Q-006, Q-008…Q-010, Q-012…Q-023, D-001, D-002, D-004, D-009…D-027
 
 ## Convenções
 - **Grupos:** RF-10 Académico · RF-20 Design (M1-04) · RF-30 Blocos comuns (M1-05).
-- **Prioridade** é provisória. A versão final sai da M1-08 (MoSCoW).
+- **Prioridade** revista na M1-08 com o critério de D-038 (Must = o piloto não chega ao fim sem isto, ou há risco de segurança ou de dinheiro). Ver `priorizacao-moscow.md`.
 - **Origem:** `L§x` = documento de layouts · `Q-NNN` = resposta registada · `PER` = implicação das personas.
 - Os RF que dependem de um bloco comum (Pagamentos, Aprovações, Ficheiros) remetem para o RF-30 correspondente.
 
@@ -26,7 +26,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-10.10 | O admin deve registar a **ficha do trabalho**: tema, tipo (trabalho escolar, universitário, relatório, formatação, revisão), nível de ensino, instituição, disciplina, normas (ex.: APA), nº de páginas e prazo | PER-01 | Must | L§5.2 |
-| RF-10.11 | O cliente deve ver a ficha do trabalho atrás de "ver detalhes", não na primeira vista | PER-03, PER-05 | Must | L§5.2, `docs/melhorar_designer.txt` |
+| RF-10.11 | O cliente deve ver a ficha do trabalho atrás de "ver detalhes", não na primeira vista | PER-03, PER-05 | Should | L§5.2, `docs/melhorar_designer.txt` |
 | RF-10.12 | O cliente deve poder carregar ficheiros de referência (enunciado, normas da instituição, bibliografia, modelos) durante a fase 1 → RF-30 Ficheiros | PER-03, PER-05 | Must | Q-006, D-010 |
 | RF-10.13 | O cliente deve poder assinalar um erro na ficha (ex.: prazo errado) por mensagem ligada à fase 1 | PER-03 | Should | L§4 (Mensagens) |
 
@@ -52,12 +52,12 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 | RF-10.40 | O admin deve marcar cada capítulo como por iniciar, em curso ou concluído | PER-01 | Must | L§5.2 |
 | RF-10.41 | O cliente deve ver o progresso como **"X de Y capítulos"** e a % da fase calculada pelos capítulos | PER-03 | Must | L§5.2 |
 | RF-10.42 | O cliente vê **só o estado** dos capítulos. Os ficheiros com o texto não ficam disponíveis antes da entrega final | PER-03 | Must | Q-013, D-015 |
-| RF-10.43 | Sem capítulos, o progresso mostrado é o da fase (o admin define a % ou só o estado) | PER-05 | Must | PER, D-014 |
+| RF-10.43 | Sem capítulos, o progresso mostrado é o da fase (o admin define a % ou só o estado) | PER-05 | Should | PER, D-014 |
 
 ### RF-10.5 Revisão e formatação (fase 5)
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
-| RF-10.50 | O cliente deve ver que o documento está em revisão e que normas estão a ser aplicadas (da ficha) | PER-03 | Must | L§5.2 |
+| RF-10.50 | O cliente deve ver que o documento está em revisão e que normas estão a ser aplicadas (da ficha) | PER-03 | Should | L§5.2 |
 | RF-10.51 | O cliente pode carregar ficheiros de referência adicionais nesta fase (ex.: indicações do orientador) → RF-30 Ficheiros | PER-03 | Should | D-010 |
 
 ### RF-10.6 Entrega final (fase 6)
@@ -65,7 +65,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 |---|---|---|---|---|
 | RF-10.60 | O admin deve carregar o ficheiro final em **PDF e em Word** → RF-30 Ficheiros | PER-01 | Must | Q-015 |
 | RF-10.61 | Os ficheiros finais só ficam disponíveis ao cliente depois de o admin registar o **restante como pago** | PER-01, PER-03 | Must | Q-012, D-013 |
-| RF-10.62 | Antes do pagamento do restante, o cliente vê "Entrega pronta, falta pagar o restante" com o valor | PER-03, PER-05 | Must | Q-012 |
+| RF-10.62 | Antes do pagamento do restante, o cliente vê "Entrega pronta, falta pagar o restante" com o valor | PER-03, PER-05 | Should | Q-012 |
 | RF-10.63 | O cliente deve receber um email quando a entrega fica disponível | PER-03 | Should | `lib/email` (existente) |
 | RF-10.64 | Ao disponibilizar a entrega, o sistema regista a **data de entrega**, que inicia o prazo de ajustes | PER-01 | Must | Q-014 |
 
@@ -74,7 +74,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 |---|---|---|---|---|
 | RF-10.70 | O admin deve definir, por projeto, o **nº de dias de ajustes** após a entrega (por omissão 7) | PER-01 | Must | Q-014, D-016 |
 | RF-10.71 | O cliente deve ver quantos dias de ajustes restam e poder **pedir um ajuste** com descrição e ficheiro opcional | PER-03, PER-05 | Must | L§5.2, Q-014 |
-| RF-10.72 | Depois do prazo de ajustes, o botão é substituído por "Prazo de ajustes terminado — fale connosco", que abre as mensagens | PER-03 | Must | RN (M1-07) |
+| RF-10.72 | Depois do prazo de ajustes, o botão é substituído por "Prazo de ajustes terminado — fale connosco", que abre as mensagens | PER-03 | Should | RN (M1-07) |
 | RF-10.73 | O admin deve poder carregar uma nova versão (PDF + Word) em resposta a um ajuste. Fica como versão nova, sem apagar a anterior | PER-01 | Must | RF-30 Ficheiros |
 | RF-10.74 | O admin deve poder dar o projeto como **concluído**. Sem ação, o projeto conclui-se sozinho quando o prazo de ajustes termina sem pedidos abertos | PER-01 | Should | Assumido (D-016) |
 
@@ -83,7 +83,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 |---|---|---|---|---|
 | RF-10.80 | O cliente deve ver, em destaque na primeira vista, os **dias restantes até ao prazo** de entrega | PER-03, PER-05 | Must | L§5.2 |
 | RF-10.81 | Com menos de 2 dias, a contagem deve passar a **horas** | PER-05 | Should | PER (prazos curtos) |
-| RF-10.82 | A cor muda para "a aguardar" (`#EAB308`) a ≤ 3 dias e para "atrasado" (`#EF4444`) depois do prazo, com o fuso Africa/Luanda | PER-03, PER-05 | Must | L§6, M6-02 |
+| RF-10.82 | A cor muda para "a aguardar" (`#EAB308`) a ≤ 3 dias e para "atrasado" (`#EF4444`) depois do prazo, com o fuso Africa/Luanda | PER-03, PER-05 | Should | L§6, M6-02 |
 | RF-10.83 | Depois da entrega final, a contagem do prazo dá lugar à contagem dos dias de ajustes (RF-10.71) | PER-03 | Should | Q-014 |
 
 ---
@@ -101,14 +101,14 @@ Fluxo: **1** Briefing → **2** Orçamento e sinal → **3** Conceito / esboço 
 | RF-20.02 | O cliente deve ver, no topo, a etiqueta "Design" na cor do serviço (magenta), o tipo de peça e a data do evento, se existir | PER-04 | Must | L§4, L§5.3 |
 | RF-20.03 | O cliente deve ver a barra de fases com as 7 fases e o estado de cada uma (concluída, em curso, a aguardar o cliente, atrasada, por iniciar) | PER-04 | Must | L§4, L§6 |
 | RF-20.04 | O cliente deve ver a fase atual com uma frase curta e **um só botão** para o próximo passo (comentar, aprovar, pagar ou levantar) | PER-04 | Must | L§4, PER |
-| RF-20.05 | A primeira vista do cliente deve mostrar, por esta ordem: a **última prova em grande**, a ronda ("Ronda 1 de 2"), o botão do próximo passo e a data e o local de levantamento | PER-04 | Must | PER-04 ("O que vê primeiro") |
+| RF-20.05 | A primeira vista do cliente deve mostrar, por esta ordem: a **última prova em grande**, a ronda ("Ronda 1 de 2"), o botão do próximo passo e a data e o local de levantamento | PER-04 | Should | PER-04 ("O que vê primeiro") |
 
 ### RF-20.1 Briefing e ficha técnica (fase 1)
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-20.10 | O admin deve registar a **ficha técnica** da peça: tipo (logótipo e identidade, convite digital, convite impresso, lona, camisola, outro), medidas, material, quantidade, acabamento, textos a incluir e data do evento (opcional) | PER-01 | Must | L§5.3 |
 | RF-20.11 | A ficha técnica deve indicar se a peça tem **impressão** e se tem **ficheiros digitais** a entregar | PER-01 | Must | Q-019, D-020 |
-| RF-20.12 | O cliente deve ver a ficha técnica atrás de "ver detalhes", não na primeira vista | PER-04 | Must | `docs/melhorar_designer.txt` |
+| RF-20.12 | O cliente deve ver a ficha técnica atrás de "ver detalhes", não na primeira vista | PER-04 | Should | `docs/melhorar_designer.txt` |
 | RF-20.13 | O cliente deve poder carregar referências (fotos, textos, nomes, cores, logótipos) durante a fase 1 → RF-30 Ficheiros | PER-04 | Must | Q-006, D-010 |
 | RF-20.14 | O cliente deve poder assinalar um erro na ficha (ex.: nome ou data errados) por mensagem ligada à fase 1 | PER-04 | Should | L§4 (Mensagens) |
 
@@ -142,13 +142,14 @@ Fluxo: **1** Briefing → **2** Orçamento e sinal → **3** Conceito / esboço 
 | RF-20.51 | Antes de confirmar, o sistema mostra o **aviso de irreversibilidade** ("Depois de aprovar, a produção não pode ser alterada") e repete os textos-chave da ficha (nomes, data, quantidade) para o cliente verificar | PER-04 | Must | L§5.3, D-021 |
 | RF-20.52 | O sistema regista a aprovação com a data, a hora, o autor e a **versão aprovada** (ex.: V3). A partir daí não se aceitam comentários nem novas rondas | PER-01 | Must | O2 (visão) |
 | RF-20.53 | Só o admin pode **reabrir** uma aprovação (ex.: o cliente detetou um erro antes de imprimir), com motivo obrigatório, que fica no histórico | PER-01 | Should | PER-01 (permissões), D-022 |
+| RF-20.54 | A reabertura de uma arte aprovada fica **bloqueada** depois de a produção começar | PER-01 | Should | RN-43, D-037 |
 
 ### RF-20.6 Produção / impressão (fase 6)
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-20.60 | A produção só pode começar depois de a arte estar aprovada **e** o **restante registado como pago**. Antes disso, o próximo passo do cliente mostra "Pagar o restante" com o valor (incluindo extras) | PER-01, PER-04 | Must | Q-017, D-018 |
 | RF-20.61 | O admin deve atualizar o estado da produção (a imprimir, pronto) e o cliente vê esse estado com uma frase curta | PER-01, PER-04 | Must | L§5.3 |
-| RF-20.62 | Peças sem impressão (ex.: convite digital, logótipo) saltam a fase 6, que fica "não aplicável" | PER-04 | Must | Q-019, D-020 |
+| RF-20.62 | Peças sem impressão (ex.: convite digital, logótipo) saltam a fase 6, que fica "não aplicável" | PER-04 | Should | Q-019, D-020 |
 
 ### RF-20.7 Entrega / levantamento (fase 7)
 | Código | Descrição | Persona | Prioridade | Origem |
@@ -180,20 +181,22 @@ Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvim
 | RF-30.03 | Em Académico e Design, o sistema cria as fases do projeto a partir do **modelo de fases** do serviço (nome, ordem, descrição curta) | PER-01 | Must | D-001, Q-001 |
 | RF-30.04 | O admin deve poder avançar uma fase, marcá-la como "a aguardar o cliente", "atrasada" ou "não aplicável", e escrever o **próximo passo** visível ao cliente | PER-01 | Must | L§4, RF-10.33, RF-20.62 |
 | RF-30.05 | O Desenvolvimento continua a ler as fases dos milestones do GitHub, sem alterações | PER-02 | Must | D-001, D-005 |
+| RF-30.06 | O admin deve poder marcar um projeto como **cancelado**. O sinal não é devolvido e o registo mantém-se. Junto ao botão "Aceitar" do orçamento, o cliente vê a regra do sinal não reembolsável | PER-01, PER-03, PER-04 | Must | RN-13, D-033 |
+| RF-30.07 | Enquanto a fase está "a aguardar o cliente", o sistema conta esses dias e **desliza o prazo de entrega**; o cliente vê a nova data e o motivo | PER-01, PER-03, PER-04 | Should | RN-21…23, D-034 |
 
 ### RF-30.1 Esqueleto comum e tema
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-30.10 | Todas as Áreas do Cliente partilham o mesmo esqueleto: etiqueta do serviço · prazo · estado · barra de fases · fase atual + próximo passo · blocos | PER-02, PER-03, PER-04 | Must | L§4 |
-| RF-30.11 | A cor de destaque (`--accent`, `--accent-2`) muda conforme o tipo de serviço, sobre a base visual atual | PER-02, PER-03, PER-04 | Must | D-004 |
-| RF-30.12 | A primeira vista mostra pouco texto. Os pormenores ficam atrás de "ver detalhes" | PER-03, PER-04 | Must | `docs/melhorar_designer.txt` |
+| RF-30.11 | A cor de destaque (`--accent`, `--accent-2`) muda conforme o tipo de serviço, sobre a base visual atual | PER-02, PER-03, PER-04 | Should | D-004 |
+| RF-30.12 | A primeira vista mostra pouco texto. Os pormenores ficam atrás de "ver detalhes" | PER-03, PER-04 | Should | `docs/melhorar_designer.txt` |
 | RF-30.13 | Um cliente com vários projetos (ex.: várias peças de Design) alterna entre eles no seletor de projetos atual | PER-04 | Must | D-019, PR #3 |
 
 ### RF-30.2 Pagamentos
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-30.20 | O admin deve registar os pagamentos de um projeto: tipo (**sinal**, **restante**, **extra**), descrição, valor em Kz e **data limite** opcional | PER-01 | Must | D-009, Q-023 |
-| RF-30.21 | Cada pagamento tem o estado **pendente**, **pago** ou **em atraso**. O estado passa a "em atraso" sozinho depois da data limite (fuso Africa/Luanda) | PER-01, PER-03, PER-04 | Must | Q-023, D-026 |
+| RF-30.21 | Cada pagamento tem o estado **pendente**, **pago** ou **em atraso**. O estado passa a "em atraso" sozinho depois da data limite (fuso Africa/Luanda) | PER-01, PER-03, PER-04 | Should | Q-023, D-026 |
 | RF-30.22 | O admin marca um pagamento como pago com a **data do pagamento**. Pode desfazer essa marcação se se enganar, e a alteração fica no histórico | PER-01 | Must | D-009 |
 | RF-30.23 | O cliente vê só a leitura dos pagamentos: total, pago, em falta e a lista com o estado de cada um. Não há pagamento nem comprovativo no portal | PER-02, PER-03, PER-04 | Must | D-009 |
 | RF-30.24 | Um pagamento pendente que bloqueia uma fase (RF-10.23, RF-10.61, RF-20.23, RF-20.60) aparece como **próximo passo do cliente** ("Pagar o sinal", "Pagar o restante") com o valor | PER-03, PER-04 | Must | D-013, D-018 |
@@ -228,7 +231,7 @@ Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvim
 |---|---|---|---|---|
 | RF-30.50 | O admin deve gerar um **link mágico** para o cliente de um projeto, em ≤ 2 cliques a partir do projeto | PER-01 | Must | D-011, PER-01 |
 | RF-30.51 | O link é de **uso único** e **expira em 24 horas**. Um link expirado ou já usado mostra "Este link já não é válido — peça um novo" com o botão do WhatsApp | PER-01, PER-03, PER-04 | Must | Q-020, D-023 |
-| RF-30.52 | O admin pode **Copiar** o link, **Abrir no WhatsApp** (`wa.me` com a mensagem e o link já preenchidos) ou **Enviar por email** (Resend) | PER-01 | Must | D-011 |
+| RF-30.52 | O admin pode **Copiar** o link, **Abrir no WhatsApp** (`wa.me` com a mensagem e o link já preenchidos) ou **Enviar por email** (Resend; o envio por email é Should, D-039) | PER-01 | Must | D-011 |
 | RF-30.53 | Ao abrir o link, o cliente entra direto na Área do Cliente do projeto e fica com **sessão longa** no telemóvel. **Não é obrigatório** definir uma senha | PER-03, PER-04 | Must | Q-020, D-023 |
 | RF-30.54 | O cliente pode **definir uma senha opcional** nas definições, para entrar depois com email e senha | PER-02, PER-03, PER-04 | Should | D-011 |
 | RF-30.55 | O acesso por **email + senha temporária** com troca no 1.º acesso continua a funcionar como alternativa | PER-02 | Must | D-011, spec §4 |
@@ -241,4 +244,6 @@ Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvim
 | RF-30.60 | As mensagens assíncronas atuais passam a existir nos 3 serviços. Em Académico e Design, uma mensagem pode ser **geral** ou **sobre uma fase** | PER-02, PER-03, PER-04 | Must | spec §5.5, L§4 |
 | RF-30.61 | O cliente recebe email (Resend) quando: há resposta a uma mensagem, uma aprovação lhe é pedida, um pagamento fica pendente ou um ficheiro novo é disponibilizado | PER-02, PER-03, PER-04 | Should | `lib/email` (existente) |
 | RF-30.62 | O admin recebe email quando o cliente envia uma mensagem, um ficheiro ou responde a uma aprovação | PER-01 | Should | spec §5.5 ("por fazer") |
+| RF-30.63 | Fora do horário de atendimento (08h00–20h00, todos os dias), a página de mensagens mostra: *"Entraremos em contacto assim que o horário de abertura estiver disponível."* | PER-02, PER-03, PER-04 | Should | RN-51/52, D-036 |
+| RF-30.64 | Com uma ação do cliente pendente há 2 dias, o cliente recebe um **lembrete** por email | PER-03, PER-04 | Should | RN-22, D-034 |
 

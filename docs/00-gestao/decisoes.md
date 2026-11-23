@@ -40,3 +40,7 @@
 | D-035 | 2026-11-23 | Ajuste/revisão incluído = cumprir a ficha; mudar tema, páginas, peça, medidas ou conceito = trabalho novo | Q-030 | Tudo incluído; admin decide | Aprovada |
 | D-036 | 2026-11-23 | Atendimento todos os dias, 08h00–20h00; fora de horas, aviso "Entraremos em contacto assim que o horário de abertura estiver disponível." (substitui seg–sex 18h–21h) | Q-031 | — | Aprovada (mesmo horário ao fim de semana assumido) |
 | D-037 | 2026-11-23 | Reabrir uma arte aprovada só antes de a produção começar | Assumido | Reabrir em qualquer momento | Assumida — confirmar no G1 |
+| D-038 | 2026-11-23 | Must = o piloto não termina sem isto, ou há risco de segurança ou de dinheiro; 12 RF passam de Must a Should (94 → 83 Must) | Q-032 | Manter; só o caminho feliz | Aprovada |
+| D-039 | 2026-11-23 | Todos os emails de aviso ao cliente e ao admin, incluindo o lembrete de 2 dias e o envio do link por email, são Should | Q-033 | Must; só os do admin | Aprovada |
+| D-040 | 2026-11-23 | Páginas públicas dos serviços Académico e Design ficam Should | Q-034 | Must; Won't | Aprovada |
+| D-041 | 2026-11-23 | 36 user stories, uma por passo do fluxo, geradas com a rastreabilidade por `scripts/gerar_us.py` | Q-035 | Uma por RF; só fluxos críticos | Aprovada |
