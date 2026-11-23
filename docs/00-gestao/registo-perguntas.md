@@ -23,5 +23,9 @@
 | Q-017 | 2026-11-23 | M1 | Design: quando é pago o restante? | Antes da produção | D-018, RF-20.23/60 |
 | Q-018 | 2026-11-23 | M1 | Design: um evento com várias peças é um projeto ou vários? | Um projeto por peça | D-019, RF-20 (âmbito) |
 | Q-019 | 2026-11-23 | M1 | Design: que ficheiros finais recebe o cliente? | Depende da peça (indicado na ficha técnica) | D-020, RF-20.11/62/71 |
+| Q-020 | 2026-11-23 | M1 | Quanto tempo vale o link mágico e é preciso senha depois? | 24 h, uso único; sessão longa, senha opcional | D-023, RF-30.51/53/56, M3-02, M5-12 |
+| Q-021 | 2026-11-23 | M1 | Que limites para os ficheiros enviados pelo cliente? | 10 MB; imagens (JPG/PNG/WebP/HEIC), PDF, Word; 10 por fase | D-024, RF-30.42, M3-03, M5-09 |
+| Q-022 | 2026-11-23 | M1 | Quanto tempo ficam guardados os ficheiros de um projeto concluído? | 90 dias, depois são apagados (fica o registo) | D-025, RF-30.47/48 |
+| Q-023 | 2026-11-23 | M1 | Que estados tem cada pagamento? | Pendente / pago / em atraso, com data limite opcional | D-026, RF-30.20/21 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
