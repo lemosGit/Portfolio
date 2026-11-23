@@ -27,7 +27,7 @@ O pequeno negócio (logótipo e identidade) não tem persona própria nesta vers
 - **Quem:** o João Pereira, que faz o atendimento, a produção e a gestão sozinho.
 - **Objetivos:** atualizar o estado de um projeto em segundos, sem duplicar trabalho no WhatsApp, e ter prova escrita de aceites e aprovações.
 - **Dores:** referências e provas espalhadas por conversas, clientes a perguntar "já está?", aprovações de arte só "de boca".
-- **Contexto:** computador para produzir e telemóvel para responder. O atendimento humano é de segunda a sexta, das 18h às 21h.
+- **Contexto:** computador para produzir e telemóvel para responder. O atendimento humano é todos os dias, das 08h às 20h, incluindo fins de semana (Q-031, D-036).
 - **Permissões:** tudo. Cria clientes e projetos, escolhe o `service_type`, avança fases, envia ficheiros e provas, regista pagamentos, gera links mágicos e reabre aprovações.
 - **Precisa no painel:** lista de projetos com a fase e o próximo passo, "gerar link" em ≤ 2 cliques, upload rápido de provas.
 
