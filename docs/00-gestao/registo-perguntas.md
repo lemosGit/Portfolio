@@ -39,6 +39,12 @@
 | Q-033 | 2026-11-23 | M1 | Que prioridade têm os emails de aviso? | Should | D-039 |
 | Q-034 | 2026-11-23 | M1 | As páginas públicas do Académico e do Design entram na v1.1? | Should | D-040, #61, #71 |
 | Q-035 | 2026-11-23 | M1 | Com que detalhe se escrevem as user stories? | Uma por passo do fluxo | D-041, user-stories.md |
+| Q-036 | 2026-11-23 | M1 (G1) | D-005: o Desenvolvimento passa a 7 fases? | Não, mantém as 6 | D-005, actas/G1-requisitos.md |
+| Q-037 | 2026-11-23 | M1 (G1) | Confirma D-021, D-022 e D-037 (aprovação e reabertura da arte)? | Sim, as três | D-021, D-022, D-037 |
+| Q-038 | 2026-11-23 | M1 (G1) | Confirma D-014 (estrutura não aplicável, capítulos opcionais)? | Sim | D-014 |
+| Q-039 | 2026-11-23 | M1 (G1) | Confirma os valores assumidos (50%, 10 por fase, 7 dias, gatilhos, 30 dias, horário ao fim de semana, 5 links/h)? | Sim, todos | D-018, D-024, D-025, D-029, D-030, D-032, D-036 |
+| Q-040 | 2026-11-23 | M1 (G1) | Aprova os requisitos da v1.1? | Aprovado | actas/G1-requisitos.md |
+| Q-041 | 2026-11-23 | M1 (G1) | Como integrar os PRs da M1 na main? | Merge em cadeia pelo Claude, com confirmação antes de executar | PRs #84…#92 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

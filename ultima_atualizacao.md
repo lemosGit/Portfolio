@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M1-08 Priorizar (MoSCoW) e escrever as user stories | #18 | `priorizacao-moscow.md`, `user-stories.md`, `rastreabilidade.md` |
-| ⏭️ Próxima | M1-09 Validar os requisitos (G1) | #19 | `docs/00-gestao/actas/G1-requisitos.md` |
-| ❓ Perguntas em aberto | Datas das milestones (depois do G1) · D-005, D-014, D-021, D-022, D-037 no G1 · PNG do diagrama de contexto por gerar · R-01 Vercel Hobby (decidir na M3) | | |
+| ✅ Última feita | M1-09 Validar os requisitos (G1) — **Aprovado** | #19 | `docs/00-gestao/actas/G1-requisitos.md` |
+| ⏭️ Próxima | M2-01 Modelar o service_type e as fases como dados | #20 | `docs/02-modelagem/` |
+| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG do diagrama de contexto por gerar | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -28,3 +28,4 @@
 | 2026-11-23 | M1-06 | #16 | RNF: 41 RNF em 7 grupos (Q-024…Q-027, D-028…D-032), riscos R-01…R-04 | `docs/01-requisitos/requisitos-nao-funcionais.md`, `docs/00-gestao/riscos.md` |
 | 2026-11-23 | M1-07 | #17 | Regras de negócio: 38 RN (Q-028…Q-031, D-033…D-037); horário corrigido na PER-01 | `docs/01-requisitos/regras-negocio.md`, `personas.md` |
 | 2026-11-23 | M1-08 | #18 | MoSCoW (83 Must / 36 Should / 2 Could / 15 Won't), 5 RF novos, 36 US, matriz RF↔PER↔US (Q-032…Q-035, D-038…D-041) | `priorizacao-moscow.md`, `user-stories.md`, `rastreabilidade.md`, `scripts/gerar_us.py` |
+| 2026-11-23 | M1-09 | #19 | **G1 aprovado** (Q-036…Q-041); decisões assumidas confirmadas | `docs/00-gestao/actas/G1-requisitos.md` |
