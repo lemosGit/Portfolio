@@ -23,7 +23,7 @@
 | `approvals` | sim | 13 | M2-02 · §3.3 | Pedido de aprovação de uma versão concreta, com cópia fixa do que o cliente viu (D-049). |
 | `approval_responses` | sim | 8 | M2-02 · §3.4 | Respostas do cliente e reaberturas do admin; só inserção. Um trigger atualiza `approvals.status`. |
 | `deliverables` | sim | 14 | M2-02 · §3.5 | Uma versão (V1, V2…) de um objeto, com 1 ou mais ficheiros (D-048). |
-| `files` | sim | 12 | M2-02 · §3.6 | Ficheiros de uma versão, no bucket privado `project-files`. |
+| `files` | sim | 13 | M2-02 · §3.6 | Ficheiros de uma versão, no bucket privado `project-files`. |
 | `activity_log` | sim | 9 | M2-02 · §3.7 | Auditoria genérica, só inserção, lida só pelo admin (D-051). |
 | `access_links` | sim | 10 | M2-06 · `sequencia/sequencias.md` §1 | Registo dos links mágicos (RF-30.57); guarda só o SHA-256 do token (D-069). |
 | `academic_briefs` | sim | 13 | M2-03 · `mer/fichas-servico.md` §3.1 | Ficha do trabalho académico (1:1 com o projeto `academic`). |
@@ -217,11 +217,12 @@ Ficheiros de uma versão, no bucket privado `project-files`.
 | files | `id` | uuid | — | não | PK | `gen_random_uuid()` | Identificador |
 | files | `deliverable_id` | uuid | — | não | FK→deliverables.id | — | Versão (on delete cascade) |
 | files | `project_id` | uuid | — | não | FK→projects.id | — | Projeto (repetido para a RLS e o Storage) (on delete cascade) |
-| files | `storage_path` | text | ≤ 300 | não | UK | — | `{project_id}/{deliverable_id}/{file_id}.{ext}` |
+| files | `bucket` | text | enum | não | — | — | `client-uploads` (cliente) ou `project-files` (admin) (ADR-003) |
+| files | `storage_path` | text | ≤ 300 | não | UK(bucket, storage_path) | — | `{project_id}/{deliverable_id}/{file_id}.{ext}` |
 | files | `original_name` | text | ≤ 200 | não | — | — | Nome mostrado ao descarregar |
 | files | `mime_type` | text | ≤ 100 | não | — | — | Tipo; cliente: JPG, PNG, WebP, HEIC, PDF, DOC, DOCX (D-024); admin também AI, PSD, ZIP (D-054) |
 | files | `size_bytes` | bigint | — | não | — | — | Tamanho; cliente ≤ 10 MB, admin ≤ 50 MB |
-| files | `thumb_path` | text | ≤ 300 | sim | — | — | Miniatura WebP ≤ 150 KB (só imagens) |
+| files | `thumb_path` | text | ≤ 300 | sim | — | — | Pré-visualização WebP ≤ 150 KB, 1600 px, gerada no browser e validada no servidor (ADR-003) |
 | files | `width` | integer | — | sim | — | — | Largura em px (imagens) |
 | files | `height` | integer | — | sim | — | — | Altura em px (imagens) |
 | files | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
@@ -356,6 +357,7 @@ Ficha técnica da peça de Design (1:1 com o projeto `design`).
 | `design_specs.piece_type` | logotipo_identidade · convite_digital · convite_impresso · lona · camisola · outro |
 | `design_specs.production_status` | a_imprimir · pronto |
 | `access_links.channel` | copiar · whatsapp · email |
+| `files.bucket` | client-uploads · project-files |
 | `access_links.status` | ativo · usado · substituido (expirado = calculado) |
 
 ## 4. Revisão cruzada MER ↔ dicionário
@@ -369,7 +371,7 @@ Feita pelo script a cada geração. Os diagramas mostram só os atributos princi
 | `mer-blocos-comuns.mmd` | `approvals` | 12 | 13 | `requested_by` |
 | `mer-blocos-comuns.mmd` | `approval_responses` | 8 | 8 | — |
 | `mer-blocos-comuns.mmd` | `deliverables` | 11 | 14 | `title`, `notes`, `created_by` |
-| `mer-blocos-comuns.mmd` | `files` | 10 | 12 | `width`, `height` |
+| `mer-blocos-comuns.mmd` | `files` | 11 | 13 | `width`, `height` |
 | `mer-blocos-comuns.mmd` | `activity_log` | 9 | 9 | — |
 | `mer-blocos-comuns.mmd` | `access_links` | 8 | 10 | `created_by`, `created_at` |
 | `mer-fases.mmd` | `projects` | 11 | 11 | — |

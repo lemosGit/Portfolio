@@ -82,3 +82,9 @@
 | D-077 | 2026-11-24 | Se `verification_type !== "magiclink"`, a geração pára e o admin é avisado (conta por confirmar) | Spike S5 | Aceitar o link `signup` | Assumida |
 | D-078 | 2026-11-24 | *Email OTP Expiration* = 86 400 s no painel do Supabase, no checklist da release | D-023, spike | Deixar 3600 s | Assumida |
 | D-079 | 2026-11-24 | Sessão sem limite (plano gratuito); o admin corta o acesso apagando a conta ou mudando o email | Spike S4 | Plano Pro com limites | Assumida |
+| D-080 | 2026-11-24 | Dois buckets privados: `client-uploads` (10 MB, tipos do cliente) e `project-files` (50 MB, também AI/PSD/ZIP/SVG); coluna `files.bucket` | ADR-003 | Um só bucket | Assumida |
+| D-081 | 2026-11-24 | Upload direto browser → Storage com URL assinada de upload; o servidor confirma e valida (limite de 4,5 MB da Vercel) | ADR-003 | Upload pela Server Action | Assumida |
+| D-082 | 2026-11-24 | Pré-visualização WebP (1600 px, ≤ 150 KB) gerada no browser; provas do admin nunca comprimidas; fotos do cliente > 2 MB reduzidas a 2560 px | Q-065 | `sharp` no servidor; Image Transformations | Aprovada |
+| D-083 | 2026-11-24 | URLs assinadas de download válidas 15 minutos | RNF-303, D-032 | 1 h | Assumida |
+| D-084 | 2026-11-24 | Tipo real verificado por assinatura (primeiros bytes) numa tabela própria, sem dependência nova | RNF-305 | Biblioteca `file-type` | Assumida |
+| D-085 | 2026-11-24 | `/api/cron/limpeza` diário (Vercel Cron, `CRON_SECRET`): aviso aos 83 dias, purga aos 90, órfãos > 24 h, conclusão do Académico | Q-066 | pg_cron + Edge Function | Aprovada |

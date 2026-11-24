@@ -189,11 +189,12 @@ TABELAS = {
             ID(),
             c("deliverable_id", "uuid", "não", "Versão (on delete cascade)", "FK→deliverables.id"),
             PROJ("Projeto (repetido para a RLS e o Storage)"),
-            c("storage_path", "text", "não", "`{project_id}/{deliverable_id}/{file_id}.{ext}`", "UK", tam="≤ 300"),
+            c("bucket", "text", "não", "`client-uploads` (cliente) ou `project-files` (admin) (ADR-003)", tam="enum"),
+            c("storage_path", "text", "não", "`{project_id}/{deliverable_id}/{file_id}.{ext}`", "UK(bucket, storage_path)", tam="≤ 300"),
             c("original_name", "text", "não", "Nome mostrado ao descarregar", tam="≤ 200"),
             c("mime_type", "text", "não", "Tipo; cliente: JPG, PNG, WebP, HEIC, PDF, DOC, DOCX (D-024); admin também AI, PSD, ZIP (D-054)", tam="≤ 100"),
             c("size_bytes", "bigint", "não", "Tamanho; cliente ≤ 10 MB, admin ≤ 50 MB"),
-            c("thumb_path", "text", "sim", "Miniatura WebP ≤ 150 KB (só imagens)", tam="≤ 300"),
+            c("thumb_path", "text", "sim", "Pré-visualização WebP ≤ 150 KB, 1600 px, gerada no browser e validada no servidor (ADR-003)", tam="≤ 300"),
             c("width", "integer", "sim", "Largura em px (imagens)"),
             c("height", "integer", "sim", "Altura em px (imagens)"),
             CRIADO(),
@@ -318,6 +319,7 @@ ENUMS = [
     ("design_specs.piece_type", "logotipo_identidade · convite_digital · convite_impresso · lona · camisola · outro"),
     ("design_specs.production_status", "a_imprimir · pronto"),
     ("access_links.channel", "copiar · whatsapp · email"),
+    ("files.bucket", "client-uploads · project-files"),
     ("access_links.status", "ativo · usado · substituido (expirado = calculado)"),
 ]
 
