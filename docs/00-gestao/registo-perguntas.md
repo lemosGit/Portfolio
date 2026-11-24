@@ -65,6 +65,8 @@
 | Q-059 | 2026-11-24 | M2 | Como evitar que a pré-visualização do WhatsApp gaste o link de uso único? | Página com botão "Entrar"; só o POST gasta o token | D-068, sequencia/sequencias.md L2 |
 | Q-060 | 2026-11-24 | M2 | Com o link expirado, o cliente pede um novo sozinho? | Não, só pelo WhatsApp (RF-30.51 sem alterações) | sequencias.md L6 |
 | Q-061 | 2026-11-24 | M2 | Como confirma o cliente a aprovação da arte? | Caixa "Confirmo" + botão | D-071, sequencias.md A1 |
+| Q-062 | 2026-11-24 | M3 | Como se calcula a % de um projeto Académico ou Design? | Fases concluídas + parte das fases em curso, sem as "não aplicável" | D-072, ADR-001 |
+| Q-063 | 2026-11-24 | M3 | Como encaixar as fases da BD no tipo atual? | Mesmo tipo `Phase`, com campos opcionais; `ProjectView` não muda | D-073, ADR-001 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

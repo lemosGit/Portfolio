@@ -1,0 +1,11 @@
+# 03 — Arquitetura
+> Projeto: GeniusFrela — Área do Cliente multi-serviço
+
+| Ficheiro | Tarefa | Conteúdo |
+|---|---|---|
+| [`adr/ADR-001-fases-bd-vs-github.md`](adr/ADR-001-fases-bd-vs-github.md) | M3-01 (#26) | Duas fontes de fases (GitHub / BD) atrás de `PhaseSource`; % do projeto |
+| `adr/ADR-002-link-magico.md` | M3-02 (#27) | Link mágico *(por fazer)* |
+| `adr/ADR-003-ficheiros.md` | M3-03 (#28) | Armazenamento de ficheiros *(por fazer)* |
+| `adr/ADR-004-tema-por-servico.md` | M3-04 (#29) | Tema por serviço *(por fazer)* |
+| `layout-blocos.md` | M3-05 (#30) | Layout genérico por blocos *(por fazer)* |
+| `seguranca.md` | M3-06 (#31) | Matriz de segurança e RLS *(por fazer)* |

@@ -74,3 +74,7 @@
 | D-069 | 2026-11-24 | `access_links` guarda só o SHA-256 do token; um link novo substitui os anteriores | RF-30.57, RNF-306 | Guardar o token | Assumida |
 | D-070 | 2026-11-24 | Clientes criados só com link mágico ficam com `must_change_password = false` | D-023 | Pedir senha no 1.º acesso | Assumida |
 | D-071 | 2026-11-24 | Aprovação da arte: caixa "Confirmo que os nomes, a data e a quantidade estão certos" ativa o botão | Q-061 | Só o botão; escrever APROVO | Aprovada |
+| D-072 | 2026-11-24 | % Académico/Design = (fases concluídas + Σ progresso das fases em curso) / fases aplicáveis | Q-062 | Só concluídas; pesos por fase | Aprovada (ADR-001) |
+| D-073 | 2026-11-24 | `PhaseSource` (github / database) devolve `Phase[]`; `Phase` ganha campos opcionais; `ProjectView` mantém a forma | Q-063 | Tipos separados por fonte | Aprovada (ADR-001) |
+| D-074 | 2026-11-24 | Gráfico semanal, atividade recente e "precisa de si" (issues) só no Desenvolvimento | ADR-001 | Calcular a partir de `phase_events` | Assumida |
+| D-075 | 2026-11-24 | `PhaseStatus` ganha `skipped` (só a fonte BD o usa) | ADR-001 | Mostrar "não aplicável" como `done` | Assumida |
