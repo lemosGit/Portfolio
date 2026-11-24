@@ -28,9 +28,20 @@ export type Task = {
   updatedAt: string; // ISO
 };
 
-/** Fase da metodologia (agrupa um ou mais milestones do GitHub). */
+/** Tipo de serviço do projeto (projects.service_type). */
+export type ServiceType = "development" | "academic" | "design";
+
+/** Estado de uma fase guardada na BD (project_phases.status) — Académico e Design. */
+export type DbPhaseState = "por_iniciar" | "em_curso" | "aguarda_cliente" | "concluida" | "atrasada" | "nao_aplicavel";
+
+/**
+ * Fase da metodologia.
+ * - GitHub (Desenvolvimento): agrupa um ou mais milestones; number = 1–6.
+ * - BD (Académico, Design): uma linha de project_phases; number = position (1–7).
+ * Os campos opcionais no fim só são preenchidos pela fonte BD (ADR-001).
+ */
 export type Phase = {
-  number: number; // 1–6
+  number: number;
   title: string;
   description: string;
   dueOn?: string; // ISO — o due_on mais tardio dos milestones da fase
@@ -42,6 +53,13 @@ export type Phase = {
    * trabalho real. Sem este campo, a % usa apenas `tasks` (dados de exemplo).
    */
   counts?: { total: number; closedAt: string[] };
+  /* ---- só fonte BD ---- */
+  key?: string;
+  state?: DbPhaseState;
+  nextStep?: { text: string; owner: "geniusfrela" | "cliente" | null };
+  /** Progresso da fase, 0–1 (capítulos ou project_phases.progress). */
+  progress?: number;
+  clientCanUpload?: boolean;
 };
 
 export type DemoLink = {
@@ -88,16 +106,21 @@ export type Project = {
   demos: DemoLink[];
   meetings: Meeting[];
   syncedAt: string; // ISO — última leitura do GitHub
-  /** "github" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */
-  source: "github" | "exemplo" | "erro";
+  /** Por omissão "development" (os projetos e dados de exemplo anteriores à 0006). */
+  serviceType?: ServiceType;
+  /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */
+  source: "github" | "bd" | "exemplo" | "erro";
 };
 
 /* ---------- valores calculados ---------- */
 
-export type PhaseStatus = "done" | "current" | "pending";
+/** "skipped" só aparece na fonte BD (fase "não aplicável", D-075). */
+export type PhaseStatus = "done" | "current" | "pending" | "skipped";
 
 export type PhaseView = Phase & {
   status: PhaseStatus;
+  /** Fonte BD: marcada "atrasada" pelo admin, ou com a data-limite ultrapassada (D-046). */
+  late?: boolean;
   closedCount: number;
   total: number;
   percent: number;

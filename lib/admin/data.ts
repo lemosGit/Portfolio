@@ -5,10 +5,11 @@
 import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { accountsEnabled, createSupabaseAdmin } from "@/lib/supabase/admin";
-import { syncPhases, toView } from "@/lib/portal/data";
-import type { DemoLink, Meeting, ProjectView } from "@/lib/portal/types";
+import { toView } from "@/lib/portal/data";
+import { loadPhases } from "@/lib/portal/phase-source";
+import type { DemoLink, Meeting, ProjectView, ServiceType } from "@/lib/portal/types";
 
-export type ProjectStatus = "ativo" | "entregue" | "pausado";
+export type ProjectStatus = "ativo" | "entregue" | "pausado" | "cancelado";
 
 export type AccountInfo = { lastSignInAt: string | null; suspended: boolean };
 
@@ -34,6 +35,7 @@ export type AdminProject = {
   tagline: string;
   description: string;
   coverUrl: string | null;
+  serviceType: ServiceType;
   githubOwner: string | null;
   githubRepo: string | null;
   startedOn: string | null;
@@ -145,6 +147,7 @@ type ProjectRow = {
   tagline: string | null;
   description: string | null;
   cover_url: string | null;
+  service_type: ServiceType;
   github_owner: string | null;
   github_repo: string | null;
   started_on: string | null;
@@ -158,7 +161,7 @@ type ProjectRow = {
 };
 
 const PROJECT_COLS =
-  "id, slug, client_id, name, tagline, description, cover_url, github_owner, github_repo, started_on, due_on, status, phase_map, created_at, clients (name, company), demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)";
+  "id, slug, client_id, name, tagline, description, cover_url, service_type, github_owner, github_repo, started_on, due_on, status, phase_map, created_at, clients (name, company), demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)";
 
 function toProject(r: ProjectRow): AdminProject {
   return {
@@ -171,6 +174,7 @@ function toProject(r: ProjectRow): AdminProject {
     tagline: r.tagline ?? "",
     description: r.description ?? "",
     coverUrl: r.cover_url,
+    serviceType: r.service_type,
     githubOwner: r.github_owner,
     githubRepo: r.github_repo,
     startedOn: r.started_on,
@@ -211,10 +215,13 @@ export async function getProjectById(sb: SupabaseClient, id: string): Promise<Ad
   return data ? toProject(data) : undefined;
 }
 
-/** Progresso calculado a partir do GitHub, igual ao que o cliente vê. */
-export async function withProgress(p: AdminProject): Promise<ProjectView> {
+/** Progresso igual ao que o cliente vê: GitHub no Desenvolvimento, BD no Académico e no Design (ADR-001). */
+export async function withProgress(p: AdminProject, sb?: SupabaseClient): Promise<ProjectView> {
   const now = new Date().toISOString();
-  const sync = await syncPhases(p.githubOwner, p.githubRepo, p.phaseMap);
+  const sync = await loadPhases(
+    { id: p.id, serviceType: p.serviceType, githubOwner: p.githubOwner, githubRepo: p.githubRepo, phaseMap: p.phaseMap },
+    sb,
+  );
   return toView({
     id: p.id,
     slug: p.slug,
@@ -223,6 +230,7 @@ export async function withProgress(p: AdminProject): Promise<ProjectView> {
     tagline: p.tagline,
     description: p.description,
     coverUrl: p.coverUrl ?? undefined,
+    serviceType: p.serviceType,
     repo: { owner: p.githubOwner ?? "", name: p.githubRepo ?? "" },
     startedOn: p.startedOn ?? now,
     dueOn: p.dueOn ?? now,

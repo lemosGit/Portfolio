@@ -129,7 +129,7 @@ function Summary({ project }: { project: ProjectView }) {
 
 /* ---------- etapas ---------- */
 
-const STATUS_LABEL = { done: "Concluída", current: "Em curso", pending: "Por iniciar" } as const;
+const STATUS_LABEL = { done: "Concluída", current: "Em curso", pending: "Por iniciar", skipped: "Não se aplica" } as const;
 
 function Stages({ phases }: { phases: PhaseView[] }) {
   return (

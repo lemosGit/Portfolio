@@ -16,7 +16,7 @@ export default async function AdminHome() {
     upcomingMeetings(sb),
   ]);
   const active = projects.filter((p) => p.status === "ativo");
-  const views = await Promise.all(active.map(async (p) => ({ p, v: await withProgress(p) })));
+  const views = await Promise.all(active.map(async (p) => ({ p, v: await withProgress(p, sb) })));
   const awaiting = conversations.filter((c) => c.awaiting);
   const firstName = name.split(" ")[0];
 

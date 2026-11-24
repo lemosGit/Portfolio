@@ -13,7 +13,7 @@ type Props = {
   unread: number;
 };
 
-const SYNC_LABEL: Record<Exclude<Props["source"], "github">, string> = {
+const SYNC_LABEL: Record<Exclude<Props["source"], "github" | "bd">, string> = {
   exemplo: "Modo demonstração",
   erro: "Progresso indisponível",
 };
@@ -31,8 +31,8 @@ export function PageHeader({ section, eyebrow, title, subtitle, source, unread }
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        {/* A ligação ao GitHub é assunto do programador: só avisamos em modo demonstração ou se falhar. */}
-        {source !== "github" && (
+        {/* A origem dos dados é assunto do programador: só avisamos em modo demonstração ou se falhar. */}
+        {(source === "exemplo" || source === "erro") && (
           <>
             <p
               className="mr-1 flex items-center gap-2 text-xs text-ink-faint"

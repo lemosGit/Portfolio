@@ -6,7 +6,7 @@
  */
 import { emptyPhases, loadRepoPhases } from "@/lib/github/phases";
 import { clients, feedbackSeed, projects } from "./mock-data";
-import type { Client, Feedback, PhaseView, Project, ProjectView } from "./types";
+import type { Client, DbPhaseState, Feedback, PhaseView, Project, ProjectView } from "./types";
 import { now as clockNow, nowMs } from "@/lib/clock";
 
 const DAY = 86_400_000;
@@ -49,7 +49,62 @@ export async function syncPhases(
   }
 }
 
+/** Reuniões e demos: iguais nas duas fontes. */
+function meetingsAndDemos(p: Project, now: number) {
+  const sortedMeetings = [...p.meetings].sort((a, b) => +new Date(a.startsAt) - +new Date(b.startsAt));
+  const latest = (kind: "web" | "app") =>
+    p.demos
+      .filter((d) => (kind === "web" ? d.kind === "web" : d.kind !== "web"))
+      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))[0];
+  return {
+    nextMeeting: sortedMeetings.find((m) => new Date(m.endsAt).getTime() > now),
+    pastMeetings: sortedMeetings.filter((m) => new Date(m.endsAt).getTime() <= now).reverse(),
+    latestWeb: latest("web"),
+    latestApp: latest("app"),
+  };
+}
+
+const IN_PROGRESS: DbPhaseState[] = ["em_curso", "aguarda_cliente", "atrasada"];
+
+/**
+ * Fonte BD (Académico, Design) — ADR-001, tabela "Como toView() trata cada fonte".
+ * % do projeto = (fases concluídas + Σ progresso das fases em curso) / fases aplicáveis (D-072).
+ */
+function toDbView(p: Project): ProjectView {
+  const now = nowMs();
+  const today = new Date(now).toISOString().slice(0, 10);
+  const phaseViews: PhaseView[] = p.phases.map((ph) => {
+    const state = ph.state ?? "por_iniciar";
+    const status: PhaseView["status"] =
+      state === "concluida" ? "done" : state === "nao_aplicavel" ? "skipped" : IN_PROGRESS.includes(state) ? "current" : "pending";
+    const late =
+      state === "atrasada" || (!!ph.dueOn && ph.dueOn.slice(0, 10) < today && (state === "por_iniciar" || state === "em_curso"));
+    const progress = status === "done" ? 1 : (ph.progress ?? 0);
+    return { ...ph, status, late, total: 1, closedCount: status === "done" ? 1 : 0, percent: Math.round(progress * 100) };
+  });
+  const applicable = phaseViews.filter((ph) => ph.status !== "skipped");
+  const done = applicable.filter((ph) => ph.status === "done").length;
+  const partial = applicable.filter((ph) => ph.status === "current").reduce((s, ph) => s + ph.percent / 100, 0);
+  // Fase atual: a primeira, por posição, que não está concluída nem "não se aplica" (D-063).
+  const current = phaseViews.find((ph) => ph.status !== "done" && ph.status !== "skipped");
+
+  return {
+    ...p,
+    phaseViews,
+    currentPhase: current ?? phaseViews[phaseViews.length - 1],
+    total: applicable.length,
+    closedCount: done,
+    percent: applicable.length ? Math.round(((done + partial) / applicable.length) * 100) : 0,
+    weekly: [], // o gráfico semanal é só do Desenvolvimento (D-074)
+    weeklyDelta: 0,
+    recentActivity: [],
+    needsClient: [],
+    ...meetingsAndDemos(p, now),
+  };
+}
+
 export function toView(p: Project): ProjectView {
+  if ((p.serviceType ?? "development") !== "development") return toDbView(p);
   const phaseViews: PhaseView[] = p.phases.map((ph) => {
     const total = ph.counts?.total ?? ph.tasks.length;
     const closedCount = ph.counts?.closedAt.length ?? ph.tasks.filter((t) => t.state === "closed").length;
@@ -89,12 +144,6 @@ export function toView(p: Project): ProjectView {
   // (fechar uma tarefa avulsa da entrega não faz o projeto "saltar" para essa fase).
   const current = phaseViews.find((ph) => ph.status === "current");
 
-  const sortedMeetings = [...p.meetings].sort((a, b) => +new Date(a.startsAt) - +new Date(b.startsAt));
-  const latest = (kind: "web" | "app") =>
-    p.demos
-      .filter((d) => (kind === "web" ? d.kind === "web" : d.kind !== "web"))
-      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))[0];
-
   return {
     ...p,
     phaseViews,
@@ -104,15 +153,12 @@ export function toView(p: Project): ProjectView {
     percent: total ? Math.round((closedTotal / total) * 100) : 0,
     weekly,
     weeklyDelta: total ? Math.round((closedThisWeek / total) * 100) : 0,
-    nextMeeting: sortedMeetings.find((m) => new Date(m.endsAt).getTime() > now),
-    pastMeetings: sortedMeetings.filter((m) => new Date(m.endsAt).getTime() <= now).reverse(),
     recentActivity: [...all]
       .filter((t) => t.state === "closed" || t.stage === "progress" || t.stage === "review")
       .sort((a, b) => +new Date(b.closedAt ?? b.updatedAt) - +new Date(a.closedAt ?? a.updatedAt))
       .slice(0, 6),
     needsClient: all.filter((t) => t.state === "open" && t.stage === "needs-client"),
-    latestWeb: latest("web"),
-    latestApp: latest("app"),
+    ...meetingsAndDemos(p, now),
   };
 }
 

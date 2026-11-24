@@ -366,7 +366,7 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
   if ("error" in project) return project;
 
   const status = str(f, "estado");
-  if (!["ativo", "entregue", "pausado"].includes(status)) return { error: "Estado inválido." };
+  if (!["ativo", "entregue", "pausado", "cancelado"].includes(status)) return { error: "Estado inválido." };
 
   let phaseMap: Record<string, number> | null = null;
   const rawMap = str(f, "mapa");
@@ -404,15 +404,30 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
+  const { data: before } = await sb.from("projects").select("status").eq("id", id).single<{ status: string }>();
   const { error } = await sb
     .from("projects")
-    .update({ ...project, status, phase_map: phaseMap, ...coverPatch })
+    .update({ ...project, phase_map: phaseMap, ...coverPatch })
     .eq("id", id);
   if (error) {
     if (coverPatch?.cover_url) await removeCover(sb, coverPatch.cover_url);
     return { error: slugTaken(error) ? `Já existe um projeto com o slug "${project.slug}".` : `Não foi possível guardar: ${error.message}` };
   }
   if (coverPatch && oldCover) await removeCover(sb, oldCover);
+
+  // Desde a migração 0006 o estado só muda pelas transições permitidas, com motivo e histórico
+  // (estados.md §2): a BD exige o motivo para pausar, cancelar ou reabrir um projeto entregue.
+  if (before && before.status !== status) {
+    const { error: se } = await sb.rpc("admin_set_project_status", {
+      p_project: id,
+      p_status: status,
+      p_note: str(f, "motivo") || null,
+    });
+    if (se) {
+      refresh();
+      return { error: `Os dados foram guardados, mas o estado não mudou: ${se.message}` };
+    }
+  }
   refresh();
   return { ok: true, message: "Projeto guardado." };
 }

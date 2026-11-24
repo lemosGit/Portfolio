@@ -3,8 +3,9 @@
  * só recebe as linhas do seu projeto, mesmo que a consulta peça mais.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { syncPhases, toView } from "./data";
-import type { Client, DemoLink, Feedback, Meeting, Project, ProjectView } from "./types";
+import { toView } from "./data";
+import { loadPhases } from "./phase-source";
+import type { Client, DemoLink, Feedback, Meeting, Project, ProjectView, ServiceType } from "./types";
 
 type ClientRow = {
   id: string;
@@ -22,6 +23,7 @@ type ProjectRow = {
   tagline: string | null;
   description: string | null;
   cover_url: string | null;
+  service_type: ServiceType;
   github_owner: string | null;
   github_repo: string | null;
   started_on: string | null;
@@ -103,7 +105,7 @@ export async function loadPortal(
     sb
       .from("projects")
       .select(
-        "id, slug, client_id, name, tagline, description, cover_url, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
+        "id, slug, client_id, name, tagline, description, cover_url, service_type, github_owner, github_repo, started_on, due_on, team, phase_map, demo_links (id, kind, url, version, notes, created_at), meetings (id, title, starts_at, ends_at, call_url, agenda, notes)",
       )
       .eq("id", chosen.id)
       .maybeSingle<ProjectRow>(),
@@ -119,8 +121,11 @@ export async function loadPortal(
   if (!p) return { client, mustChangePassword: c.must_change_password, projects, feedback: [] };
 
   const now = new Date().toISOString();
-  // Fases e tarefas vêm do GitHub (em cache no servidor; o webhook invalida-a).
-  const sync = await syncPhases(p.github_owner, p.github_repo, p.phase_map);
+  // Fases: GitHub no Desenvolvimento (em cache; o webhook invalida-a), BD no Académico e no Design (ADR-001).
+  const sync = await loadPhases(
+    { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
+    sb,
+  );
 
   const project: Project = {
     id: p.id,
@@ -130,6 +135,7 @@ export async function loadPortal(
     tagline: p.tagline ?? "",
     description: p.description ?? "",
     coverUrl: p.cover_url ?? undefined,
+    serviceType: p.service_type,
     repo: { owner: p.github_owner ?? "", name: p.github_repo ?? "" },
     startedOn: p.started_on ?? now,
     dueOn: p.due_on ?? now,
