@@ -118,3 +118,6 @@
 | D-113 | 2026-11-24 | `lib/clock.ts`: `PORTAL_FIXED_NOW` fixa a hora nos testes (dados de exemplo e datas relativas); sem a variável é a hora real | M5-01 | Mascarar zonas nas capturas | Assumida |
 | D-114 | 2026-11-24 | Capturas de referência (`@visual`) só locais; o CI corre typecheck, Vitest e E2E de comportamento | M5-01 | Capturas no CI com contentor fixo | Assumida |
 | D-115 | 2026-11-24 | Playwright usa o Google Chrome instalado localmente e o Chromium no CI; servidor de teste em modo de demonstração (sem segredos) | M5-01 | Descarregar o Chromium localmente | Assumida |
+| D-116 | 2026-11-24 | Motivos e "a pedido do cliente" chegam aos triggers por settings da transação (`app.note`, `app.client_requested`), definidos por `admin_set_phase_status` / `admin_set_project_status` | M5-02 | Colunas temporárias; parâmetros só na aplicação | Assumida |
+| D-117 | 2026-11-24 | Migrações testadas num Postgres 17 local (Docker) com o Supabase simulado (`scripts/db-test.sh`), também no CI | M5-02 | Branches do Supabase (plano Pro) | Assumida |
+| D-118 | 2026-11-24 | Antes de cada migração em produção: exportação JSON das tabelas públicas para `~/geniusfrela-backups/` (fora do repositório) enquanto o backup semanal cifrado não tiver os segredos | Q-080 | Aplicar sem backup | Aprovada |
