@@ -107,3 +107,5 @@
 | D-102 | 2026-11-24 | Ficar no plano Hobby da Vercel por agora; risco R-01 aceite, revisto no fim de cada milestone e antes da release v1.1 | Q-072 | Vercel Pro; mudar de alojamento | Aprovada |
 | D-103 | 2026-11-24 | As referências visuais ficam em `docs/references/` (já citadas por muitos documentos); `docs/04-ux-ui/referencias.md` descreve-as | M4-01 | Mover para `docs/04-ux-ui/referencias/` | Assumida |
 | D-104 | 2026-11-24 | Hierarquia das referências: DS V1 > logótipo > documento de layouts > capturas (estas só para estrutura e tom) | Q-067 | — | Assumida |
+| D-105 | 2026-11-24 | Ações do cliente em **folhas** (bottom sheet no telemóvel, painel lateral no computador); páginas só para as 4–5 entradas do menu | M4-02 | Uma página por ação | Assumida |
+| D-106 | 2026-11-24 | Depois de uma ação, volta à Visão geral com confirmação curta; emails e WhatsApp usam links profundos para a tela certa | M4-02 | — | Assumida |

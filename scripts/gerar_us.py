@@ -239,6 +239,35 @@ US = [
 ]
 
 
+# Telas (M4-02, docs/04-ux-ui/fluxo-telas.md)
+TELAS = {
+    "TEL-01": "Login (email + senha)", "TEL-02": "Nova senha (1.º acesso)", "TEL-03": "Entrar pelo link mágico",
+    "TEL-04": "Link inválido ou expirado", "TEL-05": "Seletor de projetos", "TEL-06": "Definições da conta",
+    "TEL-10": "Visão geral — Académico", "TEL-11": "Projeto — Académico", "TEL-13": "Ficha do trabalho",
+    "TEL-14": "Pedir ajuste", "TEL-20": "Responder a uma aprovação", "TEL-21": "Pagamentos",
+    "TEL-22": "Ficheiros", "TEL-23": "Enviar ficheiros", "TEL-24": "Mensagens",
+    "TEL-30": "Visão geral — Design", "TEL-31": "Projeto — Design", "TEL-32": "Prova em ecrã inteiro / comparar",
+    "TEL-33": "Pedir revisão", "TEL-34": "Aprovar arte para produção", "TEL-35": "Ficha técnica",
+    "TEL-40": "Visão geral — Tech", "TEL-41": "Meu projeto — Tech", "TEL-42": "Entregas — Tech", "TEL-44": "Agenda — Tech",
+    "TEL-50": "Admin: lista de projetos", "TEL-51": "Admin: novo cliente e projeto", "TEL-52": "Admin: projeto e fases",
+    "TEL-53": "Admin: orçamento e pagamentos", "TEL-54": "Admin: ficheiros e provas", "TEL-55": "Admin: pedir aprovação",
+    "TEL-56": "Admin: ficha e capítulos", "TEL-57": "Admin: gerar link mágico", "TEL-58": "Admin: mensagens",
+    "TEL-59": "Admin: pedidos de ajuste",
+}
+US_TEL = {
+    "US-001": ["TEL-51"], "US-002": ["TEL-57"], "US-003": ["TEL-03", "TEL-04", "TEL-01", "TEL-02", "TEL-06"],
+    "US-004": ["TEL-10", "TEL-30", "TEL-40"], "US-005": ["TEL-52"], "US-006": ["TEL-05"], "US-007": ["TEL-52"],
+    "US-008": ["TEL-40", "TEL-41", "TEL-42", "TEL-44"], "US-009": ["TEL-53"], "US-010": ["TEL-21"],
+    "US-011": ["TEL-10", "TEL-30"], "US-012": ["TEL-20", "TEL-55"], "US-013": ["TEL-20", "TEL-55"], "US-014": ["TEL-55"],
+    "US-015": ["TEL-23"], "US-016": ["TEL-54"], "US-017": ["TEL-22"], "US-018": ["TEL-50"],
+    "US-019": ["TEL-24", "TEL-58"], "US-020": [], "US-021": ["TEL-10", "TEL-30"],
+    "US-022": ["TEL-56", "TEL-13"], "US-023": ["TEL-10"], "US-024": ["TEL-20", "TEL-56"], "US-025": ["TEL-11"],
+    "US-026": ["TEL-11", "TEL-22"], "US-027": ["TEL-14", "TEL-59"], "US-028": ["TEL-52"],
+    "US-029": ["TEL-56", "TEL-35"], "US-030": ["TEL-30"], "US-031": ["TEL-32", "TEL-31"], "US-032": ["TEL-33"],
+    "US-033": ["TEL-33", "TEL-53"], "US-034": ["TEL-34"], "US-035": ["TEL-30", "TEL-53"], "US-036": ["TEL-30", "TEL-52"],
+}
+
+
 def ler_rf():
     rf = {}
     for linha in RF_FILE.read_text().splitlines():
@@ -257,6 +286,14 @@ def main():
             usados[r].append(u[0])
     em_falta = sorted(set(rf) - set(usados))
     assert not em_falta, f"RF sem US: {em_falta}"
+    assert set(US_TEL) == {u[0] for u in US}, "US sem entrada em US_TEL"
+    tel_usadas = {t for ts in US_TEL.values() for t in ts}
+    assert tel_usadas <= set(TELAS), f"TEL desconhecidas: {tel_usadas - set(TELAS)}"
+    assert set(TELAS) <= tel_usadas, f"TEL sem US: {set(TELAS) - tel_usadas}"
+    rf_tel = defaultdict(set)
+    for u in US:
+        for r in u[9]:
+            rf_tel[r].update(US_TEL[u[0]])
 
     def prio(refs):
         ps = {rf[r][1] for r in refs}
@@ -271,7 +308,7 @@ def main():
         "## Convenções",
         "- Uma US por **passo do fluxo** (D-041). Cada US liga a vários RF; todos os RF têm pelo menos uma US.",
         "- A prioridade da US é a do RF mais alto que cobre. Os RF Should dentro de uma US Must podem ficar para o fim da milestone.",
-        "- As telas (TEL-NN) são ligadas na M4-02 (fluxo de telas).",
+        "- As telas (TEL-NN) estão em `docs/04-ux-ui/fluxo-telas.md`; \"— (email)\" = a US não tem tela própria.",
         "",
     ]
     grupo = None
@@ -285,7 +322,7 @@ def main():
             "",
             f"**Critérios:** Dado que {dado} · Quando {quando} · Então {entao}.",
             "",
-            f"Prioridade: **{prio(refs)}** · RF: {', '.join(refs)} · Tela: — (M4-02)",
+            f"Prioridade: **{prio(refs)}** · RF: {', '.join(refs)} · Tela: {', '.join(US_TEL[c]) or '— (email)'}",
             "",
         ]
     (DOCS / "user-stories.md").write_text("\n".join(out))
@@ -293,14 +330,14 @@ def main():
     t = [
         "# Rastreabilidade — RF ↔ PER ↔ US ↔ TEL",
         f"> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M1-08] · Issue: #18 · Versão: 1.0 · Data: {HOJE}",
-        "> Gerado por `scripts/gerar_us.py`. A coluna TEL é preenchida na M4-02 e verificada na M9.",
+        "> Gerado por `scripts/gerar_us.py`. TEL definidas em `docs/04-ux-ui/fluxo-telas.md` (M4-02); verificadas na M9.",
         "",
         "| RF | Prioridade | Persona | US | TEL |",
         "|---|---|---|---|---|",
     ]
     for r in sorted(rf):
-        t.append(f"| {r} | {rf[r][1]} | {rf[r][0]} | {', '.join(usados[r])} | — |")
-    t += ["", f"Total: {len(rf)} RF · {len(US)} US · RF sem US: 0"]
+        t.append(f"| {r} | {rf[r][1]} | {rf[r][0]} | {', '.join(usados[r])} | {', '.join(sorted(rf_tel[r])) or '— (email)'} |")
+    t += ["", f"Total: {len(rf)} RF · {len(US)} US · {len(TELAS)} TEL · RF sem US: 0 · TEL sem US: 0"]
     (DOCS / "rastreabilidade.md").write_text("\n".join(t) + "\n")
     print(f"{len(US)} US, {len(rf)} RF cobertos")
 
