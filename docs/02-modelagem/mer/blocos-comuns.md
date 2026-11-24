@@ -1,5 +1,5 @@
 # MER — Pagamentos, Aprovações e Ficheiros
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.2 (M2-06: access_links) · Data: 2026-11-24
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.3 (M3-03: dois buckets) · Data: 2026-11-24
 > Depende de: `mer/fases-servicos.md` (M2-01), `requisitos-funcionais.md` (RF-30.2, RF-30.3, RF-30.4), `regras-negocio.md`, `requisitos-nao-funcionais.md` (RNF-3) · Perguntas/decisões usadas: Q-046…Q-049, D-009, D-013, D-017, D-018, D-022, D-024, D-025, D-026, D-033, D-037, D-048…D-054
 
 ## 1. O que este modelo resolve
@@ -104,6 +104,7 @@ erDiagram
     uuid id PK
     uuid deliverable_id FK
     uuid project_id FK
+    text bucket "client-uploads, project-files"
     text storage_path UK
     text original_name
     text mime_type
@@ -238,7 +239,8 @@ Só pode haver **um** orçamento `enviado` ou `aceite` por projeto (índice úni
 | `id` | uuid | não | `gen_random_uuid()` | PK |
 | `deliverable_id` | uuid | não | — | FK → `deliverables` on delete cascade |
 | `project_id` | uuid | não | — | repetido para a RLS e para as políticas do Storage |
-| `storage_path` | text | não | — | **UK**; `{project_id}/{deliverable_id}/{file_id}.{ext}` no bucket **privado** `project-files` |
+| `bucket` | text | não | — | `client-uploads` (cliente, 10 MB) ou `project-files` (admin, 50 MB), ADR-003 |
+| `storage_path` | text | não | — | **UK (`bucket`, `storage_path`)**; `{project_id}/{deliverable_id}/{file_id}.{ext}` |
 | `original_name` | text | não | — | nome mostrado ao descarregar |
 | `mime_type` | text | não | — | cliente: JPG, PNG, WebP, HEIC, PDF, DOC, DOCX (D-024); admin: também AI/PSD/ZIP para ficheiros finais |
 | `size_bytes` | bigint | não | — | cliente `≤ 10 MB`; admin `≤ 50 MB` (máximo do plano gratuito, RNF-503) |

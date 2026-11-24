@@ -68,6 +68,8 @@
 | Q-062 | 2026-11-24 | M3 | Como se calcula a % de um projeto Académico ou Design? | Fases concluídas + parte das fases em curso, sem as "não aplicável" | D-072, ADR-001 |
 | Q-063 | 2026-11-24 | M3 | Como encaixar as fases da BD no tipo atual? | Mesmo tipo `Phase`, com campos opcionais; `ProjectView` não muda | D-073, ADR-001 |
 | Q-064 | 2026-11-24 | M3 | Posso testar o link mágico na produção com o cliente de teste? | Sim, só com o cliente de teste | ADR-002 (spike), D-076 |
+| Q-065 | 2026-11-24 | M3 | Onde são geradas as miniaturas WebP? | No browser, antes do envio | D-082, ADR-003 |
+| Q-066 | 2026-11-24 | M3 | Que agendador para a limpeza dos 90 dias e dos órfãos? | Vercel Cron diário | D-085, ADR-003 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
