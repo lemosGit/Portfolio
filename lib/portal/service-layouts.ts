@@ -15,7 +15,8 @@ export type BlockId =
   // comuns (Académico, Design)
   | "phase-bar"
   | "next-step"
-  | "approvals";
+  | "approvals"
+  | "payments";
 
 export type NavIcon = "home" | "project" | "files" | "messages" | "agenda";
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: boolean };
@@ -47,14 +48,14 @@ export const SERVICE_LAYOUTS: Record<ServiceType, ServiceLayout> = {
   academic: {
     label: "Académico",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A contagem do prazo, os capítulos e os pagamentos entram com a M5-11 e a M6.
-    pages: { overview: ["phase-bar", "next-step", "approvals"] },
+    // A contagem do prazo e os capítulos entram com a M6.
+    pages: { overview: ["phase-bar", "next-step", "approvals", "payments"] },
   },
   design: {
     label: "Design",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A última prova, as rondas e os pagamentos entram com a M5-11 e a M7.
-    pages: { overview: ["phase-bar", "next-step", "approvals"] },
+    // A última prova e as rondas entram com a M7.
+    pages: { overview: ["phase-bar", "next-step", "approvals", "payments"] },
   },
 };
 

@@ -78,3 +78,14 @@ test("Aprovações: pendente em destaque, aprovar em dois passos e histórico (M
   await expect(block.getByText("Falta o capítulo da metodologia", { exact: false })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("Pagamentos: totais em Kz e estado de cada pagamento (M5-11)", async ({ page }) => {
+  await page.goto("/cliente");
+  const block = page.getByRole("region", { name: "Pagamentos" });
+  await expect(block.getByText("90 000 Kz")).toBeVisible();
+  await expect(block.getByText("45 000 Kz")).toHaveCount(4); // pago, em falta e os dois pagamentos
+  await expect(block.getByText("Sinal (50%)")).toBeVisible();
+  await expect(block.getByText("Pago", { exact: true }).last()).toBeVisible();
+  await expect(block.getByText("Pendente", { exact: true })).toBeVisible();
+  await expect(block.getByText("O pagamento é feito fora do portal", { exact: false })).toBeVisible();
+});

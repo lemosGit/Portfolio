@@ -9,7 +9,8 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { approvalRequestEmail, demoEmail, meetingEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { approvalRequestEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -755,4 +756,121 @@ export async function reopenApproval(_p: AdminState, f: FormData): Promise<Admin
   if (error) return { error: `Não foi possível reabrir: ${error.message}` };
   refresh();
   return { ok: true, message: "Aprovação reaberta: volta a aguardar o cliente." };
+}
+
+/* ───────────── Pagamentos (M5-11) ───────────── */
+// Registo manual, sem pagamento online (D-009). Sinal e restante nascem também do orçamento aceite (0007).
+
+const KINDS: PaymentKind[] = ["sinal", "restante", "extra"];
+
+/** Regista um pagamento. Um extra fica "por aceitar" e pede a aprovação do cliente (RN-07, RF-30.25). */
+export async function createPayment(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const kind = str(f, "tipo") as PaymentKind;
+  if (!KINDS.includes(kind)) return { error: "Escolha o tipo: sinal, restante ou extra." };
+  const description = str(f, "descricao") || (kind === "sinal" ? "Sinal" : kind === "restante" ? "Restante" : "");
+  if (!description) return { error: "Descreva o extra (ex.: ronda de revisão adicional)." };
+  if (description.length > 200) return { error: "A descrição tem no máximo 200 caracteres." };
+  const amount = parseKz(str(f, "valor"));
+  if (!amount) return { error: "Indique o valor em Kz (ex.: 25 000)." };
+  if (amount >= 1e10) return { error: "Valor demasiado alto." };
+  const dueOn = opt(f, "prazo");
+  if (dueOn && !DATE.test(dueOn)) return { error: "Data limite inválida." };
+  const rounds = kind === "extra" ? Number(str(f, "rondas") || 0) : 0;
+  if (!Number.isInteger(rounds) || rounds < 0 || rounds > 20) return { error: "As rondas extra vão de 0 a 20." };
+
+  const { data: pay, error } = await sb
+    .from("payments")
+    .insert({
+      project_id: projectId,
+      kind,
+      description,
+      amount_kz: amount,
+      due_on: dueOn,
+      extra_rounds: rounds,
+      gates_phase_id: opt(f, "fase"),
+    })
+    .select("id, status")
+    .single<{ id: string; status: string }>();
+  if (error || !pay) return { error: `Não foi possível registar: ${error?.message ?? "erro"}` };
+
+  if (pay.status === "por_aceitar") {
+    const { error: ae } = await sb.from("approvals").insert({
+      project_id: projectId,
+      subject: "extra",
+      payment_id: pay.id,
+      snapshot: { title: description, amount_kz: amount, extra_rounds: rounds, message: `Valor: ${kz(amount)}. Só conta depois de o aceitar.` },
+    });
+    if (ae) {
+      // Sem o pedido de aprovação o extra nunca seria aceite: anula-o e explica.
+      await sb.from("payments").update({ status: "anulado" }).eq("id", pay.id);
+      return { error: `Não foi possível pedir a aprovação do extra: ${ae.message}` };
+    }
+  }
+  refresh();
+  const mail = await notify(f, sb, projectId, (c) =>
+    pay.status === "por_aceitar"
+      ? approvalRequestEmail({ ...c, title: `Extra: ${description}`, message: `Valor: ${kz(amount)}.` })
+      : paymentEmail({ ...c, description, amount: kz(amount), paid: false, dueOn }),
+  );
+  return {
+    ok: true,
+    message: `${description} (${kz(amount)}) registado${pay.status === "por_aceitar" ? ": aguarda a aceitação do cliente" : ""}.${emailNote(mail)}`,
+  };
+}
+
+/** Marca como pago, com a data do pagamento (RF-30.22). A BD liberta a fase travada e os ficheiros bloqueados. */
+export async function markPaymentPaid(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const paidOn = str(f, "data") || todayLuanda();
+  if (!DATE.test(paidOn)) return { error: "Data do pagamento inválida." };
+  if (paidOn > todayLuanda()) return { error: "A data do pagamento não pode ser no futuro." };
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "pago", paid_on: paidOn })
+    .eq("id", str(f, "id"))
+    .eq("status", "pendente")
+    .select("project_id, description, amount_kz")
+    .maybeSingle<{ project_id: string; description: string; amount_kz: number | string }>();
+  if (error) return { error: `Não foi possível marcar como pago: ${error.message}` };
+  if (!data) return { error: "Só um pagamento pendente pode ser marcado como pago." };
+  refresh();
+  const amount = kz(Number(data.amount_kz));
+  const mail = await notify(f, sb, data.project_id, (c) => paymentEmail({ ...c, description: data.description, amount, paid: true }));
+  return { ok: true, message: `${data.description} marcado como pago.${emailNote(mail)}` };
+}
+
+/** Desfaz um "pago" registado por engano (pago → pendente). Fica na auditoria (activity_log). */
+export async function undoPaymentPaid(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "pendente" })
+    .eq("id", str(f, "id"))
+    .eq("status", "pago")
+    .select("description")
+    .maybeSingle<{ description: string }>();
+  if (error) return { error: `Não foi possível desfazer: ${error.message}` };
+  if (!data) return { error: "Este pagamento já não está marcado como pago." };
+  refresh();
+  return { ok: true, message: `${data.description} voltou a pendente.` };
+}
+
+/** Anula um pagamento por pagar (pendente ou por aceitar). Um extra por aceitar perde também o pedido de aprovação. */
+export async function cancelPayment(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const id = str(f, "id");
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "anulado" })
+    .eq("id", id)
+    .in("status", ["pendente", "por_aceitar"])
+    .select("description")
+    .maybeSingle<{ description: string }>();
+  if (error) return { error: `Não foi possível anular: ${error.message}` };
+  if (!data) return { error: "Só se anula um pagamento por pagar." };
+  await sb.from("approvals").update({ status: "cancelada", decided_at: new Date().toISOString() }).eq("payment_id", id).eq("status", "pendente");
+  refresh();
+  return { ok: true, message: `${data.description} anulado.` };
 }

@@ -167,3 +167,22 @@ export function approvalAnsweredEmail(o: { clientName: string; projectName: stri
     text: `${o.clientName} ${verb} ${o.title} em ${o.projectName}.${o.comment ? `\n\n${o.comment}` : ""}\n\n${href}`,
   };
 }
+
+/** Pagamento registado ou confirmado (M5-11). */
+export function paymentEmail(o: { clientName: string; projectName: string; description: string; amount: string; paid: boolean; dueOn?: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  const title = o.paid ? "Pagamento recebido" : "Pagamento registado";
+  const line = o.paid
+    ? `Recebemos o pagamento de <strong>${esc(o.amount)}</strong> (${esc(o.description)}). Obrigado!`
+    : `Registámos o pagamento <strong>${esc(o.description)}</strong>: ${esc(o.amount)}${o.dueOn ? `, até ${esc(longDate(o.dueOn))}` : ""}.`;
+  return {
+    subject: `${o.projectName}: ${title.toLowerCase()} (${o.description})`,
+    html: layout({
+      preheader: `${o.description}: ${o.amount}`,
+      title,
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))},</p><p style="margin:0">${line}</p>`,
+      cta: { href, label: "Ver os pagamentos" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\n${o.paid ? `Recebemos o pagamento de ${o.amount} (${o.description}). Obrigado!` : `Registámos o pagamento ${o.description}: ${o.amount}${o.dueOn ? `, até ${longDate(o.dueOn)}` : ""}.`}\n\nVer os pagamentos: ${href}`,
+  };
+}

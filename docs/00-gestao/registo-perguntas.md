@@ -90,6 +90,7 @@
 | Q-084 | 2026-11-24 | M5 | M5-09: fazer o ADR-003 todo neste PR? Onde o admin gere os ficheiros? Como cria as versões? | Dividir: miniaturas WebP e limpeza diária numa issue nova (criar só com confirmação); página `/admin/projetos/[id]/ficheiros` + botão "Ficheiros"; "Novo ficheiro" (título) ou "Nova versão de…" com V1, V2… automático | D-131…D-133, `lib/files/`, `components/files/` |
 | Q-085 | 2026-11-24 | M5 | M5-10: pôr uma aprovação pendente no Académico de exemplo (muda a captura de referência)? Como confirma o cliente que aprovar é definitivo? | Sim, com o "Índice V3" pendente (captura atualizada e aprovada); segundo passo no próprio cartão ("Confirmar aprovação" / "Cancelar") | D-134…D-136, `app/cliente/_blocks/approvals.tsx`, `tests/e2e/__screenshots__/…/academico-visao-geral-*.png` |
 Issue criada com confirmação do utilizador (2026-11-24): #122 [M5-09b] Gerar miniaturas WebP e limpar ficheiros diariamente (D-133), também em `scripts/tarefas.py` e no quadro #9.
+| Q-086 | 2026-11-24 | M5 | M5-11: aprova a captura "Académico Visão geral" com o bloco Pagamentos (sinal pago, restante pendente)? | Sim (captura atualizada e aprovada) | D-137…D-139, `tests/e2e/__screenshots__/…/academico-visao-geral-*.png` |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
