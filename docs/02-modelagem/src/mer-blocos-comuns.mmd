@@ -1,0 +1,103 @@
+erDiagram
+  projects ||--o{ quotes : "tem"
+  projects ||--o{ payments : "tem"
+  projects ||--o{ approvals : "tem"
+  projects ||--o{ deliverables : "tem"
+  projects ||--o{ activity_log : "regista"
+  quotes |o--o{ payments : "gera sinal e restante"
+  project_phases |o--o{ payments : "travada por"
+  project_phases |o--o{ approvals : "pedida na fase"
+  project_phases |o--o{ deliverables : "enviado na fase"
+  payments |o--o{ deliverables : "bloqueia"
+  deliverables ||--|{ files : "contem"
+  quotes |o--o{ approvals : "aceite do orcamento"
+  deliverables |o--o{ approvals : "aprovacao da versao"
+  payments |o--o{ approvals : "aceite do extra"
+  approvals ||--o{ approval_responses : "recebe"
+
+  quotes {
+    uuid id PK
+    uuid project_id FK
+    smallint version "UK com project_id"
+    numeric total_kz
+    numeric design_kz "so design"
+    numeric print_kz "so design"
+    smallint deposit_pct "50 por omissao"
+    numeric deposit_kz
+    date delivery_due_on
+    smallint rounds_included "so design, 2 por omissao"
+    text status "rascunho, enviado, aceite, substituido"
+    timestamptz accepted_at
+  }
+  payments {
+    uuid id PK
+    uuid project_id FK
+    uuid quote_id FK "nulo nos extras"
+    text kind "sinal, restante, extra"
+    text description
+    numeric amount_kz
+    date due_on "opcional"
+    text status "por_aceitar, pendente, pago, anulado"
+    date paid_on "obrigatorio se pago"
+    uuid gates_phase_id FK "fase que nao avanca sem o pagamento"
+    timestamptz created_at
+  }
+  approvals {
+    uuid id PK
+    uuid project_id FK
+    uuid project_phase_id FK
+    text subject "orcamento, indice, prova, extra, entrega"
+    uuid quote_id FK
+    uuid deliverable_id FK
+    uuid payment_id FK
+    text version_label "ex V3"
+    jsonb snapshot "copia fixa do que foi mostrado"
+    text status "pendente, aprovada, alteracoes_pedidas, cancelada"
+    timestamptz requested_at
+    timestamptz decided_at
+  }
+  approval_responses {
+    uuid id PK
+    uuid approval_id FK
+    text kind "aprovar, pedir_alteracoes, reabrir"
+    text comment "obrigatorio em pedir_alteracoes e reabrir"
+    uuid actor_id FK
+    text actor_role "client, admin"
+    timestamptz created_at
+  }
+  deliverables {
+    uuid id PK
+    uuid project_id FK
+    uuid project_phase_id FK
+    text role "entregavel, prova, referencia, interno"
+    text series_key "ex entrega-final, prova"
+    smallint version_no "UK com project_id e series_key"
+    text label "ex V2"
+    text uploaded_by_role "client, admin"
+    uuid locked_by_payment_id FK
+    timestamptz created_at
+    timestamptz purged_at
+  }
+  files {
+    uuid id PK
+    uuid deliverable_id FK
+    uuid project_id FK
+    text storage_path UK
+    text original_name
+    text mime_type
+    bigint size_bytes
+    text thumb_path "WebP, so imagens"
+    timestamptz created_at
+    timestamptz purged_at
+  }
+  activity_log {
+    bigint id PK
+    uuid project_id FK
+    text entity "quote, payment, deliverable, file, approval"
+    uuid entity_id
+    text action "insert, update, delete, purge"
+    jsonb before
+    jsonb after
+    uuid actor_id FK
+    timestamptz created_at
+  }

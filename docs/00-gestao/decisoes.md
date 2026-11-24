@@ -50,3 +50,10 @@
 | D-045 | 2026-11-23 | As fases são copiadas por trigger `after insert on projects`, na mesma transação | Q-045 | Server Action do admin | Aprovada |
 | D-046 | 2026-11-23 | "Atrasada" automática é calculada na leitura (due_on ultrapassado) sem mudar a linha; o admin também pode gravar `atrasada` | Assumido | Job diário que grava o estado | Assumida |
 | D-047 | 2026-11-23 | `projects.status` ganha `cancelado`; `completed_at` e `cancelled_at` preenchidos por trigger | RF-30.06, RN-08 | Tabela de estados do projeto | Assumida |
+| D-048 | 2026-11-24 | Ficheiros em `deliverables` (uma versão: papel, série, nº, bloqueio por pagamento) + `files` (1..N por versão) no bucket privado `project-files` | Q-046 | Tabela única com série e versão | Aprovada |
+| D-049 | 2026-11-24 | Um pedido de aprovação por versão, com `snapshot` imutável; `approval_responses` só de inserção (aprovar, pedir alterações, reabrir) | Q-047 | Uma aprovação reutilizada por objeto | Aprovada |
+| D-050 | 2026-11-24 | Orçamento em `quotes` (versões; total, design, impressão, % e valor do sinal, prazo, rondas); ao aceitar gera sinal e restante | Q-048 | Só pagamentos; colunas em `projects` | Aprovada |
+| D-051 | 2026-11-24 | Auditoria em `activity_log` genérico (antes/depois em JSON), só de inserção e só lido pelo admin | Q-049 | Tabelas de eventos por bloco | Aprovada |
+| D-052 | 2026-11-24 | `payments.gates_phase_id`: um trigger recusa pôr a fase em curso enquanto o pagamento não estiver pago | RN-11, RN-15 | Só verificação na aplicação | Assumida |
+| D-053 | 2026-11-24 | "Em atraso" e as rondas restantes são calculados na leitura, não gravados | D-046, RF-20.41 | Gravar por job / contador | Assumida |
+| D-054 | 2026-11-24 | O admin pode enviar também AI, PSD e ZIP até 50 MB (ficheiros finais); os limites de D-024 são só do cliente | RNF-503 | Mesmos limites do cliente | Assumida |
