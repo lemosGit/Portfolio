@@ -4,6 +4,7 @@ erDiagram
   phase_templates |o--o{ project_phases : "copiada para"
   project_phases ||--o{ phase_events : "regista"
   projects ||--o{ phase_events : "agrupa"
+  projects ||--o{ project_status_events : "historico do projeto"
 
   projects {
     uuid id PK
@@ -54,6 +55,16 @@ erDiagram
     uuid project_phase_id FK
     text from_status
     text to_status
+    text note
+    uuid actor_id FK
+    timestamptz created_at
+  }
+  project_status_events {
+    uuid id PK
+    uuid project_id FK
+    text from_status
+    text to_status
+    boolean client_requested "pausa a pedido do cliente desliza o prazo"
     text note
     uuid actor_id FK
     timestamptz created_at

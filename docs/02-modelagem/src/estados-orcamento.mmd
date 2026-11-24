@@ -1,0 +1,9 @@
+stateDiagram-v2
+  [*] --> rascunho : admin cria
+  rascunho --> enviado : admin envia
+  enviado --> aceite : cliente aprova
+  enviado --> rascunho : cliente pede alteracoes
+  enviado --> substituido : admin envia versao nova
+  aceite --> substituido : admin envia versao nova com motivo
+  substituido --> [*]
+  aceite --> [*]

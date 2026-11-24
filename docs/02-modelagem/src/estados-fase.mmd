@@ -1,0 +1,15 @@
+stateDiagram-v2
+  [*] --> por_iniciar : projeto criado (B1)
+  por_iniciar --> em_curso : admin inicia
+  por_iniciar --> nao_aplicavel : admin salta (can_be_skipped)
+  em_curso --> aguarda_cliente : pedido de aprovacao ou pagamento
+  aguarda_cliente --> em_curso : cliente responde ou paga
+  em_curso --> atrasada : admin marca
+  atrasada --> em_curso : admin retoma
+  em_curso --> concluida : admin conclui ou aprovacao
+  aguarda_cliente --> concluida : aprovacao que fecha a fase
+  atrasada --> concluida : admin conclui
+  concluida --> em_curso : admin reabre com motivo
+  nao_aplicavel --> por_iniciar : admin repoe
+  concluida --> [*]
+  nao_aplicavel --> [*]

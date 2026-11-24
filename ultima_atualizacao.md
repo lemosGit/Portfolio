@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M2-04 Escrever o dicionário de dados das novas tabelas | #23 | `docs/02-modelagem/dicionario-dados.md` |
-| ⏭️ Próxima | M2-05 Desenhar os diagramas de estados | #24 | `docs/02-modelagem/estados/` |
-| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto e os 3 MER): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M2-05 Desenhar os diagramas de estados | #24 | `docs/02-modelagem/estados/estados.md` |
+| ⏭️ Próxima | M2-06 Desenhar as sequências do link mágico e da aprovação da arte | #25 | `docs/02-modelagem/sequencia/` |
+| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados): falta autorizar o `mermaid-cli` | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -37,3 +37,4 @@
 | 2026-11-24 | M2-02 | #21 | MER de quotes, payments, approvals, approval_responses, deliverables, files, activity_log (Q-046…Q-049, D-048…D-054) | `docs/02-modelagem/mer/blocos-comuns.md`, `src/mer-blocos-comuns.mmd` |
 | 2026-11-24 | M2-03 | #22 | MER de academic_briefs, academic_sections, adjustment_requests, design_specs (Q-050…Q-054, D-055…D-061); PA-001 aprovado | `docs/02-modelagem/mer/fichas-servico.md`, `docs/00-gestao/pedidos-alteracao.md` |
 | 2026-11-24 | M2-04 | #23 | Dicionário de dados (15 tabelas, 176 colunas, 22 domínios) e revisão cruzada (RV-01…RV-03) | `docs/02-modelagem/dicionario-dados.md`, `revisao-modelagem.md`, `scripts/gerar_dicionario.py` |
+| 2026-11-24 | M2-05 | #24 | 7 diagramas de estados com tabelas de transição; `project_status_events`; PA-002 aprovado (Q-055…Q-058, D-062…D-066) | `docs/02-modelagem/estados/estados.md`, `src/estados-*.mmd`, `regras-negocio.md` v1.2 |

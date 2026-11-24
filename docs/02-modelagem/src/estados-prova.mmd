@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> enviada : admin carrega Vn
+  enviada --> comentada : cliente pede alteracoes, gasta 1 ronda
+  enviada --> aprovada : cliente aprova a arte
+  comentada --> substituida : admin carrega Vn+1
+  substituida --> [*]
+  aprovada --> enviada : admin reabre antes da producao
+  aprovada --> [*] : producao comeca

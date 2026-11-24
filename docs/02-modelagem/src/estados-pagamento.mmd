@@ -1,0 +1,14 @@
+stateDiagram-v2
+  [*] --> pendente : sinal ou restante gerado
+  [*] --> por_aceitar : extra criado
+  por_aceitar --> pendente : cliente aceita o extra
+  por_aceitar --> anulado : cliente recusa ou admin retira
+  pendente --> pago : admin regista com data
+  pago --> pendente : admin desfaz o engano
+  pendente --> anulado : cancelamento ou orcamento substituido
+  state pendente {
+    [*] --> no_prazo
+    no_prazo --> em_atraso : due_on passou (calculado)
+  }
+  pago --> [*]
+  anulado --> [*]

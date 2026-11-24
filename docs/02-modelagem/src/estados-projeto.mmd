@@ -1,0 +1,10 @@
+stateDiagram-v2
+  [*] --> ativo : admin cria
+  ativo --> pausado : admin pausa com motivo
+  pausado --> ativo : admin retoma
+  ativo --> entregue : admin ou job dos ajustes
+  entregue --> ativo : admin reabre com motivo
+  ativo --> cancelado : admin cancela
+  pausado --> cancelado : admin cancela
+  cancelado --> [*]
+  entregue --> [*] : 90 dias, ficheiros apagados
