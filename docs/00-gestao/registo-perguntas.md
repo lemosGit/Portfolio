@@ -74,6 +74,8 @@
 | Q-068 | 2026-11-24 | M3 | Como mostrar uma fase "Atrasada" (atraso da GeniusFrela)? | Cor do módulo + etiqueta "Atrasada" | D-088 |
 | Q-069 | 2026-11-24 | M3 | Que entradas tem o menu de Académico e Design? | 4: Visão geral, Projeto, Ficheiros, Mensagens (o Tech mantém 5) | D-092, layout-blocos.md §3 |
 | Q-070 | 2026-11-24 | M3 | Como se navega no telemóvel? | Barra inferior com ícones, nos 3 serviços | D-093 |
+| Q-071 | 2026-11-24 | M3 | Como proteger as escritas do cliente (aprovar, pedir ajuste…)? | Funções SQL (RPC) + triggers | D-098, seguranca.md §3 |
+| Q-072 | 2026-11-24 | M3 | R-01: o que fazer com o plano Hobby da Vercel (uso não comercial)? | Ficar no Hobby por agora | D-102, riscos.md R-01 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

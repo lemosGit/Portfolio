@@ -100,3 +100,8 @@
 | D-095 | 2026-11-24 | Um loader por página (`loadBlocks`) com consultas em paralelo; os blocos só recebem dados | RNF-101 | Cada bloco consulta | Assumida |
 | D-096 | 2026-11-24 | Rotas mantidas; rótulo por serviço ("Entregas" → "Ficheiros"); `/cliente/agenda` redireciona sem Agenda | RNF-701 | Rotas novas por serviço | Assumida |
 | D-097 | 2026-11-24 | Migração do Tech em 5 passos com capturas de referência; a mudança visual para o DS V1 é um passo próprio aprovado pelo João | RNF-701, PA-003 | Migrar tudo de uma vez | Assumida |
+| D-098 | 2026-11-24 | Escritas do cliente só por RPC `security definer` (`respond_approval`, `request_adjustment`); triggers como segunda barreira | Q-071 | Insert direto com RLS | Aprovada |
+| D-099 | 2026-11-24 | Chave secreta só no servidor para link mágico, uploads do cliente, URLs assinadas, limpeza e contas | seguranca.md §4 | Mais usos da chave | Assumida |
+| D-100 | 2026-11-24 | Buckets privados sem políticas para `authenticated`; acesso só por URL assinada gerada no servidor | ADR-003 | Políticas de Storage por pasta | Assumida |
+| D-101 | 2026-11-24 | Tabelas de histórico sem `update`/`delete` para ninguém | RNF-308 | Admin pode corrigir | Assumida |
+| D-102 | 2026-11-24 | Ficar no plano Hobby da Vercel por agora; risco R-01 aceite, revisto no fim de cada milestone e antes da release v1.1 | Q-072 | Vercel Pro; mudar de alojamento | Aprovada |
