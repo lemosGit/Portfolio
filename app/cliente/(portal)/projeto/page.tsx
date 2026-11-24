@@ -36,7 +36,7 @@ export default async function ProjectPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="space-y-8">
-      <PageHeader section="Meu projeto" eyebrow="Vamos construir algo bom" title="O meu projeto" unread={unread} source={project.source} />
+      <PageHeader section="Meu projeto" eyebrow="Vamos construir algo bom" title="O meu projeto" unread={unread} source={project.source} serviceType={project.serviceType} />
 
       <Summary project={project} />
 

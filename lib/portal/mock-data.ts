@@ -3,6 +3,7 @@
  * feedback) e pela API do GitHub (fases e tarefas) — ver docs/especificacao_portal_cliente.md.
  * As datas são relativas a "hoje" para a demonstração nunca parecer desatualizada.
  */
+import { mapDbPhases } from "./db-phases";
 import { PHASES } from "./phases";
 import type { Client, Feedback, Project, Task } from "./types";
 import { now as clockNow, nowMs } from "@/lib/clock";
@@ -23,6 +24,13 @@ export const clients: Client[] = [
     company: "Nova Mobilidade",
     email: DEMO_CREDENTIALS.email,
     initials: "AM",
+  },
+  {
+    id: "c_kiala",
+    name: "Kiala Domingos",
+    company: "",
+    email: "kiala@exemplo.ao",
+    initials: "KD",
   },
 ];
 
@@ -210,6 +218,33 @@ export const projects: Project[] = [
       },
     ],
     syncedAt: at(0, clockNow().getHours(), Math.max(0, clockNow().getMinutes() - 3)),
+    source: "exemplo",
+  },
+  // Académico (fases como dados, M5-06). Os dados do Design e mais estados chegam na M5-14.
+  {
+    id: "p_mono",
+    slug: "monografia-microcredito",
+    clientId: "c_kiala",
+    name: "Monografia",
+    tagline: "O microcrédito e as zungueiras de Luanda",
+    description: "Monografia de licenciatura em Economia, normas APA 7.ª edição, 45 páginas.",
+    serviceType: "academic",
+    repo: { owner: "", name: "" },
+    startedOn: at(-14),
+    dueOn: at(12),
+    team: [{ initials: "JP", name: "João Pereira" }],
+    phases: mapDbPhases([
+      { position: 1, key: "pedido-briefing", name: "Pedido e briefing", description: "Tema, normas, páginas e prazo combinados.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: true },
+      { position: 2, key: "orcamento-aceite", name: "Orçamento e aceite", description: "Valor, sinal e prazo para aceitar.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 3, key: "estrutura", name: "Estrutura (índice)", description: "Índice proposto para aprovar.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 4, key: "desenvolvimento", name: "Desenvolvimento", description: "Escrita dos capítulos.", status: "em_curso", due_on: null, next_step: "Estamos a escrever o capítulo 4. Não precisa de fazer nada.", next_step_owner: "geniusfrela", progress: 40, client_can_upload: false },
+      { position: 5, key: "revisao-formatacao", name: "Revisão e formatação", description: "Revisão do texto e aplicação das normas.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: true },
+      { position: 6, key: "entrega-final", name: "Entrega final", description: "Ficheiros finais em PDF e Word.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 7, key: "ajustes", name: "Ajustes", description: "Pequenas correções dentro do prazo combinado.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: true },
+    ]),
+    demos: [],
+    meetings: [],
+    syncedAt: at(0, 10),
     source: "exemplo",
   },
 ];

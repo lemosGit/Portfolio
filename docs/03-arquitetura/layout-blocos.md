@@ -193,3 +193,9 @@ Os passos 1–3 não mudam **nada** que o cliente do Tech veja; só o passo 5 mu
 | D-095 | Um loader por página (`loadBlocks`) com consultas em paralelo; os blocos não consultam dados |
 | D-096 | As rotas mantêm-se; muda o rótulo por serviço; `/cliente/agenda` redireciona quando não existe |
 | D-097 | Migração do Tech em 5 passos, com capturas de referência; a mudança visual (DS V1) é um passo próprio e aprovado |
+
+## 10. Implementação (M5-06, 2026-11-24)
+- `lib/portal/service-layouts.ts`: `SERVICE_LAYOUTS` com `label`, `nav` e `pages.overview` (lista ordenada de blocos, D-126).
+- `app/cliente/_blocks/`: `tech.tsx` (as 4 linhas da Visão geral do Tech, sem alterações), `common.tsx` (`phase-bar`, `next-step`, `StateChip`), `index.tsx` (liga ids a componentes; um id sem componente falha no typecheck).
+- O menu (barra lateral e barra inferior) e a etiqueta do cabeçalho vêm do registo; `/cliente/agenda` redireciona quando o serviço não a tem.
+- O `loadBlocks` (D-095) chega com os primeiros blocos que precisam de dados próprios (aprovações e pagamentos, M5-10/M5-11).

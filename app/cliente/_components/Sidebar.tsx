@@ -21,17 +21,20 @@ import {
 } from "lucide-react";
 import { BrandLockup } from "@/components/BrandMark";
 import { logout, selectProject } from "@/lib/portal/actions";
+import type { NavIcon, NavItem } from "@/lib/portal/service-layouts";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { href: "/cliente", label: "Visão geral", icon: House },
-  { href: "/cliente/projeto", label: "Meu projeto", icon: LayoutGrid },
-  { href: "/cliente/entregas", label: "Entregas", icon: FolderOpen },
-  { href: "/cliente/mensagens", label: "Mensagens", icon: MessageSquare, badge: true },
-  { href: "/cliente/agenda", label: "Agenda", icon: CalendarDays },
-] as const;
+const ICONS: Record<NavIcon, typeof House> = {
+  home: House,
+  project: LayoutGrid,
+  files: FolderOpen,
+  messages: MessageSquare,
+  agenda: CalendarDays,
+};
 
 type Props = {
+  /** Entradas do menu do serviço do projeto (SERVICE_LAYOUTS, D-092). */
+  nav: NavItem[];
   client: { name: string; initials: string };
   project: { id: string; name: string; percent: number };
   projects: { id: string; name: string; status: "ativo" | "entregue" | "pausado" }[];
@@ -78,7 +81,7 @@ export function Sidebar(props: Props) {
       </div>
 
       {/* Mobile: barra inferior com as entradas do menu, ao alcance do polegar (D-093) */}
-      <BottomNav unread={props.unread} />
+      <BottomNav nav={props.nav} unread={props.unread} />
 
       <AnimatePresence>
         {open && (
@@ -118,17 +121,18 @@ export function Sidebar(props: Props) {
   );
 }
 
-function BottomNav({ unread }: { unread: number }) {
+function BottomNav({ nav, unread }: { nav: NavItem[]; unread: number }) {
   const pathname = usePathname();
   return (
     <nav
       aria-label="Área do cliente"
       className="fixed inset-x-0 bottom-0 z-40 grid border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
-      style={{ gridTemplateColumns: `repeat(${NAV.length}, minmax(0, 1fr))` }}
+      style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}
     >
-      {NAV.map(({ href, label, icon: Icon, ...rest }) => {
+      {nav.map(({ href, label, icon, badge }) => {
+        const Icon = ICONS[icon];
         const active = href === "/cliente" ? pathname === href : pathname.startsWith(href);
-        const showBadge = "badge" in rest && unread > 0;
+        const showBadge = badge && unread > 0;
         return (
           <Link
             key={href}
@@ -158,7 +162,7 @@ function BottomNav({ unread }: { unread: number }) {
   );
 }
 
-function SidebarBody({ client, project, projects, unread, layoutGroup }: Props & { layoutGroup: string }) {
+function SidebarBody({ nav, client, project, projects, unread, layoutGroup }: Props & { layoutGroup: string }) {
   const pathname = usePathname();
   return (
     <>
@@ -182,9 +186,10 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
       <nav aria-label="Área do cliente" className="mt-9">
         <p className="kicker kicker-plain mb-3 px-3">Acompanhar</p>
         <ul className="space-y-1">
-          {NAV.map(({ href, label, icon: Icon, ...rest }) => {
+          {nav.map(({ href, label, icon, badge }) => {
+            const Icon = ICONS[icon];
             const active = href === "/cliente" ? pathname === href : pathname.startsWith(href);
-            const showBadge = "badge" in rest && unread > 0;
+            const showBadge = badge && unread > 0;
             return (
               <li key={href}>
                 <Link

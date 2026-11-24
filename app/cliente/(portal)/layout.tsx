@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { layoutFor } from "@/lib/portal/service-layouts";
 import { requirePortal } from "@/lib/portal/session";
 import { Sidebar } from "../_components/Sidebar";
 
@@ -18,6 +19,7 @@ export default async function PortalLayout({ children }: { children: React.React
       </div>
 
       <Sidebar
+        nav={layoutFor(project.serviceType).nav}
         client={{ name: client.name, initials: client.initials }}
         project={{ id: project.id, name: project.name, percent: project.percent }}
         projects={projects}

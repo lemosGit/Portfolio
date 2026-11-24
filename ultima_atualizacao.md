@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-05 Tema por serviço no portal (Design System V1) — capturas novas aprovadas | #43 | `app/globals.css`, `tailwind.config.ts` |
-| ⏭️ Próxima | M5-06 Criar o esqueleto genérico da Área do Cliente (blocos + `SERVICE_LAYOUTS`) | #44 | `lib/portal/service-layouts.ts`, `app/cliente/_blocks/` |
+| ✅ Última feita | M5-06 Esqueleto genérico da Área do Cliente (`SERVICE_LAYOUTS`, blocos) | #44 | `lib/portal/service-layouts.ts`, `app/cliente/_blocks/` |
+| ⏭️ Próxima | M5-07 Permitir escolher o tipo de serviço ao criar o projeto | #45 | `app/admin/…`, `lib/admin/actions.ts` |
 | ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -70,3 +70,4 @@
 | 2026-11-24 | M5-03 | #41 | Migração 0007 testada localmente (fluxos completos de Académico e Design, RLS) e aplicada em produção; buckets privados criados; dados intactos (D-119…D-122) | `supabase/migrations/0007_pagamentos_aprovacoes_ficheiros.sql`, `supabase/tests/0007_blocos.sql` |
 | 2026-11-24 | M5-04 | #42 | `PhaseSource` (github/database), ramo BD no `toView()`, ligação no portal e no admin; correção da regressão de estados no admin (D-123, D-124, R-09); 20 unitários + 26 E2E/visuais verdes sem atualizar capturas | `lib/portal/phase-source.ts`, `lib/portal/data.ts`, `tests/unit/phase-source.test.ts` |
 | 2026-11-24 | M5-05 | #43 | Portal e admin no DS V1 (neutros, Inter, Azul Sistema no Tech, marca no admin/login, coral, barra inferior); 12 capturas atualizadas após aprovação (Q-081, D-125); R-09 fechado | `app/globals.css`, `tailwind.config.ts`, layouts, `Sidebar.tsx`, widgets |
+| 2026-11-24 | M5-06 | #44 | `SERVICE_LAYOUTS`, blocos do Tech extraídos sem mudança visual (provado), blocos comuns `phase-bar`/`next-step`, menu e etiqueta pelo registo, Académico de exemplo; capturas atualizadas após aprovação (Q-082, D-126, D-127) | `lib/portal/service-layouts.ts`, `app/cliente/_blocks/`, `tests/e2e/academico.spec.ts` |

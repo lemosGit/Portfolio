@@ -21,7 +21,7 @@ export default async function DeliveriesPage() {
         section="Entregas"
         eyebrow="Do lado de dentro"
         title="Experimente a versão mais recente"
-        unread={unread} source={project.source}
+        unread={unread} source={project.source} serviceType={project.serviceType}
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
