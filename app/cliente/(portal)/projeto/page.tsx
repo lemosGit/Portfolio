@@ -52,7 +52,7 @@ export default async function ProjectPage({ searchParams }: { searchParams: Prom
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "-mb-px border-b-2 pb-3 text-sm transition-colors duration-200",
-                  active ? "border-[#b59fe1] text-ink" : "border-transparent text-ink-faint hover:text-ink",
+                  active ? "border-accent text-ink" : "border-transparent text-ink-faint hover:text-ink",
                 )}
               >
                 {v.label}
@@ -97,7 +97,7 @@ function Summary({ project }: { project: ProjectView }) {
         <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-white/[0.06]" aria-hidden>
           <div
             className="bar-sheen h-full rounded-full"
-            style={{ width: `${project.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
+            style={{ width: `${project.percent}%`, background: "rgb(var(--c-accent))" }}
           />
         </div>
 
@@ -180,7 +180,7 @@ function StageRow({ phase }: { phase: PhaseView }) {
           <span className="block h-1 w-40 overflow-hidden rounded-full bg-white/[0.07]" aria-hidden>
             <span
               className="block h-full rounded-full"
-              style={{ width: `${phase.percent}%`, background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }}
+              style={{ width: `${phase.percent}%`, background: "rgb(var(--c-accent))" }}
             />
           </span>
           {phase.closedCount} de {phase.total} · {phase.percent}%
@@ -322,7 +322,7 @@ function TaskGroup({
 const STAGE: Record<NonNullable<Task["stage"]>, { label: string; icon: typeof Check; tone: string }> = {
   progress: { label: "Em curso", icon: LoaderCircle, tone: "bg-accent/15 text-accent-soft" },
   review: { label: "Em revisão", icon: Eye, tone: "bg-accent/15 text-accent-soft" },
-  "needs-client": { label: "Precisa de si", icon: Hand, tone: "bg-amber-400/15 text-amber-300" },
+  "needs-client": { label: "Precisa de si", icon: Hand, tone: "bg-action/15 text-action" },
   waiting: { label: "Em espera", icon: PauseCircle, tone: "bg-white/5 text-ink-dim" },
 };
 
@@ -350,7 +350,7 @@ function TaskRow({ task, phase }: { task: Task; phase?: string }) {
       <span
         className={cn(
           "shrink-0 text-right text-xs",
-          task.stage === "needs-client" && !done ? "font-semibold text-amber-300" : "text-ink-faint",
+          task.stage === "needs-client" && !done ? "font-semibold text-action" : "text-ink-faint",
         )}
       >
         {done && task.closedAt ? shortDate(task.closedAt) : (stage?.label ?? "Por fazer")}

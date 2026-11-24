@@ -26,7 +26,7 @@ export default async function AgendaPage() {
           <section aria-labelledby="next-title" className="panel panel-glow p-7 md:p-8">
             <p className="kicker">Próximo encontro</p>
             <div className="mt-6 flex items-center gap-5">
-              <div className="grid h-[76px] w-[68px] shrink-0 place-items-center rounded-2xl border border-[#b59fe1]/25 bg-[#b59fe1]/[0.06] text-center">
+              <div className="grid h-[76px] w-[68px] shrink-0 place-items-center rounded-2xl border border-accent/25 bg-accent/[0.06] text-center">
                 <div>
                   <p className="lav text-[11px] font-semibold uppercase tracking-[0.12em]">{dayParts(next.startsAt).month}</p>
                   <p className="lav mt-0.5 font-display text-[30px] font-normal leading-none">{dayParts(next.startsAt).day}</p>
@@ -49,7 +49,7 @@ export default async function AgendaPage() {
                 <ul className="space-y-2.5">
                   {next.agenda.map((a) => (
                     <li key={a} className="flex items-center gap-3 text-sm text-ink-dim">
-                      <span className="h-1 w-1 shrink-0 rounded-full bg-[#b59fe1]" aria-hidden /> {a}
+                      <span className="h-1 w-1 shrink-0 rounded-full bg-accent-soft" aria-hidden /> {a}
                     </li>
                   ))}
                 </ul>

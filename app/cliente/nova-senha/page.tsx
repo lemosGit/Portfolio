@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Primeiro acesso: o cliente troca a senha temporária recebida por email. */
 export default function NewPasswordPage() {
   return (
-    <main id="conteudo" className="app relative grid min-h-dvh place-items-center px-6 py-12">
+    <main id="conteudo" className="app relative grid min-h-dvh place-items-center px-6 py-12" data-service="brand">
       <div aria-hidden className="app-ambient">
         <i />
         <i />

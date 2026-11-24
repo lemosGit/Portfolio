@@ -21,7 +21,7 @@
 Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu projeto, Entregas, Mensagens, Agenda e Login, a 360 px e 1280 px (12 imagens). Duas execuções seguidas deram 0 diferenças.
 
 - Os passos 1–3 da migração (extrair blocos, `SERVICE_LAYOUTS`, `PhaseSource`) têm de passar `npm run e2e:visual` **sem atualizar** as capturas.
-- O passo 5 (DS V1, M5-05) muda o aspeto de propósito: novas capturas aprovadas pelo João e `npm run e2e:update`.
+- O passo 5 (DS V1, M5-05) mudou o aspeto de propósito: **capturas atualizadas a 2026-11-24, depois de aprovadas pelo João** (Q-081). Esta é a nova referência.
 
 ## CI
 `.github/workflows/ci.yml`, em cada PR e em cada push para `main`: `npm ci` → typecheck → Vitest → Playwright (E2E). Se falhar, o relatório do Playwright fica como artefacto durante 7 dias.

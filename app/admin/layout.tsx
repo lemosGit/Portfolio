@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const awaiting = await countAwaiting(sb).catch(() => 0);
 
   return (
-    <div className="app relative min-h-dvh overflow-x-clip">
+    <div className="app relative min-h-dvh overflow-x-clip" data-service="brand">
       <div aria-hidden className="app-ambient">
         <i />
         <i />

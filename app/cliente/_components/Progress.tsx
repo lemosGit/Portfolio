@@ -21,8 +21,8 @@ export function ProgressRing({ percent, size = 148 }: { percent: number; size?: 
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
         <defs>
           <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#8b6cff" />
-            <stop offset="100%" stopColor="#5fd4e8" />
+            <stop offset="0%" style={{ stopColor: "rgb(var(--c-accent))" }} />
+            <stop offset="100%" style={{ stopColor: "rgb(var(--c-accent-soft))" }} />
           </linearGradient>
         </defs>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={stroke} />
@@ -77,7 +77,7 @@ export function WeekBars({ data }: { data: { day: string; closed: number }[] }) 
               className="block w-full origin-bottom rounded-t-[4px]"
               style={{
                 height: h,
-                background: isPeak ? "linear-gradient(180deg, #5fd4e8, #8b6cff)" : "rgba(139,108,255,0.22)",
+                background: isPeak ? "linear-gradient(180deg, rgb(var(--c-accent-soft)), rgb(var(--c-accent)))" : "rgb(var(--c-accent) / 0.22)",
               }}
               initial={{ scaleY: reduce ? 1 : 0 }}
               animate={{ scaleY: 1 }}

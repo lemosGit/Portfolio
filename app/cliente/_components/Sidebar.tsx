@@ -77,6 +77,9 @@ export function Sidebar(props: Props) {
         </button>
       </div>
 
+      {/* Mobile: barra inferior com as entradas do menu, ao alcance do polegar (D-093) */}
+      <BottomNav unread={props.unread} />
+
       <AnimatePresence>
         {open && (
           <>
@@ -112,6 +115,46 @@ export function Sidebar(props: Props) {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function BottomNav({ unread }: { unread: number }) {
+  const pathname = usePathname();
+  return (
+    <nav
+      aria-label="Área do cliente"
+      className="fixed inset-x-0 bottom-0 z-40 grid border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      style={{ gridTemplateColumns: `repeat(${NAV.length}, minmax(0, 1fr))` }}
+    >
+      {NAV.map(({ href, label, icon: Icon, ...rest }) => {
+        const active = href === "/cliente" ? pathname === href : pathname.startsWith(href);
+        const showBadge = "badge" in rest && unread > 0;
+        return (
+          <Link
+            key={href}
+            href={href}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold transition-colors",
+              active ? "text-accent-soft" : "text-ink-dim hover:text-ink",
+            )}
+          >
+            <span className="relative">
+              <Icon size={21} strokeWidth={1.7} aria-hidden />
+              {showBadge && (
+                <span
+                  className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-action px-1 text-[10px] font-semibold text-bg"
+                  aria-label={`${unread} ${unread === 1 ? "resposta nova" : "respostas novas"}`}
+                >
+                  {unread}
+                </span>
+              )}
+            </span>
+            <span className="max-w-full truncate px-1">{label}</span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -155,7 +198,7 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
                   {active && (
                     <motion.span
                       layoutId={`nav-active-${layoutGroup}`}
-                      className="absolute inset-0 rounded-xl border border-white/[0.09] bg-white/[0.05] before:absolute before:inset-y-3 before:left-0 before:w-[2px] before:rounded-full before:bg-gradient-to-b before:from-[#a78bfa] before:to-[#5fd4e8]"
+                      className="absolute inset-0 rounded-xl border border-white/[0.09] bg-white/[0.05] before:absolute before:inset-y-3 before:left-0 before:w-[2px] before:rounded-full before:bg-accent"
                       transition={{ type: "spring", stiffness: 420, damping: 40 }}
                     />
                   )}
@@ -169,7 +212,7 @@ function SidebarBody({ client, project, projects, unread, layoutGroup }: Props &
                       {unread}
                     </span>
                   ) : (
-                    active && <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-[#b59fe1]" aria-hidden />
+                    active && <span className="relative ml-auto h-1.5 w-1.5 rounded-full bg-accent-soft" aria-hidden />
                   )}
                 </Link>
               </li>

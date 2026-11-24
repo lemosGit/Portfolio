@@ -75,7 +75,7 @@ export function NextMeeting({ meeting }: { meeting?: Meeting }) {
   return (
     <div className="flex h-full gap-6 p-5 sm:p-6">
       <div
-        className="flex w-[76px] shrink-0 flex-col items-center justify-center self-center rounded-2xl border border-[#b59fe1]/25 bg-[#b59fe1]/[0.06] py-3.5 text-center"
+        className="flex w-[76px] shrink-0 flex-col items-center justify-center self-center rounded-2xl border border-accent-soft/25 bg-accent-soft/[0.06] py-3.5 text-center"
       >
         <p className="lav text-[11px] font-semibold uppercase tracking-[0.12em]">{d.month}</p>
         <p className="lav mt-0.5 font-display text-[30px] font-normal leading-none">{d.day}</p>
@@ -123,7 +123,7 @@ export function ActivityFeed({ items, limit = 3 }: { items: ProjectView["recentA
               <span
                 className={cn(
                   "grid h-9 w-9 shrink-0 place-items-center rounded-xl border",
-                  done ? "border-ok/20 bg-ok/10 text-ok" : "border-transparent bg-accent/15 text-[#a99bf0]",
+                  done ? "border-ok/20 bg-ok/10 text-ok" : "border-transparent bg-accent/15 text-accent-soft",
                 )}
               >
                 {done ? <Check size={16} strokeWidth={2.4} aria-hidden /> : <LoaderCircle size={16} aria-hidden />}

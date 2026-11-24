@@ -14,9 +14,14 @@ const config: Config = {
           dim: "rgb(var(--c-ink-dim) / <alpha-value>)",
           faint: "rgb(var(--c-ink-faint) / <alpha-value>)",
         },
-        accent: { DEFAULT: "#8b6cff", deep: "#6d4cff", soft: "#b9a6ff" },
+        accent: {
+          DEFAULT: "rgb(var(--c-accent) / <alpha-value>)",
+          deep: "rgb(var(--c-accent-deep) / <alpha-value>)",
+          soft: "rgb(var(--c-accent-soft) / <alpha-value>)",
+        },
+        action: "rgb(var(--c-action) / <alpha-value>)",
         aqua: "#5fd4e8",
-        ok: "#3ddc97",
+        ok: "rgb(var(--c-ok) / <alpha-value>)",
         line: "var(--c-line)",
       },
       fontFamily: {
