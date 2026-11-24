@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-11 Implementar o bloco Pagamentos | #49 | `lib/payments/model.ts`, `app/cliente/_blocks/payments.tsx`, `app/admin/projetos/[id]/pagamentos/page.tsx` |
-| ⏭️ Próxima | M5-12 Gerar e enviar o link mágico pelo admin | #50 | — |
-| ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M5-12 Gerar e enviar o link mágico pelo admin | #50 | `lib/access/`, `app/cliente/entrar/page.tsx`, `app/admin/_components/AccessLinkPanel.tsx` |
+| ⏭️ Próxima | M5-13 Testar as políticas RLS das novas tabelas | #51 | — |
+| ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -77,3 +77,4 @@
 | 2026-11-24 | M5-09b | #122 | Issue criada (miniaturas WebP + limpeza diária, D-133), com confirmação | `scripts/tarefas.py` |
 | 2026-11-24 | M5-10 | #48 | Bloco Aprovações: pedir (índice, prova, entrega), cancelar e reabrir no admin; cliente aprova em 2 passos ou pede alterações com comentário; histórico; próximo passo do cliente; email ao João; 4 unitários, 1 E2E, captura do Académico atualizada (Q-085, D-134…D-136) | `lib/approvals/`, `app/cliente/_blocks/approvals.tsx`, `app/cliente/_components/ApprovalCard.tsx`, `app/admin/projetos/[id]/aprovacoes/page.tsx` |
 | 2026-11-24 | M5-11 | #49 | Bloco Pagamentos: admin regista sinal/restante/extra, marca pago com data, desfaz e anula; extra pede aceitação; cliente vê total/pago/em falta e estados (em atraso calculado em Luanda); próximo passo "Pagar…"; 7 unitários, 1 E2E, captura do Académico atualizada (Q-086, D-137…D-139) | `lib/payments/model.ts`, `app/cliente/_blocks/payments.tsx`, `app/admin/projetos/[id]/pagamentos/page.tsx`, `tests/unit/payments.test.ts` |
+| 2026-11-24 | M5-12 | #50 | Link mágico: gerar no projeto (limite 5/h, recusa links `signup`), Copiar / WhatsApp / Email, `/cliente/entrar` (GET mostra, POST entra), ecrã de link inválido com WhatsApp; 5 unitários, 1 E2E; **teste real em produção com o cliente de teste**, dados temporários apagados (Q-087, Q-088, D-140…D-142) | `lib/access/`, `app/cliente/entrar/page.tsx`, `app/admin/_components/AccessLinkPanel.tsx`, `middleware.ts` |

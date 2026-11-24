@@ -13,7 +13,8 @@ const DEMO_COOKIE = "jp_portal_session";
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  if (pathname === "/cliente/sair") return NextResponse.next();
+  // /cliente/entrar é a porta do link mágico: tem de abrir sem sessão (M5-12).
+  if (pathname === "/cliente/sair" || pathname === "/cliente/entrar") return NextResponse.next();
 
   let res = NextResponse.next({ request: req });
   let signedIn: boolean;
