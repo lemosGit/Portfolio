@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M4-04 Desenhar o wireframe da Área do Cliente Design | #35 | `docs/04-ux-ui/wireframes/design.html` |
-| ⏭️ Próxima | M4-05 Desenhar os blocos comuns e o ecrã do link mágico | #36 | `docs/04-ux-ui/wireframes/blocos-comuns.html` |
+| ✅ Última feita | M4-05 Desenhar os blocos comuns e o ecrã do link mágico | #36 | `docs/04-ux-ui/wireframes/blocos-comuns.html` |
+| ⏭️ Próxima | M4-06 Validar os tokens de acento por serviço (já no ADR-004) → M4-07 G2 | #37, #38 | `docs/00-gestao/actas/G2-design.md` |
 | ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -58,3 +58,4 @@
 | 2026-11-24 | M4-02 | #33 | 35 telas, variações por serviço, 5 fluxos; coluna TEL da rastreabilidade gerada (D-105, D-106) | `docs/04-ux-ui/fluxo-telas.md`, `rastreabilidade.md`, `user-stories.md` |
 | 2026-11-24 | M4-03 | #34 | Wireframe Académico em HTML com o DS V1 (9 ecrãs) + `ds.css` + captura (Q-073, D-107, D-108) | `docs/04-ux-ui/wireframes/academico.html`, `academico.md`, `ds.css`, `img/academico.png` |
 | 2026-11-24 | M4-04 | #35 | Wireframe Design em HTML com o DS V1 (9 ecrãs) + captura (D-109, D-110) | `docs/04-ux-ui/wireframes/design.html`, `design.md`, `img/design.png` |
+| 2026-11-24 | M4-05 | #36 | Wireframe dos blocos comuns e do link mágico (8 ecrãs); logótipo corrigido nos 3 wireframes (D-111, D-112) | `docs/04-ux-ui/wireframes/blocos-comuns.html`, `blocos-comuns.md`, `img/*.png` |
