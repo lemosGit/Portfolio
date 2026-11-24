@@ -284,6 +284,19 @@ do $$ begin
 end $$;
 reset role;
 
+-- M5-09 (#47): o cliente B nunca vê ficheiros nem versões do projeto de A, nem por junção.
+select set_config('request.jwt.claims', :'CB', false); set role authenticated;
+do $$ begin
+  assert (select count(*) from files where project_id = '30000000-0000-0000-0000-0000000aca01') = 0, 'B não vê ficheiros de A';
+  assert (select count(*) from deliverables where project_id = '30000000-0000-0000-0000-0000000aca01') = 0, 'B não vê versões de A';
+  assert (select count(*) from files f join deliverables d on d.id = f.deliverable_id
+          where d.project_id = '30000000-0000-0000-0000-0000000aca01') = 0, 'B não vê ficheiros de A por junção';
+  assert (select count(*) from files f where not exists (
+            select 1 from deliverables d where d.id = f.deliverable_id and d.project_id = '30000000-0000-0000-0000-0000000de501')) = 0,
+         'B só vê ficheiros do seu projeto';
+end $$;
+reset role;
+
 -- ═════════ Cancelamento anula o que falta pagar (RN-13) ═════════
 select set_config('request.jwt.claims', :'ADMIN', false); set role authenticated;
 do $$ begin
