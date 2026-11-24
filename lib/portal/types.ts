@@ -114,6 +114,8 @@ export type Project = {
   approvals?: Approval[];
   /** Pagamentos (Académico e Design, M5-11). O cliente não vê os anulados (RLS). */
   payments?: Payment[];
+  /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
+  filesPurgeOn?: string;
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */
   source: "github" | "bd" | "exemplo" | "erro";
 };

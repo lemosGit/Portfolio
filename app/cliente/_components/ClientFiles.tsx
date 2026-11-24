@@ -9,11 +9,14 @@ import { demoSeries } from "@/lib/files/demo";
 import { clientMayUpload } from "@/lib/files/rules";
 import { supabaseEnabled } from "@/lib/supabase/config";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { longDate } from "@/lib/portal/format";
 import type { ProjectView } from "@/lib/portal/types";
 
 export async function ClientFiles({ project }: { project: ProjectView }) {
   const series = supabaseEnabled ? await loadSeries(await createSupabaseServer(), project.id) : demoSeries(project.id);
   const open = project.phaseViews.filter((ph) => clientMayUpload(ph));
+  // RF-30.48 / D-027: num projeto concluído, até quando se pode descarregar.
+  const purgeOn = project.filesPurgeOn;
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
@@ -22,6 +25,11 @@ export async function ClientFiles({ project }: { project: ProjectView }) {
         <h2 id="files-title" className="mt-2.5 text-base font-medium text-ink">
           Ficheiros do projeto
         </h2>
+        {purgeOn && (
+          <p className="mt-3 rounded-xl border border-action/30 bg-action/[0.06] px-3 py-2 text-[13px] text-ink-dim">
+            Pode descarregar os ficheiros até <b className="font-semibold text-ink">{longDate(purgeOn)}</b>. Depois disso saem do armazenamento.
+          </p>
+        )}
         <div className="mt-6">
           {"error" in series ? (
             <p className="text-sm text-ink-dim">{series.error}</p>

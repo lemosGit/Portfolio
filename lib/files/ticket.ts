@@ -8,7 +8,7 @@ import type { Bucket, FileRole } from "./rules";
 
 if (typeof window !== "undefined") throw new Error("lib/files/ticket.ts só pode correr no servidor.");
 
-export type TicketFile = { id: string; path: string; name: string; mime: string; size: number };
+export type TicketFile = { id: string; path: string; name: string; mime: string; size: number; previewPath?: string };
 
 export type Ticket = {
   uid: string;

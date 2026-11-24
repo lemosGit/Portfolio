@@ -65,7 +65,7 @@ export function resolveMime(name: string, type: string): string {
   return BY_EXT[ext] ?? type ?? "";
 }
 
-export type FileMeta = { name: string; type: string; size: number };
+export type FileMeta = { name: string; type: string; size: number; /** Tamanho da pré-visualização WebP gerada no browser (#122). */ preview?: number };
 
 /** Valida nome, tipo e tamanho declarados (o passo 3 confirma com os bytes reais). */
 export function checkFile(bucket: Bucket, f: FileMeta): { mime: string; ext: string } | { error: string } {
@@ -166,4 +166,43 @@ export function humanSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / 1024 / 1024).toFixed(1).replace(".", ",")} MB`;
+}
+
+/* ───────────── Miniaturas WebP (D-082) ───────────── */
+
+/** Limites da pré-visualização: 1600 px no lado maior e 150 KB. */
+export const PREVIEW = { maxSide: 1600, maxBytes: 150 * 1024 } as const;
+
+/** Imagens que ganham pré-visualização (HEIC não: o browser quase nunca a lê). */
+export const hasPreview = (mime: string) => mime === "image/jpeg" || mime === "image/png" || mime === "image/webp";
+
+/** Caminho da pré-visualização ao lado do original (ADR-003 §3). */
+export const previewPath = (path: string) => path.replace(/\.[a-z0-9]+$/, ".preview.webp");
+
+/** Largura e altura de um WebP pelos primeiros bytes (VP8, VP8L ou VP8X); undefined se não for WebP. */
+export function webpSize(b: Uint8Array): { width: number; height: number } | undefined {
+  if (b.length < 30 || ascii(b, 0, 4) !== "RIFF" || ascii(b, 8, 12) !== "WEBP") return undefined;
+  const chunk = ascii(b, 12, 16);
+  if (chunk === "VP8X") {
+    const w = 1 + (b[24] | (b[25] << 8) | (b[26] << 16));
+    const h = 1 + (b[27] | (b[28] << 8) | (b[29] << 16));
+    return { width: w, height: h };
+  }
+  if (chunk === "VP8 ") {
+    // frame tag (3) + start code 9D 01 2A, depois 14 bits de largura e de altura
+    if (b[23] !== 0x9d || b[24] !== 0x01 || b[25] !== 0x2a) return undefined;
+    return { width: (b[26] | (b[27] << 8)) & 0x3fff, height: (b[28] | (b[29] << 8)) & 0x3fff };
+  }
+  if (chunk === "VP8L") {
+    if (b[20] !== 0x2f) return undefined;
+    const bits = b[21] | (b[22] << 8) | (b[23] << 16) | (b[24] << 24);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
+  }
+  return undefined;
+}
+
+/** A pré-visualização enviada pelo browser é aceitável? (o servidor valida sempre, ADR-003 §3) */
+export function previewOk(head: Uint8Array, size: number): boolean {
+  const dim = webpSize(head);
+  return Boolean(dim) && size > 0 && size <= PREVIEW.maxBytes && Math.max(dim!.width, dim!.height) <= PREVIEW.maxSide;
 }

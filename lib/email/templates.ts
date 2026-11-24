@@ -201,3 +201,25 @@ export function accessLinkEmail(o: { clientName: string; projectName: string; ur
     text: `Olá ${firstName(o.clientName)},\n\nEntre no projeto ${o.projectName} (sem senha):\n${o.url}\n\nO link funciona uma vez e vale 24 horas.`,
   };
 }
+
+/** Aviso ao João: ficheiros a apagar dentro de 7 dias (#122, RN-08). */
+export function retentionWarningEmail(o: { projects: { id: string; name: string; clientName: string; purgeOn: string; days: number }[] }) {
+  const items = o.projects.map((p) => ({
+    ...p,
+    href: `${SITE_URL}/admin/projetos/${p.id}#ficheiros-retencao`,
+    when: `${longDate(p.purgeOn)} (${p.days === 1 ? "amanhã" : `daqui a ${p.days} dias`})`,
+  }));
+  return {
+    subject: `Ficheiros a apagar em breve: ${items.length} projeto${items.length === 1 ? "" : "s"}`,
+    html: layout({
+      preheader: "Os ficheiros destes projetos concluídos vão ser apagados do armazenamento.",
+      title: "Ficheiros a apagar em breve",
+      body: `<p style="margin:0 0 12px">Os ficheiros destes projetos concluídos vão ser apagados do armazenamento (fica o registo). Para os guardar mais tempo, abra o projeto e carregue em <strong>Adiar 30 dias</strong>.</p>
+<ul style="margin:0;padding-left:20px">${items
+        .map((p) => `<li style="margin-bottom:6px"><a href="${esc(p.href)}" style="color:#6d4cff">${esc(p.name)}</a> · ${esc(p.clientName)} · ${esc(p.when)}</li>`)
+        .join("")}</ul>`,
+      cta: { href: items[0]?.href ?? `${SITE_URL}/admin`, label: "Abrir o projeto" },
+    }),
+    text: `Ficheiros a apagar em breve (fica o registo). Para adiar, abra o projeto e carregue em "Adiar 30 dias".\n\n${items.map((p) => `- ${p.name} (${p.clientName}): ${p.when}\n  ${p.href}`).join("\n")}`,
+  };
+}

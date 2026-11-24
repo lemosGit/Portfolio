@@ -14,6 +14,7 @@ import { LINKS_PER_HOUR, LINK_TTL_MS, entryUrl, looksLikeToken, type LinkChannel
 import { digest } from "@/lib/access/digest";
 import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
+import { postponeTo } from "@/lib/files/retention";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -977,4 +978,19 @@ export async function setAccessLinkChannel(url: string, projectId: string, chann
   if (channel !== "copiar" && channel !== "whatsapp") return;
   const found = await activeLinkFor(String(url ?? ""), String(projectId ?? ""));
   if (found) await found.admin.from("access_links").update({ channel }).eq("id", found.row.id);
+}
+
+/* ───────────── Retenção dos ficheiros (#122, RN-08) ───────────── */
+
+/** Adia a limpeza dos ficheiros 30 dias (Q-091); pode repetir-se. */
+export async function postponeFilesPurge(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const id = str(f, "projeto");
+  const { data: p } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
+  if (!p?.files_purge_on) return { error: "Este projeto não tem limpeza marcada (só os entregues ou cancelados)." };
+  const until = postponeTo(p.files_purge_on, todayLuanda());
+  const { error } = await sb.from("projects").update({ files_keep_until: until }).eq("id", id);
+  if (error) return { error: `Não foi possível adiar: ${error.message}` };
+  refresh();
+  return { ok: true, message: `Limpeza adiada: os ficheiros ficam até ${until.split("-").reverse().join("/")}.` };
 }

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSquare, Smartphone, Trash2, Wallet } from "lucide-react";
-import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
+import { addDemo, deleteDemo, postponeFilesPurge, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
 import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
 import { emailEnabled } from "@/lib/email/send";
+import { WARN_DAYS, daysUntil } from "@/lib/files/retention";
+import { todayLuanda } from "@/lib/payments/model";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
@@ -40,6 +42,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .returns<{ id: string; status: LinkStatus; channel: string; expires_at: string; used_at: string | null; created_at: string }[]>(),
   ]);
   const links = linkRows ?? [];
+  // Limpeza dos ficheiros (#122): data calculada na BD (files_purge_on, 0008).
+  const { data: retention } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
+  const purgeOn = retention?.files_purge_on ?? null;
+  const purgeDays = purgeOn ? daysUntil(purgeOn, todayLuanda()) : null;
 
   const now = Date.now();
   const upcoming = p.meetings.filter((m) => new Date(m.endsAt).getTime() > now).reverse();
@@ -145,6 +151,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           ))}
         </ul>
       </Section>
+
+      {purgeOn && (
+        <Section
+          id="ficheiros-retencao"
+          title={purgeDays! <= 0 ? "Ficheiros apagados" : purgeDays! <= WARN_DAYS ? `Os ficheiros são apagados daqui a ${purgeDays} dia${purgeDays === 1 ? "" : "s"}` : "Limpeza dos ficheiros"}
+          tone={purgeDays! <= WARN_DAYS ? "danger" : undefined}
+          description={`Projeto ${p.status === "cancelado" ? "cancelado" : "entregue"}: os ficheiros saem do armazenamento a ${longDate(purgeOn)} (90 dias depois, RN-08). Fica o registo (nome, data, autor).`}
+        >
+          {purgeDays! > 0 && (
+            <ActionForm action={postponeFilesPurge} submit="Adiar 30 dias" variant="quiet" pendingLabel="A adiar…">
+              <input type="hidden" name="projeto" value={p.id} />
+            </ActionForm>
+          )}
+        </Section>
+      )}
 
       <Section
         id="acesso"

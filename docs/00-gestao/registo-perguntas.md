@@ -97,6 +97,8 @@ Teste real M5-12 (2026-11-24): app local com o `.env.local`, conta `cliente.test
 | Q-089 | 2026-11-24 | M5 | M5-13 (T9): pôr 1 KB de teste em `project-files` e `client-uploads` de produção para provar que não se lê sem URL assinada, e apagar logo? | Sim; testado e apagado (0 restantes) | `scripts/teste-storage-t9.mjs`, `docs/05-qa/relatorios/M5-13-rls.md` |
 Consulta: Supabase MCP `get_advisors(security)` na M5-13 (2026-11-24) para o T15: 0 avisos de RLS em falta ou `search_path`; ficam 2 SECURITY DEFINER previstos e a *leaked password protection* (D-143).
 | Q-090 | 2026-11-24 | M5 | M5-14: aprova a captura nova "Design Visão geral" e a do Login com as 3 contas de demonstração? | Sim (aprovadas depois de vistas) | D-145, `tests/e2e/__screenshots__/…/design-visao-geral-*.png`, `login-*.png` |
+| Q-091 | 2026-11-24 | M5 | #122: a RN-08 diz "pode adiar" e o ADR-003 diz "sem adiamento"; como fica? A quem vai o aviso dos 83 dias? | Botão "Adiar 30 dias" (repetível, migração 0008 com `files_keep_until`); email diário ao João com a lista + faixa no projeto do admin | D-146, D-147, `supabase/migrations/0008_files_retention.sql` |
+| Q-092 | 2026-11-24 | M5 | #122: aplicar a migração 0008 em produção pelo MCP? | Sim; aplicada (só acrescenta), 2 projetos intactos, consultas da limpeza verificadas só com leituras, Security Advisor sem avisos novos | D-147 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

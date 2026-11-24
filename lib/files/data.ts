@@ -5,7 +5,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isLocked, type FileRole } from "./rules";
 
-export type FileItem = { id: string; name: string; mime: string; size: number; purged: boolean };
+export type FileItem = { id: string; name: string; mime: string; size: number; purged: boolean; /** Miniatura WebP (URL assinada de 15 min), #122. */ thumbUrl?: string };
 
 export type FileVersion = {
   deliverableId: string;
@@ -42,11 +42,11 @@ export type DeliverableRow = {
   purged_at: string | null;
   project_phases: { key: string; name: string; position: number } | null;
   payments: { status: string } | null;
-  files: { id: string; original_name: string; mime_type: string; size_bytes: number; purged_at: string | null }[];
+  files: { id: string; original_name: string; mime_type: string; size_bytes: number; purged_at: string | null; bucket?: string; thumb_path?: string | null }[];
 };
 
 export const DELIVERABLE_COLS =
-  "id, role, series_key, version_no, label, title, notes, uploaded_by_role, locked_by_payment_id, created_at, purged_at, project_phases (key, name, position), payments (status), files (id, original_name, mime_type, size_bytes, purged_at)";
+  "id, role, series_key, version_no, label, title, notes, uploaded_by_role, locked_by_payment_id, created_at, purged_at, project_phases (key, name, position), payments (status), files (id, original_name, mime_type, size_bytes, purged_at, bucket, thumb_path)";
 
 /** Linhas → séries com as versões por data, mais recente primeiro (critério "versões ordenadas por data"). Pura. */
 export function groupSeries(rows: DeliverableRow[]): FileSeries[] {
@@ -87,5 +87,35 @@ export async function loadSeries(sb: SupabaseClient, projectId: string): Promise
     console.error(`[ficheiros] Falha a ler os ficheiros do projeto ${projectId}:`, error.message);
     return { error: "Não foi possível ler os ficheiros." };
   }
-  return groupSeries(data ?? []);
+  const rows = data ?? [];
+  const thumbs = await signThumbs(rows);
+  return groupSeries(rows).map((s) => ({
+    ...s,
+    versions: s.versions.map((v) => ({ ...v, files: v.files.map((f) => (thumbs.has(f.id) ? { ...f, thumbUrl: thumbs.get(f.id) } : f)) })),
+  }));
+}
+
+/**
+ * URLs assinadas das miniaturas (#122). As linhas já passaram pela RLS de quem pede; os buckets
+ * não têm políticas, por isso assina-se com a chave secreta. Uma versão bloqueada por pagamento
+ * não mostra miniatura: não mostra conteúdo nenhum (RF-30.44).
+ */
+async function signThumbs(rows: DeliverableRow[]): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  const wanted = rows
+    .filter((r) => !r.purged_at && !isLocked(r.locked_by_payment_id, r.payments?.status))
+    .flatMap((r) => r.files.filter((f) => f.thumb_path && f.bucket && !f.purged_at).map((f) => ({ id: f.id, bucket: f.bucket!, path: f.thumb_path! })));
+  if (!wanted.length) return out;
+  let storage;
+  try {
+    storage = (await import("@/lib/supabase/admin")).createSupabaseAdmin().storage;
+  } catch {
+    return out;
+  }
+  for (const bucket of new Set(wanted.map((w) => w.bucket))) {
+    const list = wanted.filter((w) => w.bucket === bucket);
+    const { data } = await storage.from(bucket).createSignedUrls(list.map((w) => w.path), 15 * 60);
+    data?.forEach((d, i) => d.signedUrl && out.set(list[i].id, d.signedUrl));
+  }
+  return out;
 }
