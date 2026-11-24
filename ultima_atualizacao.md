@@ -1,12 +1,12 @@
 # Última atualização
-> Projeto: GeniusFrela — Área do Cliente multi-serviço (Académico e Design) · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço (Académico e Design) · Data: 2026-11-24
 
 <!-- ESTADO:INICIO -->
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-07 Escolher o tipo de serviço ao criar o projeto | #45 | `app/admin/_components/ServicePicker.tsx`, `lib/admin/project-form.ts` |
-| ⏭️ Próxima | M5-08 Gerir as fases do projeto no admin | #46 | `app/admin/projetos/[id]/…` |
+| ✅ Última feita | M5-08 Gerir as fases do projeto no admin | #46 | `app/admin/projetos/[id]/fases/page.tsx`, `lib/admin/phases.ts` |
+| ⏭️ Próxima | M5-09 Implementar o bloco Ficheiros | #47 | — |
 | ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -72,3 +72,4 @@
 | 2026-11-24 | M5-05 | #43 | Portal e admin no DS V1 (neutros, Inter, Azul Sistema no Tech, marca no admin/login, coral, barra inferior); 12 capturas atualizadas após aprovação (Q-081, D-125); R-09 fechado | `app/globals.css`, `tailwind.config.ts`, layouts, `Sidebar.tsx`, widgets |
 | 2026-11-24 | M5-06 | #44 | `SERVICE_LAYOUTS`, blocos do Tech extraídos sem mudança visual (provado), blocos comuns `phase-bar`/`next-step`, menu e etiqueta pelo registo, Académico de exemplo; capturas atualizadas após aprovação (Q-082, D-126, D-127) | `lib/portal/service-layouts.ts`, `app/cliente/_blocks/`, `tests/e2e/academico.spec.ts` |
 | 2026-11-24 | M5-07 | #45 | Tipo de serviço obrigatório ao criar (cliente+projeto e projeto), repositório só no Tech, edição sem mudar o tipo; 7 testes unitários novos (D-128) | `lib/admin/project-form.ts`, `app/admin/_components/ServicePicker.tsx`, `tests/unit/project-form.test.ts` |
+| 2026-11-24 | M5-08 | #46 | Página de fases no admin: avançar (concluir + iniciar a seguinte), recuar (reabrir com motivo), mudar estado, prazo, próximo passo e progresso, histórico; email ao cliente pelo Resend; resumo na página do projeto; 10 testes unitários (Q-083, D-129, D-130) | `app/admin/projetos/[id]/fases/page.tsx`, `lib/admin/phases.ts`, `lib/email/templates.ts`, `tests/unit/admin-phases.test.ts` |

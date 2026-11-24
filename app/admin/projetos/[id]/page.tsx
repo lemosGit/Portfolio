@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, Eye, Globe, MessageSquare, Smartphone, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, Globe, ListChecks, MessageSquare, Smartphone, Trash2 } from "lucide-react";
 import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
+import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
@@ -11,6 +12,7 @@ import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
 
 export const metadata = { title: "Projeto" };
+
 
 /** ISO → { data: "2026-11-25", hora: "14:30" } em hora de Luanda (UTC+1). */
 function luandaParts(iso: string) {
@@ -55,14 +57,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <Section
         title={`Progresso · ${v.percent}%`}
         description={
-          v.source === "github"
+          p.serviceType !== "development"
+            ? v.source === "bd"
+              ? "Fases guardadas na base de dados. O cliente vê o estado, o prazo e o próximo passo de cada fase."
+              : "Não foi possível ler as fases da base de dados."
+            : v.source === "github"
             ? `Lido do GitHub (${repo}) ${relative(v.syncedAt)}. ${v.closedCount} de ${v.total} issues fechadas.`
             : repo
               ? `Não foi possível ler ${repo}. Confirme o GITHUB_TOKEN e o acesso do token a este repositório.`
               : "Sem repositório GitHub associado: indique-o em “Dados do projeto”."
         }
         actions={
-          repo ? (
+          p.serviceType !== "development" ? (
+            <Link href={`/admin/projetos/${p.id}/fases`} className="btn-violet h-9 py-0 text-[13px]">
+              <ListChecks size={14} aria-hidden /> Gerir fases
+            </Link>
+          ) : repo ? (
             <div className="flex flex-wrap gap-2">
               <Link href={`/admin/projetos/${p.id}/tarefas`} className="btn-violet h-9 py-0 text-[13px]">
                 <Eye size={14} aria-hidden /> Tarefas visíveis
@@ -82,7 +92,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <p className="text-sm font-semibold text-ink">
                   {ph.number}. {ph.title}
                 </p>
-                {ph.status === "done" ? (
+                {ph.state ? (
+                  <Badge tone={PHASE_TONE[ph.state]}>{PHASE_LABEL[ph.state]}</Badge>
+                ) : ph.status === "done" ? (
                   <Badge tone="ok">Concluída</Badge>
                 ) : ph.status === "current" ? (
                   <Badge tone="accent">Em curso</Badge>
@@ -90,9 +102,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   <Badge>Por iniciar</Badge>
                 )}
               </div>
-              <Progress percent={ph.percent} className="mt-3 h-1" />
-              <p className="mt-2 text-xs text-ink-faint">
-                {ph.closedCount}/{ph.total} issues · {ph.tasks.length} visíveis ao cliente
+              <Progress percent={ph.state ? Math.round((ph.progress ?? 0) * 100) : ph.percent} className="mt-3 h-1" />
+              <p className="mt-2 truncate text-xs text-ink-faint">
+                {ph.state
+                  ? ph.nextStep
+                    ? `Próximo passo: ${ph.nextStep.text}`
+                    : ph.dueOn
+                      ? `Prazo: ${shortDate(ph.dueOn)}`
+                      : ph.description
+                  : `${ph.closedCount}/${ph.total} issues · ${ph.tasks.length} visíveis ao cliente`}
               </p>
             </li>
           ))}
