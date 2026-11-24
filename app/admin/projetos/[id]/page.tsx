@@ -104,6 +104,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <input type="hidden" name="id" value={p.id} />
           <ProjectFields
             showSlug
+            serviceType={p.serviceType}
             d={{
               name: p.name,
               slug: p.slug,
@@ -127,15 +128,17 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <Field label="Motivo da mudança de estado" hint="Fica no histórico. Obrigatório para pausar, cancelar ou reabrir.">
               <input name="motivo" maxLength={500} className={inputCls} placeholder="Ex.: a pedido do cliente, em exames" />
             </Field>
-            <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
-              <input
-                name="mapa"
-                defaultValue={p.phaseMap ? JSON.stringify(p.phaseMap) : ""}
-                className={`${inputCls} font-mono`}
-                spellCheck={false}
-                placeholder="(padrão)"
-              />
-            </Field>
+            {p.serviceType === "development" && (
+              <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
+                <input
+                  name="mapa"
+                  defaultValue={p.phaseMap ? JSON.stringify(p.phaseMap) : ""}
+                  className={`${inputCls} font-mono`}
+                  spellCheck={false}
+                  placeholder="(padrão)"
+                />
+              </Field>
+            )}
           </div>
         </ActionForm>
       </Section>

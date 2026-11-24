@@ -11,6 +11,8 @@ import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
 import { demoEmail, meetingEmail, replyEmail } from "@/lib/email/templates";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import type { ServiceType } from "@/lib/portal/types";
+import { opt, readProject, readServiceType, str } from "./project-form";
 import { requireAdminStrict as requireAdmin } from "./session";
 
 export type AdminState = {
@@ -23,13 +25,10 @@ export type AdminState = {
 
 /* ───────────── utilitários ───────────── */
 
-const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
-const opt = (f: FormData, k: string) => str(f, k) || null;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^\d{2}:\d{2}$/;
-const REPO = /^[\w.-]+\/[\w.-]+$/;
 const isUrl = (s: string) => {
   try {
     const u = new URL(s);
@@ -39,13 +38,6 @@ const isUrl = (s: string) => {
   }
 };
 
-const slugify = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 /** Senha temporária legível (sem 0/O, 1/l): o cliente troca-a no primeiro acesso. */
 function tempPassword() {
@@ -72,47 +64,8 @@ function accounts() {
   }
 }
 
-function parseRepo(raw: string): { owner: string | null; repo: string | null } | { error: string } {
-  const v = raw.replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/$/, "");
-  if (!v) return { owner: null, repo: null };
-  if (!REPO.test(v)) return { error: "Repositório inválido. Use o formato dono/repositorio (ex.: lemosGit/candongueiro_pay)." };
-  const [owner, repo] = v.split("/");
-  return { owner, repo };
-}
 
-type ProjectFields = {
-  name: string;
-  slug: string;
-  tagline: string | null;
-  description: string | null;
-  github_owner: string | null;
-  github_repo: string | null;
-  started_on: string | null;
-  due_on: string | null;
-};
 
-function readProject(f: FormData, nameKey = "projeto"): ProjectFields | { error: string } {
-  const name = str(f, nameKey);
-  if (name.length < 2) return { error: "Indique o nome do projeto." };
-  const slug = slugify(str(f, "slug") || name);
-  if (!slug) return { error: "O identificador (slug) do projeto ficou vazio. Escreva um nome com letras ou números." };
-  const repo = parseRepo(str(f, "repo"));
-  if ("error" in repo) return repo;
-  const started = opt(f, "inicio");
-  const due = opt(f, "entrega");
-  if ((started && !DATE.test(started)) || (due && !DATE.test(due))) return { error: "Datas inválidas." };
-  if (started && due && due < started) return { error: "A data de entrega é anterior à data de início." };
-  return {
-    name,
-    slug,
-    tagline: opt(f, "resumo"),
-    description: opt(f, "descricao"),
-    github_owner: repo.owner,
-    github_repo: repo.repo,
-    started_on: started,
-    due_on: due,
-  };
-}
 
 /** Nome e email do cliente de um projeto, para os avisos. */
 async function contactOf(sb: Awaited<ReturnType<typeof requireAdmin>>["sb"], projectId: string) {
@@ -193,7 +146,9 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
   const email = str(f, "email").toLowerCase();
   if (name.length < 2) return { error: "Indique o nome do cliente." };
   if (!EMAIL.test(email)) return { error: "Email inválido." };
-  const project = readProject(f);
+  const serviceType = readServiceType(f);
+  if (typeof serviceType !== "string") return serviceType;
+  const project = readProject(f, serviceType);
   if ("error" in project) return project;
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
@@ -225,6 +180,7 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
     .from("projects")
     .insert({
       ...project,
+      service_type: serviceType, // o trigger da BD cria as 7 fases no Académico e no Design (B1)
       client_id: client.id,
       started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
       team: [{ initials: "JP", name: "João Pereira" }],
@@ -336,7 +292,9 @@ export async function deleteClient(_p: AdminState, f: FormData): Promise<AdminSt
 
 export async function createProject(_p: AdminState, f: FormData): Promise<AdminState> {
   const { sb } = await requireAdmin();
-  const project = readProject(f);
+  const serviceType = readServiceType(f);
+  if (typeof serviceType !== "string") return serviceType;
+  const project = readProject(f, serviceType);
   if ("error" in project) return project;
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
@@ -345,6 +303,7 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
     .from("projects")
     .insert({
       ...project,
+      service_type: serviceType, // o trigger da BD cria as 7 fases no Académico e no Design (B1)
       client_id: str(f, "cliente"),
       started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
       team: [{ initials: "JP", name: "João Pereira" }],
@@ -362,14 +321,22 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
 
 export async function updateProject(_p: AdminState, f: FormData): Promise<AdminState> {
   const { sb } = await requireAdmin();
-  const project = readProject(f);
+  const id = str(f, "id");
+  const { data: before } = await sb
+    .from("projects")
+    .select("status, service_type")
+    .eq("id", id)
+    .single<{ status: string; service_type: ServiceType }>();
+  if (!before) return { error: "Projeto não encontrado." };
+  // O tipo de serviço não muda depois de criado (RN-02): vem sempre da BD, nunca do formulário.
+  const project = readProject(f, before.service_type);
   if ("error" in project) return project;
 
   const status = str(f, "estado");
   if (!["ativo", "entregue", "pausado", "cancelado"].includes(status)) return { error: "Estado inválido." };
 
   let phaseMap: Record<string, number> | null = null;
-  const rawMap = str(f, "mapa");
+  const rawMap = before.service_type === "development" ? str(f, "mapa") : "";
   if (rawMap) {
     try {
       const parsed = JSON.parse(rawMap);
@@ -385,7 +352,6 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
-  const id = str(f, "id");
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
   const dropCover = str(f, "remover_capa") === "1";
@@ -404,7 +370,6 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
-  const { data: before } = await sb.from("projects").select("status").eq("id", id).single<{ status: string }>();
   const { error } = await sb
     .from("projects")
     .update({ ...project, phase_map: phaseMap, ...coverPatch })
