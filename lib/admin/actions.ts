@@ -9,9 +9,21 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { demoEmail, meetingEmail, replyEmail } from "@/lib/email/templates";
+import { demoEmail, meetingEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
-import type { ServiceType } from "@/lib/portal/types";
+import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
+import {
+  ADMIN_PHASE_COLS,
+  PHASE_LABEL,
+  isTransitionAllowed,
+  mapAdminPhase,
+  needsNote,
+  planAdvance,
+  planBack,
+  readPhaseDetails,
+  type AdminPhaseRow,
+  type Step,
+} from "./phases";
 import { opt, readProject, readServiceType, str } from "./project-form";
 import { requireAdminStrict as requireAdmin } from "./session";
 
@@ -547,4 +559,121 @@ export async function setTasksVisible(_p: AdminState, f: FormData): Promise<Admi
       ? `${many ? `${numbers.length} tarefas passaram` : "A tarefa passou"} a estar visíve${many ? "is" : "l"} para o cliente.`
       : `${many ? `${numbers.length} tarefas deixaram` : "A tarefa deixou"} de estar visíve${many ? "is" : "l"} para o cliente.`,
   };
+}
+
+/* ───────────── Fases (M5-08, Académico e Design) ───────────── */
+
+async function projectPhases(sb: Sb, projectId: string) {
+  const { data, error } = await sb
+    .from("project_phases")
+    .select(ADMIN_PHASE_COLS)
+    .eq("project_id", projectId)
+    .order("position")
+    .returns<AdminPhaseRow[]>();
+  return error ? undefined : (data ?? []).map(mapAdminPhase);
+}
+
+/**
+ * Aplica os passos pela ordem, com admin_set_phase_status (a BD valida a transição, o travão
+ * de pagamento D-052 e grava o histórico). Não é atómico: se um passo falhar, os anteriores
+ * ficam e a mensagem diz o que ficou feito.
+ */
+async function applySteps(sb: Sb, steps: Step[], note: string | null) {
+  const done: Step[] = [];
+  for (const s of steps) {
+    const { error } = await sb.rpc("admin_set_phase_status", { p_phase: s.id, p_status: s.to, p_note: note });
+    if (error) return { done, error: error.message };
+    done.push(s);
+  }
+  return { done };
+}
+
+/** Resumo para o admin e aviso ao cliente (só das mudanças visíveis: os passos intermédios contam uma vez). */
+async function finishPhaseChange(
+  f: FormData,
+  sb: Sb,
+  projectId: string,
+  done: Step[],
+  failed: string | undefined,
+  note: string | null,
+): Promise<AdminState> {
+  const last = new Map<string, Step>();
+  for (const s of done) last.set(s.id, s);
+  const changes = [...last.values()].map((s) => ({ name: s.name, to: s.to }));
+  if (changes.length) refresh();
+  const summary = changes.map((c) => `“${c.name}”: ${PHASE_LABEL[c.to as DbPhaseState].toLowerCase()}`).join("; ");
+  if (failed) {
+    return { error: changes.length ? `Feito: ${summary}. Depois falhou: ${failed}` : failed };
+  }
+  const phases = await projectPhases(sb, projectId);
+  const nextStep = phases?.find((p) => p.id === done[done.length - 1]?.id)?.nextStep;
+  const mail = changes.length
+    ? await notify(f, sb, projectId, (c) => phaseEmail({ ...c, changes, nextStep, note }))
+    : undefined;
+  return { ok: true, message: `${summary}.${emailNote(mail)}` };
+}
+
+/** Muda o estado de uma fase para um estado permitido. */
+export async function setPhaseStatus(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const to = str(f, "estado") as DbPhaseState;
+  const note = opt(f, "motivo");
+  const phases = await projectPhases(sb, projectId);
+  const ph = phases?.find((p) => p.id === str(f, "fase"));
+  if (!ph) return { error: "Fase não encontrada." };
+  if (!isTransitionAllowed(ph, to)) {
+    return { error: `Não é possível passar de “${PHASE_LABEL[ph.status]}” para “${PHASE_LABEL[to] ?? to}”.` };
+  }
+  if (needsNote(ph.status) && !note) return { error: "Indique o motivo para reabrir a fase." };
+  const step: Step = { id: ph.id, name: ph.name, from: ph.status, to };
+  const r = await applySteps(sb, [step], note);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, note);
+}
+
+/** Avançar: conclui a fase e inicia a seguinte por iniciar (Q-083). */
+export async function advancePhase(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const phases = await projectPhases(sb, projectId);
+  if (!phases) return { error: "Não foi possível ler as fases." };
+  const plan = planAdvance(phases, str(f, "fase"));
+  if ("error" in plan) return plan;
+  const r = await applySteps(sb, plan, null);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, null);
+}
+
+/** Recuar: reabre a última fase concluída antes da atual, com motivo (D-062). */
+export async function reopenPreviousPhase(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const note = opt(f, "motivo");
+  if (!note) return { error: "Indique o motivo para reabrir a fase anterior." };
+  const phases = await projectPhases(sb, projectId);
+  if (!phases) return { error: "Não foi possível ler as fases." };
+  const step = planBack(phases);
+  if ("error" in step) return step;
+  const r = await applySteps(sb, [step], note);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, note);
+}
+
+/** Prazo, próximo passo (visível ao cliente) e progresso de uma fase. */
+export async function updatePhaseDetails(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const d = readPhaseDetails((k) => str(f, k));
+  if ("error" in d) return d;
+  const { data, error } = await sb
+    .from("project_phases")
+    .update(d)
+    .eq("id", str(f, "fase"))
+    .eq("project_id", projectId)
+    .select("name")
+    .single<{ name: string }>();
+  if (error || !data) return { error: `Não foi possível guardar: ${error?.message ?? "fase não encontrada"}` };
+  refresh();
+  const mail = await notify(f, sb, projectId, (c) =>
+    phaseEmail({ ...c, changes: [{ name: data.name, to: "atualizada" }], nextStep: d.next_step }),
+  );
+  return { ok: true, message: `Fase “${data.name}” guardada.${emailNote(mail)}` };
 }

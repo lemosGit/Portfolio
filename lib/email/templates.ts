@@ -93,3 +93,40 @@ export function demoEmail(o: { clientName: string; projectName: string; kind: ke
     text: `Olá ${firstName(o.clientName)},\n\nHá uma versão nova de ${o.projectName} para testar: ${label}.${o.notes ? `\nO que mudou: ${o.notes}` : ""}\n\nAbrir as entregas: ${href}`,
   };
 }
+
+/** Frase para o cliente sobre o novo estado de uma fase (M5-08). */
+const PHASE_SENTENCE: Record<string, string> = {
+  em_curso: "começou",
+  aguarda_cliente: "está a aguardar uma ação sua",
+  atrasada: "está atrasada",
+  concluida: "foi concluída",
+  por_iniciar: "voltou a ficar por iniciar",
+  nao_aplicavel: "não se aplica a este projeto",
+  atualizada: "foi atualizada",
+};
+
+export function phaseEmail(o: {
+  clientName: string;
+  projectName: string;
+  changes: { name: string; to: string }[];
+  nextStep?: string | null;
+  note?: string | null;
+}) {
+  const href = `${SITE_URL}/cliente`;
+  const lines = o.changes.map((c) => `A fase “${c.name}” ${PHASE_SENTENCE[c.to] ?? "mudou de estado"}.`);
+  const waiting = o.changes.some((c) => c.to === "aguarda_cliente");
+  const extra = [o.note && `Nota: ${o.note}`, o.nextStep && `Próximo passo: ${o.nextStep}`].filter(Boolean) as string[];
+  return {
+    subject: `${o.projectName}: ${lines[lines.length - 1].replace(/\.$/, "")}`,
+    html: layout({
+      preheader: lines.join(" "),
+      title: waiting ? "Precisamos de si" : "Novidades no seu projeto",
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, há novidades em <strong>${esc(o.projectName)}</strong>:</p>
+<ul style="margin:0 0 12px;padding-left:20px">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>${extra
+        .map((e) => `<p style="margin:0 0 8px">${esc(e)}</p>`)
+        .join("")}`,
+      cta: { href, label: "Ver o projeto" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nHá novidades em ${o.projectName}:\n${lines.map((l) => `- ${l}`).join("\n")}\n${extra.length ? `\n${extra.join("\n")}\n` : ""}\nVer o projeto: ${href}`,
+  };
+}
