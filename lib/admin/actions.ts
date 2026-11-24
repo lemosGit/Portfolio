@@ -9,7 +9,8 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { demoEmail, meetingEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { approvalRequestEmail, demoEmail, meetingEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
 import {
@@ -676,4 +677,82 @@ export async function updatePhaseDetails(_p: AdminState, f: FormData): Promise<A
     phaseEmail({ ...c, changes: [{ name: data.name, to: "atualizada" }], nextStep: d.next_step }),
   );
   return { ok: true, message: `Fase “${data.name}” guardada.${emailNote(mail)}` };
+}
+
+/* ───────────── Aprovações (M5-10) ───────────── */
+// Orçamento e extra nascem dos orçamentos e pagamentos (0007, M5-11). Aqui: índice, prova e entrega.
+
+/** Pede uma aprovação ao cliente. A BD grava o snapshot, põe a fase "a aguardar o cliente" e garante 1 pendente por alvo. */
+export async function createApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const subject = str(f, "assunto") as ApprovalSubject;
+  const phaseId = opt(f, "fase");
+  const message = opt(f, "mensagem");
+  if (message && message.length > 1000) return { error: "A mensagem tem no máximo 1000 caracteres." };
+
+  let row: Record<string, unknown>;
+  let snapshot: ApprovalSnapshot;
+  if (subject === "indice") {
+    const items = parseItems(str(f, "itens"));
+    if (items.length === 0) return { error: "Escreva o índice: um capítulo ou secção por linha." };
+    const label = opt(f, "versao");
+    if (label && label.length > 10) return { error: "A versão tem no máximo 10 caracteres (ex.: V2)." };
+    snapshot = { title: "Índice", items, ...(message && { message }) };
+    row = { subject, version_label: label };
+  } else if (subject === "prova" || subject === "entrega") {
+    const { data: d } = await sb
+      .from("deliverables")
+      .select("id, label, title, role, project_phase_id, files (original_name)")
+      .eq("id", str(f, "versao_ficheiro"))
+      .eq("project_id", projectId)
+      .maybeSingle<{ id: string; label: string; title: string | null; role: string; project_phase_id: string | null; files: { original_name: string }[] }>();
+    if (!d) return { error: "Escolha a versão do ficheiro a aprovar." };
+    if (d.role === "interno" || d.role === "referencia") return { error: "Só se pedem aprovações de entregáveis e provas." };
+    snapshot = { title: d.title ?? (subject === "prova" ? "Prova" : "Entrega"), files: d.files.map((x) => x.original_name), ...(message && { message }) };
+    row = { subject, deliverable_id: d.id, version_label: d.label };
+    if (!phaseId && d.project_phase_id) row.project_phase_id = d.project_phase_id;
+  } else {
+    return { error: "Escolha o que o cliente vai aprovar." };
+  }
+
+  const { error } = await sb.from("approvals").insert({ project_id: projectId, project_phase_id: phaseId, ...row, snapshot });
+  if (error) {
+    return {
+      error: error.code === "23505" ? "Já há um pedido pendente para isto. Cancele-o antes de pedir outro." : `Não foi possível pedir: ${error.message}`,
+    };
+  }
+  refresh();
+  const title = approvalTitle({ subject, versionLabel: (row.version_label as string | null) ?? null, snapshot });
+  const mail = await notify(f, sb, projectId, (c) => approvalRequestEmail({ ...c, title, message }));
+  return { ok: true, message: `Pedido “${title}” enviado ao cliente.${emailNote(mail)}` };
+}
+
+/** Cancela um pedido pendente (pendente → cancelada; a fase não muda sozinha). */
+export async function cancelApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb
+    .from("approvals")
+    .update({ status: "cancelada", decided_at: new Date().toISOString() })
+    .eq("id", str(f, "id"))
+    .eq("status", "pendente")
+    .select("id");
+  if (error) return { error: `Não foi possível cancelar: ${error.message}` };
+  if (!data?.length) return { error: "Este pedido já não está pendente." };
+  refresh();
+  return { ok: true, message: "Pedido cancelado." };
+}
+
+/** Reabre uma aprovação dada, com motivo (RF-30.33, D-022). A BD recusa reabrir a arte com a produção iniciada (RN-43). */
+export async function reopenApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb, userId } = await requireAdmin();
+  const reason = opt(f, "motivo");
+  if (!reason) return { error: "Indique o motivo para reabrir." };
+  if (reason.length > 2000) return { error: "O motivo tem no máximo 2000 caracteres." };
+  const { error } = await sb
+    .from("approval_responses")
+    .insert({ approval_id: str(f, "id"), kind: "reabrir", comment: reason, actor_role: "admin", actor_id: userId });
+  if (error) return { error: `Não foi possível reabrir: ${error.message}` };
+  refresh();
+  return { ok: true, message: "Aprovação reaberta: volta a aguardar o cliente." };
 }

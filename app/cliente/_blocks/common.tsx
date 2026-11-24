@@ -3,6 +3,7 @@
  * Design System V1: Concluído (verde), Em curso (cor do módulo), Aguarda a sua resposta
  * (coral, só quando a ação é do cliente), Planeado (cinzento), Atrasada (cor do módulo + etiqueta).
  */
+import { approvalTitle } from "@/lib/approvals/model";
 import type { PhaseView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import type { BlockProps } from "./types";
@@ -79,7 +80,9 @@ export function PhaseBar({ project }: BlockProps) {
 export function NextStep({ project }: BlockProps) {
   const ph = project.currentPhase;
   const allDone = project.phaseViews.every((p) => p.status === "done" || p.status === "skipped");
-  const clientTurn = isWaiting(ph) || ph.nextStep?.owner === "cliente";
+  // Um pedido de aprovação pendente é sempre um passo do cliente (M5-10, D-136).
+  const pending = (project.approvals ?? []).filter((a) => a.status === "pendente");
+  const clientTurn = isWaiting(ph) || ph.nextStep?.owner === "cliente" || pending.length > 0;
   const tone: Tone = allDone ? "done" : clientTurn ? "action" : ph.status === "pending" ? "planned" : "now";
   const label = allDone
     ? "Concluído"
@@ -89,8 +92,12 @@ export function NextStep({ project }: BlockProps) {
         ? "Atrasada"
         : STATE_LABEL[ph.status];
   const text =
-    ph.nextStep?.text ??
-    (clientTurn ? "Há um passo do seu lado. Veja os detalhes." : ph.description || "Estamos a tratar desta fase.");
+    pending.length > 0 && !(isWaiting(ph) || ph.nextStep?.owner === "cliente")
+      ? pending.length === 1
+        ? `Tem um pedido à sua espera: ${approvalTitle(pending[0])}. Veja-o em Aprovações, mais abaixo.`
+        : `Tem ${pending.length} pedidos à sua espera. Veja-os em Aprovações, mais abaixo.`
+      : (ph.nextStep?.text ??
+        (clientTurn ? "Há um passo do seu lado. Veja os detalhes." : ph.description || "Estamos a tratar desta fase."));
 
   return (
     <section aria-labelledby="proximo-title" className="panel p-6 sm:p-7">

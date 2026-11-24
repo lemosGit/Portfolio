@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-09 Implementar o bloco Ficheiros | #47 | `lib/files/`, `components/files/`, `app/admin/projetos/[id]/ficheiros/page.tsx` |
-| ⏭️ Próxima | M5-10 Implementar o bloco Aprovações | #48 | — |
-| ❓ Perguntas em aberto | **Criar a issue "miniaturas WebP + limpeza diária" (D-133)?** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M5-10 Implementar o bloco Aprovações | #48 | `lib/approvals/`, `app/cliente/_blocks/approvals.tsx`, `app/admin/projetos/[id]/aprovacoes/page.tsx` |
+| ⏭️ Próxima | M5-11 Implementar o bloco Pagamentos | #49 | — |
+| ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -74,3 +74,5 @@
 | 2026-11-24 | M5-07 | #45 | Tipo de serviço obrigatório ao criar (cliente+projeto e projeto), repositório só no Tech, edição sem mudar o tipo; 7 testes unitários novos (D-128) | `lib/admin/project-form.ts`, `app/admin/_components/ServicePicker.tsx`, `tests/unit/project-form.test.ts` |
 | 2026-11-24 | M5-08 | #46 | Página de fases no admin: avançar (concluir + iniciar a seguinte), recuar (reabrir com motivo), mudar estado, prazo, próximo passo e progresso, histórico; email ao cliente pelo Resend; resumo na página do projeto; 10 testes unitários (Q-083, D-129, D-130) | `app/admin/projetos/[id]/fases/page.tsx`, `lib/admin/phases.ts`, `lib/email/templates.ts`, `tests/unit/admin-phases.test.ts` |
 | 2026-11-24 | M5-09 | #47 | Bloco Ficheiros: upload direto em 3 passos com bilhete assinado e verificação dos bytes, versões por série, bloqueio por pagamento, download por link de 15 min; página do admin e "Ficheiros" do cliente (Académico/Design); 13 unitários, 1 E2E, RLS entre clientes no SQL (Q-084, D-131…D-133) | `lib/files/`, `components/files/`, `app/admin/projetos/[id]/ficheiros/page.tsx`, `app/cliente/_components/ClientFiles.tsx`, `tests/unit/files.test.ts` |
+| 2026-11-24 | M5-09b | #122 | Issue criada (miniaturas WebP + limpeza diária, D-133), com confirmação | `scripts/tarefas.py` |
+| 2026-11-24 | M5-10 | #48 | Bloco Aprovações: pedir (índice, prova, entrega), cancelar e reabrir no admin; cliente aprova em 2 passos ou pede alterações com comentário; histórico; próximo passo do cliente; email ao João; 4 unitários, 1 E2E, captura do Académico atualizada (Q-085, D-134…D-136) | `lib/approvals/`, `app/cliente/_blocks/approvals.tsx`, `app/cliente/_components/ApprovalCard.tsx`, `app/admin/projetos/[id]/aprovacoes/page.tsx` |
