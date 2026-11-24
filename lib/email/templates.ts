@@ -186,3 +186,18 @@ export function paymentEmail(o: { clientName: string; projectName: string; descr
     text: `Olá ${firstName(o.clientName)},\n\n${o.paid ? `Recebemos o pagamento de ${o.amount} (${o.description}). Obrigado!` : `Registámos o pagamento ${o.description}: ${o.amount}${o.dueOn ? `, até ${longDate(o.dueOn)}` : ""}.`}\n\nVer os pagamentos: ${href}`,
   };
 }
+
+/** Link de acesso enviado por email (M5-12, RF-30.52). */
+export function accessLinkEmail(o: { clientName: string; projectName: string; url: string }) {
+  return {
+    subject: `O seu acesso a ${o.projectName}`,
+    html: layout({
+      preheader: "Toque no botão para entrar na Área do Cliente. O link vale 24 horas.",
+      title: `Olá ${firstName(o.clientName)}, aqui está o seu acesso`,
+      body: `<p style="margin:0 0 12px">Toque no botão para entrar no projeto <strong>${esc(o.projectName)}</strong>. Não precisa de senha.</p>
+<p style="margin:0;color:#8a85a3;font-size:13px">O link funciona uma vez e vale 24 horas. Se expirar, peça um novo ao João.</p>`,
+      cta: { href: o.url, label: "Entrar no meu projeto" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nEntre no projeto ${o.projectName} (sem senha):\n${o.url}\n\nO link funciona uma vez e vale 24 horas.`,
+  };
+}

@@ -4,10 +4,13 @@ import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSq
 import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
+import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
+import { emailEnabled } from "@/lib/email/send";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field, inputCls } from "../../_components/forms";
+import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
 
@@ -25,7 +28,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { sb } = await requireAdmin();
   const p = await getProjectById(sb, id);
   if (!p) notFound();
-  const v = await withProgress(p, sb);
+  const [v, { data: linkRows }] = await Promise.all([
+    withProgress(p, sb),
+    // Eventos do link mágico (quem gerou e quando): a RLS só deixa o admin ler.
+    sb
+      .from("access_links")
+      .select("id, status, channel, expires_at, used_at, created_at")
+      .eq("project_id", id)
+      .order("created_at", { ascending: false })
+      .limit(5)
+      .returns<{ id: string; status: LinkStatus; channel: string; expires_at: string; used_at: string | null; created_at: string }[]>(),
+  ]);
+  const links = linkRows ?? [];
 
   const now = Date.now();
   const upcoming = p.meetings.filter((m) => new Date(m.endsAt).getTime() > now).reverse();
@@ -130,6 +144,31 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </li>
           ))}
         </ul>
+      </Section>
+
+      <Section
+        id="acesso"
+        title="Acesso do cliente"
+        description="Um link de uso único, válido 24 horas, que leva o cliente direto a este projeto sem senha. O email e a senha continuam a funcionar."
+      >
+        <AccessLinkPanel projectId={p.id} emailOn={emailEnabled} />
+        {links.length > 0 && (
+          <ul className="mt-5 divide-y divide-line border-t border-line text-xs text-ink-dim">
+            {links.map((l) => {
+              const v = linkView({ status: l.status, expiresAt: l.expires_at });
+              return (
+                <li key={l.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
+                  <span className="text-ink">Gerado {relative(l.created_at)}</span>
+                  <span>· {l.channel === "copiar" ? "copiado" : l.channel === "whatsapp" ? "WhatsApp" : "email"}</span>
+                  {l.used_at && <span>· usado {relative(l.used_at)}</span>}
+                  <span className="ml-auto">
+                    <Badge tone={v === "ativo" ? "accent" : v === "usado" ? "ok" : "neutral"}>{LINK_LABEL[v]}</Badge>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Section>
 
       <Section title="Dados do projeto">

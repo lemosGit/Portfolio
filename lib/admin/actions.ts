@@ -9,7 +9,10 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { approvalRequestEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { accessLinkEmail, approvalRequestEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { LINKS_PER_HOUR, LINK_TTL_MS, entryUrl, looksLikeToken, type LinkChannel } from "@/lib/access/links";
+import { digest } from "@/lib/access/digest";
+import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
@@ -35,6 +38,8 @@ export type AdminState = {
   message?: string;
   /** Credenciais a mostrar uma única vez (conta nova ou senha redefinida). */
   credentials?: { email: string; password: string };
+  /** Link mágico acabado de gerar (M5-12): o token só existe aqui, nunca na BD. */
+  link?: { url: string; expiresAt: string; clientName: string; projectName: string };
 };
 
 /* ───────────── utilitários ───────────── */
@@ -873,4 +878,103 @@ export async function cancelPayment(_p: AdminState, f: FormData): Promise<AdminS
   await sb.from("approvals").update({ status: "cancelada", decided_at: new Date().toISOString() }).eq("payment_id", id).eq("status", "pendente");
   refresh();
   return { ok: true, message: `${data.description} anulado.` };
+}
+
+/* ───────────── Link mágico (M5-12, ADR-002) ───────────── */
+// access_links só tem política de leitura para o admin: escreve-se com a chave secreta,
+// depois de requireAdminStrict (seguranca.md §4).
+
+/** Gera o link de uso único (24 h) para o cliente de um projeto. Os anteriores ficam "substituídos" (L4). */
+export async function generateAccessLink(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb, userId } = await requireAdmin();
+  const admin = accounts();
+  if (!admin) return { error: ACCOUNTS_OFF };
+  const projectId = str(f, "projeto");
+  const { data: p } = await sb
+    .from("projects")
+    .select("id, name, client_id, clients (id, name, email, user_id)")
+    .eq("id", projectId)
+    .single<{ id: string; name: string; client_id: string; clients: { id: string; name: string; email: string; user_id: string } | null }>();
+  if (!p?.clients) return { error: "Projeto ou cliente não encontrado." };
+  const c = p.clients;
+
+  // L5 / D-032: no máximo 5 links por cliente por hora.
+  const { count } = await sb
+    .from("access_links")
+    .select("id", { count: "exact", head: true })
+    .eq("client_id", c.id)
+    .gte("created_at", new Date(Date.now() - 60 * 60 * 1000).toISOString());
+  if ((count ?? 0) >= LINKS_PER_HOUR) return { error: `Já gerou ${LINKS_PER_HOUR} links para este cliente na última hora. Tente mais tarde.` };
+
+  const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email: c.email });
+  if (error || !data?.properties) return { error: `O Supabase não gerou o link: ${error?.message ?? "sem resposta"}` };
+  // D-077: uma conta com o email por confirmar recebe um link "signup". Nunca o enviamos.
+  if (data.properties.verification_type !== "magiclink") {
+    return { error: "A conta deste cliente tem o email por confirmar. Confirme-o (Clientes → editar o email) antes de gerar o link." };
+  }
+  const token = data.properties.hashed_token;
+  if (!looksLikeToken(token)) return { error: "O Supabase devolveu um token inesperado." };
+
+  const expiresAt = new Date(Date.now() + LINK_TTL_MS).toISOString();
+  await admin.from("access_links").update({ status: "substituido" }).eq("client_id", c.id).eq("status", "ativo");
+  const { error: ie } = await admin.from("access_links").insert({
+    client_id: c.id,
+    project_id: p.id,
+    token_digest: digest(token),
+    channel: "copiar",
+    expires_at: expiresAt,
+    created_by: userId, // evento: quem gerou e quando (created_at)
+  });
+  if (ie) return { error: `Não foi possível registar o link: ${ie.message}` };
+
+  revalidatePath(`/admin/projetos/${p.id}`);
+  return {
+    ok: true,
+    message: "Link gerado. Envie-o ao cliente: funciona uma vez e vale 24 horas.",
+    link: { url: entryUrl(SITE_URL, token), expiresAt, clientName: c.name, projectName: p.name },
+  };
+}
+
+/** Lê o link que o painel tem na mão e confirma que é o ativo deste projeto (o token não está na BD). */
+async function activeLinkFor(url: string, projectId: string) {
+  const admin = accounts();
+  if (!admin) return undefined;
+  let token: string | null = null;
+  try {
+    token = new URL(url).searchParams.get("t");
+  } catch {
+    return undefined;
+  }
+  if (!looksLikeToken(token ?? undefined)) return undefined;
+  const { data } = await admin
+    .from("access_links")
+    .select("id, project_id, status, expires_at, clients (name, email), projects (name)")
+    .eq("token_digest", digest(token!))
+    .maybeSingle<{ id: string; project_id: string; status: string; expires_at: string; clients: { name: string; email: string } | null; projects: { name: string } | null }>();
+  if (!data || data.project_id !== projectId || data.status !== "ativo" || Date.parse(data.expires_at) <= Date.now()) return undefined;
+  return { admin, row: data };
+}
+
+/** Envia o link por email (Resend, RF-30.52 — Should, D-039). */
+export async function emailAccessLink(url: string, projectId: string): Promise<AdminState> {
+  await requireAdmin();
+  const found = await activeLinkFor(String(url ?? ""), String(projectId ?? ""));
+  if (!found?.row.clients) return { error: "Este link já não é o ativo. Gere um novo." };
+  const { row, admin } = found;
+  const r = await sendEmail({
+    to: row.clients!.email,
+    ...accessLinkEmail({ clientName: row.clients!.name, projectName: row.projects?.name ?? "o seu projeto", url }),
+  });
+  if (!r.sent) return { error: `Email não enviado: ${r.reason}.` };
+  await admin.from("access_links").update({ channel: "email" }).eq("id", row.id);
+  revalidatePath(`/admin/projetos/${projectId}`);
+  return { ok: true, message: `Link enviado para ${row.clients!.email}.` };
+}
+
+/** Regista o último canal usado (Copiar / WhatsApp). Não falha a interface se não conseguir. */
+export async function setAccessLinkChannel(url: string, projectId: string, channel: LinkChannel): Promise<void> {
+  await requireAdmin();
+  if (channel !== "copiar" && channel !== "whatsapp") return;
+  const found = await activeLinkFor(String(url ?? ""), String(projectId ?? ""));
+  if (found) await found.admin.from("access_links").update({ channel }).eq("id", found.row.id);
 }
