@@ -6,7 +6,7 @@
 | D-001 | 2026-11-23 | Fases de Académico/Design guardadas no Supabase como dados por `service_type`; o Desenvolvimento mantém os milestones do GitHub | Q-001 | Tudo na BD, Tech incluído; fases fixas no código | Aprovada |
 | D-002 | 2026-11-23 | Pagamentos, Aprovações, Ficheiros e Link mágico construídos uma vez (M5) e usados pelos 3 serviços | Q-002 | Só 3 blocos; nenhum | Aprovada |
 | D-003 | 2026-11-23 | Ordem: fundação (M5) → Académico (M6) → Design (M7) | Q-003 | Design primeiro; em paralelo | Aprovada |
-| D-004 | 2026-11-23 | Base visual atual mantida; `--accent`/`--accent-2` por serviço (Dev #22D3EE/#3B82F6 · Académico #F59E0B/#1E3A8A · Design #EC4899/#F97316) | Q-004 | Migrar para #0B0F1A/#7C3AED | Aprovada |
+| D-004 | 2026-11-23 | Base visual atual mantida; `--accent`/`--accent-2` por serviço (Dev #22D3EE/#3B82F6 · Académico #F59E0B/#1E3A8A · Design #EC4899/#F97316) | Q-004 | Migrar para #0B0F1A/#7C3AED | **Substituída por D-086** (PA-003, 2026-11-24) |
 | D-005 | 2026-11-23 | Layout Tech mantém as 6 fases já implementadas (o documento lista 7); não se altera neste roteiro | Assumido | Passar o Tech para 7 fases | Aprovada no G1 (Q-036…Q-039) |
 | D-006 | 2026-11-23 | M6 e M7 são fatias verticais por módulo (BD + admin + cliente), não "backend" e "web" separados | Assumido | Divisão por camada da metodologia | Assumida |
 | D-007 | 2026-11-23 | Sem branch `develop`: o repositório já trabalha com `feature/*` → PR → `main` | Assumido (histórico de PRs #1–#10) | Criar `develop` | Assumida |
@@ -88,3 +88,9 @@
 | D-083 | 2026-11-24 | URLs assinadas de download válidas 15 minutos | RNF-303, D-032 | 1 h | Assumida |
 | D-084 | 2026-11-24 | Tipo real verificado por assinatura (primeiros bytes) numa tabela própria, sem dependência nova | RNF-305 | Biblioteca `file-type` | Assumida |
 | D-085 | 2026-11-24 | `/api/cron/limpeza` diário (Vercel Cron, `CRON_SECRET`): aviso aos 83 dias, purga aos 90, órfãos > 24 h, conclusão do Académico | Q-066 | pg_cron + Edge Function | Aprovada |
+| D-086 | 2026-11-24 | O **Design System V1** (`docs/references/designer_system/`) é a referência de todo o design: neutros comuns, marca violeta + azul, acentos Azul Sistema / Lilás Criativo / Âmbar Saber | Q-067, PA-003 | Base ameixa (D-004) | Aprovada |
+| D-087 | 2026-11-24 | Acentos aplicados por `data-service` no layout com 4 tokens por módulo (`--m-primary`, `--m-soft`, `--m-tint`, `--m-on`); componentes só usam tokens | ADR-004 | Classes Tailwind por serviço | Assumida |
+| D-088 | 2026-11-24 | "Atrasada" = cor do módulo + etiqueta "Atrasada"; o coral "Ação sua" fica só para ações do cliente; "Não se aplica" usa o estilo de Planeado | Q-068 | Coral; 5.ª cor | Aprovada |
+| D-089 | 2026-11-24 | Botão primário com texto escuro (`--m-on`); secundário com tinta + borda; Planeado só como ponto/borda (contraste) | ADR-004 §6 | Texto branco | Assumida |
+| D-090 | 2026-11-24 | Inter (via `@fontsource-variable/inter`) substitui o Manrope na `.app`; o portal público mantém as letras até ser revisto | ADR-004 §5 | Mudar tudo já | Assumida |
+| D-091 | 2026-11-24 | Admin, login e portal público usam a marca (violeta + azul), sem `data-service` | DS V1 (regra 3) | Acento do último projeto aberto | Assumida |

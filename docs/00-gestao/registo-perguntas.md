@@ -70,6 +70,8 @@
 | Q-064 | 2026-11-24 | M3 | Posso testar o link mágico na produção com o cliente de teste? | Sim, só com o cliente de teste | ADR-002 (spike), D-076 |
 | Q-065 | 2026-11-24 | M3 | Onde são geradas as miniaturas WebP? | No browser, antes do envio | D-082, ADR-003 |
 | Q-066 | 2026-11-24 | M3 | Que agendador para a limpeza dos 90 dias e dos órfãos? | Vercel Cron diário | D-085, ADR-003 |
+| Q-067 | 2026-11-24 | M3 | (Instrução do João) Em que se baseia o design? | No **Design System V1** (`docs/references/designer_system/Design System — GeniusFrela@2x.png`): mesma base e metodologia, só diversificar por módulo; todas as tarefas de design seguem esta imagem | PA-003, D-086, ADR-004 |
+| Q-068 | 2026-11-24 | M3 | Como mostrar uma fase "Atrasada" (atraso da GeniusFrela)? | Cor do módulo + etiqueta "Atrasada" | D-088 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

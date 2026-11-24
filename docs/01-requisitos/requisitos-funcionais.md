@@ -1,5 +1,5 @@
 # Requisitos funcionais — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.4 (RF-10, RF-20, RF-30; prioridades revistas na M1-08; PA-001) · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.5 (RF-10, RF-20, RF-30; prioridades revistas na M1-08; PA-001, PA-003) · Data: 2026-11-23
 > Depende de: `visao-modulos.md`, `personas.md`, `docs/references/1/GeniusFrela_Projeto_e_Layouts.md` §5.2 e §5.3 · Perguntas/decisões usadas: Q-005, Q-006, Q-008…Q-010, Q-012…Q-023, D-001, D-002, D-004, D-009…D-027
 
 ## Convenções
@@ -18,7 +18,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-10.01 | O admin deve poder criar um projeto com `service_type = academic`, sem repositório GitHub, e o sistema cria as 7 fases a partir do modelo do Académico | PER-01 | Must | L§7, D-001 |
-| RF-10.02 | O cliente deve ver, no topo, a etiqueta "Académico" na cor do serviço (âmbar), o prazo de entrega e o estado do projeto | PER-03, PER-05 | Must | L§4, L§5.2 |
+| RF-10.02 | O cliente deve ver, no topo, a etiqueta "Académico" na cor do serviço (Âmbar Saber, ADR-004), o prazo de entrega e o estado do projeto | PER-03, PER-05 | Must | L§4, L§5.2 |
 | RF-10.03 | O cliente deve ver a barra de fases com as 7 fases e o estado de cada uma (concluída, em curso, a aguardar o cliente, atrasada, por iniciar) | PER-03, PER-05 | Must | L§4, L§6 |
 | RF-10.04 | O cliente deve ver a fase atual com uma frase curta e o **próximo passo** (de quem está a ação: GeniusFrela ou o cliente) | PER-03, PER-05 | Must | L§4, PER |
 
@@ -83,7 +83,7 @@ Fluxo: **1** Pedido e briefing → **2** Orçamento e aceite → **3** Estrutura
 |---|---|---|---|---|
 | RF-10.80 | O cliente deve ver, em destaque na primeira vista, os **dias restantes até ao prazo** de entrega | PER-03, PER-05 | Must | L§5.2 |
 | RF-10.81 | Com menos de 2 dias, a contagem deve passar a **horas** | PER-05 | Should | PER (prazos curtos) |
-| RF-10.82 | A cor muda para "a aguardar" (`#EAB308`) a ≤ 3 dias e para "atrasado" (`#EF4444`) depois do prazo, com o fuso Africa/Luanda | PER-03, PER-05 | Should | L§6, M6-02 |
+| RF-10.82 | A ≤ 3 dias a contagem mostra a etiqueta "Prazo próximo"; depois do prazo, a etiqueta "Atrasada" com a nova data — sempre na cor do módulo, sem o coral "Ação sua" (ADR-004, D-088); fuso Africa/Luanda | PER-03, PER-05 | Should | L§6, M6-02, PA-003 |
 | RF-10.83 | Depois da entrega final, a contagem do prazo dá lugar à contagem dos dias de ajustes (RF-10.71) | PER-03 | Should | Q-014 |
 
 ---
@@ -98,7 +98,7 @@ Fluxo: **1** Briefing → **2** Orçamento e sinal → **3** Conceito / esboço 
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-20.01 | O admin deve poder criar um projeto com `service_type = design`, sem repositório GitHub, e o sistema cria as 7 fases a partir do modelo do Design | PER-01 | Must | L§7, D-001 |
-| RF-20.02 | O cliente deve ver, no topo, a etiqueta "Design" na cor do serviço (magenta), o tipo de peça e a data do evento, se existir | PER-04 | Must | L§4, L§5.3 |
+| RF-20.02 | O cliente deve ver, no topo, a etiqueta "Design" na cor do serviço (Lilás Criativo, ADR-004), o tipo de peça e a data do evento, se existir | PER-04 | Must | L§4, L§5.3 |
 | RF-20.03 | O cliente deve ver a barra de fases com as 7 fases e o estado de cada uma (concluída, em curso, a aguardar o cliente, atrasada, por iniciar) | PER-04 | Must | L§4, L§6 |
 | RF-20.04 | O cliente deve ver a fase atual com uma frase curta e **um só botão** para o próximo passo (comentar, aprovar, pagar ou levantar) | PER-04 | Must | L§4, PER |
 | RF-20.05 | A primeira vista do cliente deve mostrar, por esta ordem: a **última prova em grande**, a ronda ("Ronda 1 de 2"), o botão do próximo passo e a data e o local de levantamento | PER-04 | Should | PER-04 ("O que vê primeiro") |
@@ -188,7 +188,7 @@ Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvim
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-30.10 | Todas as Áreas do Cliente partilham o mesmo esqueleto: etiqueta do serviço · prazo · estado · barra de fases · fase atual + próximo passo · blocos | PER-02, PER-03, PER-04 | Must | L§4 |
-| RF-30.11 | A cor de destaque (`--accent`, `--accent-2`) muda conforme o tipo de serviço, sobre a base visual atual | PER-02, PER-03, PER-04 | Should | D-004 |
+| RF-30.11 | Os acentos do módulo (`--m-primary`, `--m-soft`, `--m-tint`, `--m-on`) mudam conforme o tipo de serviço (`data-service`), sobre os neutros comuns do Design System V1 | PER-02, PER-03, PER-04 | Should | ADR-004, PA-003 |
 | RF-30.12 | A primeira vista mostra pouco texto. Os pormenores ficam atrás de "ver detalhes" | PER-03, PER-04 | Should | `docs/melhorar_designer.txt` |
 | RF-30.13 | Um cliente com vários projetos (ex.: várias peças de Design) alterna entre eles no seletor de projetos atual | PER-04 | Must | D-019, PR #3 |
 
