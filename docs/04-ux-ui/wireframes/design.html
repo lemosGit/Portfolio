@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wireframe — Área do Cliente Design · GeniusFrela</title>
+  <link rel="stylesheet" href="ds.css" />
+  <style>
+    /* só deste wireframe: a moldura da prova (a arte do cliente) */
+    .proof { position: relative; background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--r-lg); display: grid; place-items: center; padding: var(--s3); flex: none; }
+    .proof svg { width: 100%; height: 100%; border-radius: 4px; }
+    .proof-tag { position: absolute; left: var(--s3); top: var(--s3); z-index: 1; height: 24px; padding: 0 10px; border-radius: var(--r-pill); background: rgba(11,15,23,.85); color: var(--n-ink); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
+    .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+    .g-item { display: flex; flex-direction: column; gap: 6px; }
+    .g-item.now .proof { border-color: var(--m-primary); }
+  </style>
+</head>
+<body data-service="design">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.3-.7a11.3 11.3 0 0 1-4.4-3.9c-.3-.5-1.1-1.5-1.1-2.9s.7-2 1-2.3a1 1 0 0 1 .7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6a8 8 0 0 0 1.5 1.8 7 7 0 0 0 2.1 1.3c.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.4.2.5.3a2 2 0 0 1-.1 1.2z"/></symbol>
+  <symbol id="i-g" viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#4C8DFF"/></linearGradient></defs><path d="M17 6.5A7 7 0 1 0 19 12h-6"/></symbol>
+</svg>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="proof-v1" viewBox="0 0 300 420">
+    <rect width="300" height="420" fill="#F4EFE6"/>
+    <rect x="14" y="14" width="272" height="392" fill="none" stroke="#9C8A63" stroke-width="1"/>
+    <g fill="none" stroke="#6F8A74" stroke-width="1.6" stroke-linecap="round">
+      <path d="M150 62c-22 0-40-10-52-26M150 62c22 0 40-10 52-26"/><path d="M120 52c-4-8-2-16 4-20M180 52c4-8 2-16-4-20"/>
+      <path d="M150 358c-22 0-40 10-52 26M150 358c22 0 40 10 52 26"/>
+    </g>
+    <circle cx="150" cy="62" r="3.5" fill="#9C8A63"/>
+    <text x="150" y="120" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#2F3B33" opacity=".75">COM A BÊNÇÃO DOS NOSSOS PAIS</text>
+    <text x="150" y="190" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="34" fill="#2F3B33">Ana</text>
+    <text x="150" y="222" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#9C8A63">&amp;</text>
+    <text x="150" y="262" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="34" fill="#2F3B33">Paulo</text>
+    <line x1="110" y1="290" x2="190" y2="290" stroke="#9C8A63" stroke-width="1"/>
+    <text x="150" y="314" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#2F3B33">Sábado, 13 de fevereiro de 2027</text>
+    <text x="150" y="334" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#2F3B33" opacity=".75">Igreja da Sagrada Família, Luanda</text>
+  </symbol>
+  <symbol id="proof-v2" viewBox="0 0 300 420">
+    <rect width="300" height="420" fill="#F4EFE6"/>
+    <rect x="14" y="14" width="272" height="392" fill="none" stroke="#B48A46" stroke-width="1"/>
+    <g fill="none" stroke="#B48A46" stroke-width="1.6" stroke-linecap="round">
+      <path d="M150 62c-22 0-40-10-52-26M150 62c22 0 40-10 52-26"/><path d="M120 52c-4-8-2-16 4-20M180 52c4-8 2-16-4-20"/>
+      <path d="M150 358c-22 0-40 10-52 26M150 358c22 0 40 10 52 26"/>
+    </g>
+    <circle cx="150" cy="62" r="3.5" fill="#B48A46"/>
+    <text x="150" y="120" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#23362B" opacity=".75">COM A BÊNÇÃO DOS NOSSOS PAIS</text>
+    <text x="150" y="190" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="40" fill="#23362B">Ana</text>
+    <text x="150" y="222" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#B48A46">&amp;</text>
+    <text x="150" y="262" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="40" fill="#23362B">Paulo</text>
+    <line x1="110" y1="290" x2="190" y2="290" stroke="#B48A46" stroke-width="1"/>
+    <text x="150" y="314" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#23362B">Sábado, 13 de fevereiro de 2027</text>
+    <text x="150" y="334" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#23362B" opacity=".75">Igreja da Sagrada Família, Luanda</text>
+  </symbol>
+  <symbol id="proof-v3" viewBox="0 0 300 420">
+    <rect width="300" height="420" fill="#F4EFE6"/>
+    <rect x="14" y="14" width="272" height="392" fill="none" stroke="#B48A46" stroke-width="1"/>
+    <g fill="none" stroke="#B48A46" stroke-width="1.6" stroke-linecap="round">
+      <path d="M150 62c-22 0-40-10-52-26M150 62c22 0 40-10 52-26"/><path d="M120 52c-4-8-2-16 4-20M180 52c4-8 2-16-4-20"/>
+      <path d="M150 358c-22 0-40 10-52 26M150 358c22 0 40 10 52 26"/>
+    </g>
+    <circle cx="150" cy="62" r="3.5" fill="#B48A46"/>
+    <text x="150" y="120" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="3" fill="#23362B" opacity=".75">COM A BÊNÇÃO DOS NOSSOS PAIS</text>
+    <text x="150" y="190" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="40" fill="#23362B">Ana</text>
+    <text x="150" y="222" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#B48A46">&amp;</text>
+    <text x="150" y="262" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="40" fill="#23362B">Paulo</text>
+    <line x1="110" y1="290" x2="190" y2="290" stroke="#B48A46" stroke-width="1"/>
+    <text x="150" y="314" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#23362B">Domingo, 14 de fevereiro de 2027</text>
+    <text x="150" y="334" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#23362B" opacity=".75">Igreja da Sagrada Família, Luanda</text>
+  </symbol>
+</svg>
+
+<main class="doc">
+  <h1>Área do Cliente — Design</h1>
+  <p>Wireframes da M4-04 (#35) com o Design System V1: neutros comuns, acento Lilás Criativo, Space Grotesk e Inter. A interface fica discreta para a arte do cliente ser a protagonista. Telas em <code>fluxo-telas.md</code> (TEL-30 a TEL-35); blocos em <code>layout-blocos.md</code>.</p>
+  <div class="legend"><span class="state done">Concluído</span><span class="state now">Em curso (cor do módulo)</span><span class="state action">Aguarda a sua resposta</span><span class="state planned">Planeado</span></div>
+
+  <h2>Visão geral (TEL-30)</h2>
+  <p>A última prova em grande, a ronda e os dois botões. Depois da aprovação, o ecrã passa a falar da produção e, no fim, de onde e quando levantar.</p>
+  <div class="row">
+    <figure class="shot"><div class="phone"><div class="scroll"><div class="topbar"><div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Design</span><span class="project-name">Convite do casamento</span></div><span class="avatar">TE</span></div>
+<div class="proof" style="height:292px"><span class="proof-tag">V2, atual</span><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div>
+<div class="split"><span class="state action">Aguarda a sua resposta</span><span class="small muted">Ronda 1 de 2</span></div>
+<div class="stack" style="gap:8px"><a class="btn primary block" href="#">Aprovar arte</a><a class="btn secondary block" href="#">Pedir revisão</a></div>
+<p class="small muted">Ainda pode pedir 1 revisão incluída no preço.</p>
+<div class="card split small"><span class="muted">Levantamento previsto</span><b>5 fev, Talatona</b></div>
+</div><a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a><nav class="bottomnav" aria-label="Área do cliente"><a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a><a href="#"><svg><use href="#i-layers"/></svg>Projeto</a><a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a><a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a></nav></div><figcaption><b>A · Revisões.</b> A prova V2 ocupa a primeira vista (RF-20.05). Aprovar é o primário; Pedir revisão é secundário, como no DS V1.</figcaption></figure>
+    <figure class="shot"><div class="phone"><div class="scroll"><div class="topbar"><div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Design</span><span class="project-name">Convite do casamento</span></div><span class="avatar">TE</span></div>
+<div class="proof" style="height:250px"><span class="proof-tag">V3, aprovada</span><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v3"/></svg></div>
+<div class="stack" style="gap:6px"><div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="action"></i><i class=""></i></div><div class="phase-caption"><span>Fase 6 de 7</span><b>Produção</b></div></div>
+<div class="card next stack"><span class="state action">Aguarda a sua resposta</span><h3>Falta o restante para imprimir</h3>
+<p>A arte V3 foi aprovada a 2 dez. Imprimimos os 120 convites assim que os 30 000 Kz estiverem pagos.</p>
+<a class="btn primary block" href="#">Ver como pagar</a></div>
+</div><a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a><nav class="bottomnav" aria-label="Área do cliente"><a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a><a href="#"><svg><use href="#i-layers"/></svg>Projeto</a><a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a><a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a></nav></div><figcaption><b>B · Arte aprovada, falta o restante.</b> A produção está travada pelo pagamento (RN-15): a ação volta a ser do cliente, por isso coral.</figcaption></figure>
+    <figure class="shot"><div class="phone"><div class="scroll"><div class="topbar"><div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Design</span><span class="project-name">Convite do casamento</span></div><span class="avatar">TE</span></div>
+<div class="stack" style="gap:6px"><div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div><div class="phase-caption"><span>Fase 7 de 7</span><b>Entrega</b></div></div>
+<div class="card stack" style="padding:var(--s5) var(--s4)"><span class="state done">Pronto para levantar</span>
+<p style="font:600 28px/36px var(--font-display);color:var(--n-ink)">Sexta, 5 de fevereiro</p>
+<p style="color:var(--n-ink)">Loja GeniusFrela, Talatona<br/><span class="muted">das 08h às 20h</span></p>
+<a class="btn primary block" href="#">Abrir no mapa</a></div>
+<div class="card stack"><span class="small muted">Ficheiros digitais</span><div class="list">
+<div><span>Convite_digital.png</span><a class="link" href="#">Descarregar</a></div>
+<div><span>Convite_impressao.pdf</span><a class="link" href="#">Descarregar</a></div></div></div>
+<p class="small muted">O casamento é a 14 de fevereiro: tem 9 dias de folga.</p>
+</div><a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a><nav class="bottomnav" aria-label="Área do cliente"><a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a><a href="#"><svg><use href="#i-layers"/></svg>Projeto</a><a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a><a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a></nav></div><figcaption><b>C · Pronto para levantar.</b> Data e local em destaque, ficheiros digitais quando a ficha os prevê (RF-20.71) e a folga até ao evento.</figcaption></figure>
+  </div>
+
+  <h2>Provas, revisão e aprovação (TEL-31 a TEL-34)</h2>
+  <p>As ações abrem uma folha. A aprovação repete os textos-chave e só fica ativa com a confirmação (D-071).</p>
+  <div class="row">
+    <figure class="shot"><div class="phone"><div class="scroll"><div class="topbar"><div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Design</span><span class="project-name">Convite do casamento</span></div><span class="avatar">TE</span></div>
+<h3 style="font:600 28px/36px var(--font-display);margin-top:4px">Provas</h3>
+<div class="gallery">
+<div class="g-item now"><div class="proof" style="height:176px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div><div class="split small"><b>V2, atual</b><span class="muted">28 nov</span></div></div>
+<div class="g-item"><div class="proof" style="height:176px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v1"/></svg></div><div class="split small"><b>V1</b><span class="muted">25 nov</span></div></div>
+</div>
+<a class="btn secondary block" href="#">Comparar V1 e V2</a>
+<div class="card"><div class="list">
+<div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Briefing</span><span class="small muted">20 nov</span></div>
+<div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Orçamento e sinal</span><span class="small muted">22 nov</span></div>
+<div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Conceito</span><span class="small muted">25 nov</span></div>
+<div><span style="display:flex;gap:10px;align-items:center"><span class="tick now"></span><b>Revisões</b></span><span class="state action">Ronda 1 de 2</span></div>
+<div><span style="display:flex;gap:10px;align-items:center"><span class="tick todo"></span><span class="muted">Aprovação da arte</span></span></div>
+</div></div>
+</div><nav class="bottomnav" aria-label="Área do cliente"><a href="#"><svg><use href="#i-home"/></svg>Visão geral</a><a href="#" aria-current="page"><svg><use href="#i-layers"/></svg>Projeto</a><a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a><a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a></nav></div><figcaption><b>TEL-31 · Projeto.</b> Galeria com a versão atual marcada na cor do módulo, e as fases por baixo.</figcaption></figure>
+    <figure class="shot"><div class="phone"><div class="scroll" style="padding-bottom:16px">
+<div class="split"><a class="btn quiet" href="#" style="padding:0">Fechar</a><b>V1 e V2</b><span style="width:48px"></span></div>
+<div class="proof" style="height:300px"><span class="proof-tag">V1, 25 nov</span><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v1"/></svg></div>
+<p class="small muted">O seu pedido: &quot;Os nomes podem ficar maiores e as folhas em dourado?&quot;</p>
+<div class="proof" style="height:300px"><span class="proof-tag">V2, 28 nov</span><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div>
+</div></div><figcaption><b>TEL-32 · Comparar.</b> No telemóvel, uma versão por cima da outra, com o pedido que levou à V2 (RF-20.81, RF-20.82).</figcaption></figure>
+    <figure class="shot"><div class="phone"><div class="scroll" style="opacity:.35"><div class="proof" style="height:320px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div></div><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Pedir revisão"><span class="handle"></span><h3>Pedir revisão</h3>
+<p class="small muted">Esta é a ronda 2 de 2 incluídas. Depois desta, cada nova revisão tem um custo extra.</p>
+<div class="field">A data está errada: o casamento é domingo, 14 de fevereiro.</div>
+<div class="attach"><svg width="18" height="18"><use href="#i-clip"/></svg>Juntar imagem (opcional)</div>
+<a class="btn primary block" href="#">Enviar revisão</a></div></div><figcaption><b>TEL-33 · Pedir revisão.</b> Avisa que é a última ronda incluída antes de enviar (RN-35, RN-36). Comentário obrigatório, imagem opcional.</figcaption></figure>
+  </div>
+  <div class="row" style="margin-top:var(--s6)">
+    <figure class="shot"><div class="phone"><div class="scroll" style="opacity:.35"><div class="proof" style="height:320px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v3"/></svg></div></div><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Aprovar para produção"><span class="handle"></span><h3>Aprovar para produção</h3>
+<p class="small" style="color:var(--state-action)">Depois de aprovar, a peça vai para impressão e já não pode ser alterada.</p>
+<div class="sub list"><div><span class="muted">Noivos</span><b>Ana &amp; Paulo</b></div><div><span class="muted">Data</span><b>Domingo, 14 fev 2027</b></div>
+<div><span class="muted">Local</span><b>Igreja da Sagrada Família</b></div><div><span class="muted">Quantidade</span><b>120 convites</b></div><div><span class="muted">Versão</span><b>V3</b></div></div>
+<label class="check"><span class="box on" style="display:grid;place-items:center"><svg width="14" height="14" style="color:var(--m-on)"><use href="#i-check"/></svg></span>Confirmo que os nomes, a data e a quantidade estão certos</label>
+<a class="btn primary block" href="#">Aprovar para produção</a></div></div><figcaption><b>TEL-34 · Aprovar para produção.</b> Aviso de irreversibilidade, textos-chave do <code>snapshot</code> e a caixa &quot;Confirmo&quot; que ativa o botão (RN-41, RN-42, D-071).</figcaption></figure>
+    <figure class="shot"><div class="phone"><div class="scroll" style="opacity:.35"><div class="proof" style="height:320px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div></div><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Revisões incluídas usadas"><span class="handle"></span><h3>Já usou as 2 revisões</h3>
+<p class="muted">Pode aprovar a versão atual, ou pedir uma revisão extra. Dizemos-lhe o valor antes de começar e só avançamos se aceitar.</p>
+<a class="btn primary block" href="#">Pedir revisão extra</a><a class="btn quiet" href="#" style="align-self:center">Voltar e aprovar</a></div></div><figcaption><b>Sem rondas.</b> Em vez de bloquear, mostra as duas saídas: aprovar, ou pedir uma revisão extra com o valor aceite antes (RN-36, RN-07).</figcaption></figure>
+  </div>
+
+  <h2>Visão geral no computador</h2>
+  <p>A prova à esquerda, em grande; à direita, a decisão, as outras versões e os pagamentos.</p>
+  <div class="desktop"><aside class="side">
+<div style="display:flex;align-items:center;gap:10px"><svg width="28" height="28"><use href="#i-g"/></svg><b style="font:600 18px/1 var(--font-display)">GeniusFrela</b></div>
+<div class="card" style="padding:12px"><span class="chip-service">Design</span><p style="color:var(--n-ink);font-weight:600;margin-top:8px">Convite do casamento</p><p class="small muted">Trocar de projeto</p></div>
+<nav aria-label="Área do cliente"><a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a><a href="#"><svg><use href="#i-layers"/></svg>Projeto</a><a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a><a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a></nav>
+<a class="btn whatsapp" href="#" style="margin-top:auto"><svg width="18" height="18"><use href="#i-wa"/></svg>Falar no WhatsApp</a></aside>
+<section class="main"><div class="split"><h3 style="font:600 28px/36px var(--font-display)">Olá, Teresa</h3><span class="avatar">TE</span></div>
+<div class="stack" style="gap:6px"><div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="action"></i><i class=""></i><i class=""></i><i class=""></i></div><div class="phase-caption"><span>Fase 4 de 7</span><b>Revisões</b></div></div>
+<div class="grid-2" style="grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)">
+<div class="proof" style="height:560px"><span class="proof-tag">V2, atual</span><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v2"/></svg></div>
+<div class="stack" style="gap:var(--s4)">
+<div class="card next stack"><div class="split"><span class="state action">Aguarda a sua resposta</span><span class="small muted">Ronda 1 de 2</span></div>
+<h3>A segunda versão está pronta</h3><p>Nomes maiores e folhas em dourado, como pediu.</p>
+<div style="display:flex;gap:8px"><a class="btn primary" href="#" style="flex:1">Aprovar arte</a><a class="btn secondary" href="#" style="flex:1">Pedir revisão</a></div></div>
+<div class="card stack"><span class="small muted">Outras versões</span><div style="display:flex;gap:12px;align-items:center"><div class="proof" style="height:110px"><svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid meet"><use href="#proof-v1"/></svg></div><div><b>V1</b><p class="small muted">25 nov</p><a class="link" href="#">Comparar com a V2</a></div></div></div>
+<div class="card stack"><div class="split"><span class="small muted">Pagamentos</span><span class="state done">Sinal pago</span></div><p class="small">Faltam 30 000 Kz, antes de imprimir.</p></div>
+<a class="link" href="#">Ver ficha técnica</a></div></div></section></div>
+</main>
+</body>
+</html>

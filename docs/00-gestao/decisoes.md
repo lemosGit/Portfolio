@@ -111,3 +111,5 @@
 | D-106 | 2026-11-24 | Depois de uma ação, volta à Visão geral com confirmação curta; emails e WhatsApp usam links profundos para a tela certa | M4-02 | — | Assumida |
 | D-107 | 2026-11-24 | Wireframes da M4 em HTML no repositório (`docs/04-ux-ui/wireframes/*.html` + `ds.css` com os tokens do DS V1) e captura PNG | Q-073 | Figma; esquemas em texto | Aprovada |
 | D-108 | 2026-11-24 | Barra de fases segmentada com "Fase N de 7" + nome da fase no telemóvel; nomes completos na página Projeto | M4-03 | Pontos com nomes | Assumida — confirmar no G2 |
+| D-109 | 2026-11-24 | No Design, a prova fica numa moldura neutra (Superfície + Borda); o Lilás só nos botões e estados, para não competir com a arte | M4-04 | Moldura na cor do módulo | Assumida — confirmar no G2 |
+| D-110 | 2026-11-24 | Sem rondas incluídas, a folha de revisão mostra as duas saídas (aprovar ou pedir revisão extra) em vez de bloquear | RN-36, M4-04 | Desativar o botão | Assumida — confirmar no G2 |
