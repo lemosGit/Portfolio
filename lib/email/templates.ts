@@ -130,3 +130,40 @@ export function phaseEmail(o: {
     text: `Olá ${firstName(o.clientName)},\n\nHá novidades em ${o.projectName}:\n${lines.map((l) => `- ${l}`).join("\n")}\n${extra.length ? `\n${extra.join("\n")}\n` : ""}\nVer o projeto: ${href}`,
   };
 }
+
+/** Pedido de aprovação ao cliente (M5-10). */
+export function approvalRequestEmail(o: { clientName: string; projectName: string; title: string; message?: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  return {
+    subject: `${o.projectName}: precisamos da sua aprovação (${o.title})`,
+    html: layout({
+      preheader: `Veja e aprove: ${o.title}.`,
+      title: "Precisamos da sua aprovação",
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, em <strong>${esc(o.projectName)}</strong> há um pedido à sua espera: <strong>${esc(o.title)}</strong>.</p>${
+        o.message ? `<p style="margin:0 0 12px">${esc(o.message)}</p>` : ""
+      }<p style="margin:0">Pode aprovar ou pedir alterações na Área do Cliente.</p>`,
+      cta: { href, label: "Ver o pedido" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nEm ${o.projectName} há um pedido à sua espera: ${o.title}.${o.message ? `\n${o.message}` : ""}\n\nAprovar ou pedir alterações: ${href}`,
+  };
+}
+
+/** Aviso ao João quando o cliente responde (RF-30.35). */
+export function approvalAnsweredEmail(o: { clientName: string; projectName: string; projectId: string; title: string; approved: boolean; comment?: string | null }) {
+  const href = `${SITE_URL}/admin/projetos/${o.projectId}/aprovacoes`;
+  const verb = o.approved ? "aprovou" : "pediu alterações em";
+  return {
+    subject: `${o.clientName} ${verb} ${o.title} (${o.projectName})`,
+    html: layout({
+      preheader: `${o.clientName} ${verb} ${o.title}.`,
+      title: o.approved ? "Aprovação recebida" : "Alterações pedidas",
+      body: `<p style="margin:0 0 12px"><strong>${esc(o.clientName)}</strong> ${verb} <strong>${esc(o.title)}</strong> em ${esc(o.projectName)}.</p>${
+        o.comment
+          ? `<blockquote style="margin:0;padding:12px 16px;border-left:3px solid #8b6cff;background:#f7f5ff;border-radius:8px;white-space:pre-wrap">${esc(o.comment)}</blockquote>`
+          : ""
+      }`,
+      cta: { href, label: "Abrir as aprovações" },
+    }),
+    text: `${o.clientName} ${verb} ${o.title} em ${o.projectName}.${o.comment ? `\n\n${o.comment}` : ""}\n\n${href}`,
+  };
+}

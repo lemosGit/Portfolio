@@ -14,7 +14,8 @@ export type BlockId =
   | "tech-demo-feedback"
   // comuns (Académico, Design)
   | "phase-bar"
-  | "next-step";
+  | "next-step"
+  | "approvals";
 
 export type NavIcon = "home" | "project" | "files" | "messages" | "agenda";
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: boolean };
@@ -46,14 +47,14 @@ export const SERVICE_LAYOUTS: Record<ServiceType, ServiceLayout> = {
   academic: {
     label: "Académico",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A contagem do prazo, os capítulos, as aprovações e os pagamentos entram com a M5-10/M5-11 e a M6.
-    pages: { overview: ["phase-bar", "next-step"] },
+    // A contagem do prazo, os capítulos e os pagamentos entram com a M5-11 e a M6.
+    pages: { overview: ["phase-bar", "next-step", "approvals"] },
   },
   design: {
     label: "Design",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A última prova, as rondas, as aprovações e os pagamentos entram com a M5-10/M5-11 e a M7.
-    pages: { overview: ["phase-bar", "next-step"] },
+    // A última prova, as rondas e os pagamentos entram com a M5-11 e a M7.
+    pages: { overview: ["phase-bar", "next-step", "approvals"] },
   },
 };
 

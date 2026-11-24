@@ -185,6 +185,13 @@ task("M5-08", "Gerir as fases do projeto no admin", "feature", ["frontend", "bac
 task("M5-09", "Implementar o bloco Ficheiros", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin: upload por fase · Cliente: download por URL assinada e upload de referências no briefing e na revisão (D-010)",
      ac=["Cliente só carrega nas fases de briefing e revisão", "Limite de tamanho e tipos validados no servidor", "O cliente nunca vê ficheiros de outro projeto (teste)", "Versões ordenadas por data", "Disponibilidade de um ficheiro pode depender de um pagamento marcado como pago (D-013)"])
+task("M5-09b", "Gerar miniaturas WebP e limpar ficheiros diariamente", "feature", ["backend", "frontend", "devops"], "must", "M", ["M5-09"],
+     ent="Browser: pré-visualização WebP (1600 px, ≤ 150 KB) e redução de fotos > 2 MB · `/api/cron/limpeza` (Vercel Cron) · D-133",
+     refs="`docs/03-arquitetura/adr/ADR-003-ficheiros.md` §3 e §4",
+     ac=["Provas e fotos mostram a miniatura WebP; o original só se descarrega a pedido (RF-20.83, RF-30.46)",
+         "O servidor valida a miniatura (RIFF…WEBP, ≤ 150 KB, ≤ 1600 px) e apaga a inválida",
+         "Limpeza diária protegida pelo CRON_SECRET: aviso aos 83 dias, apaga aos 90 com purged_at e activity_log (RF-30.47)",
+         "Apaga uploads órfãos com mais de 24 h"])
 task("M5-10", "Implementar o bloco Aprovações", "feature", ["backend", "frontend"], "must", "M", ["M5-03", "M5-06"],
      ent="Admin cria pedido · Cliente aprova ou pede alterações com comentário",
      ac=["Aprovação irreversível pelo cliente (só o admin reabre)", "Pendentes em destaque na visão geral", "Histórico com data e autor"])
