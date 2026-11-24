@@ -113,3 +113,5 @@
 | D-108 | 2026-11-24 | Barra de fases segmentada com "Fase N de 7" + nome da fase no telemóvel; nomes completos na página Projeto | M4-03 | Pontos com nomes | Assumida — confirmar no G2 |
 | D-109 | 2026-11-24 | No Design, a prova fica numa moldura neutra (Superfície + Borda); o Lilás só nos botões e estados, para não competir com a arte | M4-04 | Moldura na cor do módulo | Assumida — confirmar no G2 |
 | D-110 | 2026-11-24 | Sem rondas incluídas, a folha de revisão mostra as duas saídas (aprovar ou pedir revisão extra) em vez de bloquear | RN-36, M4-04 | Desativar o botão | Assumida — confirmar no G2 |
+| D-111 | 2026-11-24 | Tokens da marca para login, link mágico e admin (`data-service="brand"`): primária `#8B7CF6` (DS V1); suave `#C9C2FB`, tinta `#1C1838`, sobre `#0B0F17` derivados (AA verificado) | M4-05 | Usar os tokens do Design | Assumida — confirmar no G2 |
+| D-112 | 2026-11-24 | Nos wireframes, o logótipo é o "G" em arco com ponto e "Frela" em gradiente (ficha R2); o ícone anterior parecia o "G" da Google. Na M5 usa-se `components/BrandMark.tsx` | Revisão M4-05 | — | Aprovada (correção) |

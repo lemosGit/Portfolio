@@ -30,6 +30,8 @@
 [data-service="development"] { --m-primary: #4c8dff; --m-soft: #9cc0ff; --m-tint: #13213d; --m-on: #0a1530; }
 [data-service="design"]      { --m-primary: #a78bfa; --m-soft: #d2c4ff; --m-tint: #231b3f; --m-on: #170f2e; }
 [data-service="academic"]    { --m-primary: #e8b65a; --m-soft: #f5d79a; --m-tint: #2e2412; --m-on: #221a08; }
+/* marca: login, link mágico, admin (D-091). Só a primária vem do DS V1; suave/tinta/sobre derivados (D-111, confirmar no G2) */
+[data-service="brand"]       { --m-primary: #8b7cf6; --m-soft: #c9c2fb; --m-tint: #1c1838; --m-on: #0b0f17; }
 
 * { box-sizing: border-box; margin: 0; }
 body {
@@ -160,6 +162,15 @@ body {
 .check .box.on { background: var(--m-primary); border-color: var(--m-primary); }
 
 /* ---------- computador ---------- */
+/* logótipo: "Frela" no gradiente da marca (ficha R2) */
+.wm-frela { background: linear-gradient(90deg, #8b7cf6, #7aa6f2 55%, #5bc8e6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.err { color: var(--state-action); font-size: 13px; line-height: 20px; }
+.prog { height: 4px; border-radius: var(--r-pill); background: var(--n-border); overflow: hidden; margin-top: 6px; }
+.prog i { display: block; height: 100%; background: var(--m-primary); }
+.bubble { max-width: 82%; padding: var(--s3) var(--s4); border-radius: var(--r-lg); font-size: 14px; line-height: 22px; }
+.bubble.me { align-self: flex-end; background: var(--m-tint); color: var(--n-ink); border-bottom-right-radius: var(--r-sm); }
+.bubble.them { align-self: flex-start; background: var(--n-surface); border: 1px solid var(--n-border); border-bottom-left-radius: var(--r-sm); }
+.notice { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: var(--n-surface); border: 1px solid var(--n-border); font-size: 13px; line-height: 20px; color: var(--n-ink-2); }
 .desktop { width: 100%; max-width: 1180px; min-height: 720px; display: grid; grid-template-columns: 232px 1fr; border: 1px solid var(--n-border); border-radius: var(--r-lg); overflow: hidden; background: var(--n-night); }
 .side { background: var(--n-surface); border-right: 1px solid var(--n-border); padding: var(--s5) var(--s4); display: flex; flex-direction: column; gap: var(--s5); }
 .side nav { display: flex; flex-direction: column; gap: 2px; }
