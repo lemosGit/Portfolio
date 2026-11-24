@@ -1,5 +1,5 @@
 # Requisitos funcionais — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.3 (RF-10, RF-20, RF-30; prioridades revistas na M1-08) · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefas: [M1-03] RF-10 · [M1-04] RF-20 · [M1-05] RF-30 · Issues: #13, #14, #15 · Versão: 1.4 (RF-10, RF-20, RF-30; prioridades revistas na M1-08; PA-001) · Data: 2026-11-23
 > Depende de: `visao-modulos.md`, `personas.md`, `docs/references/1/GeniusFrela_Projeto_e_Layouts.md` §5.2 e §5.3 · Perguntas/decisões usadas: Q-005, Q-006, Q-008…Q-010, Q-012…Q-023, D-001, D-002, D-004, D-009…D-027
 
 ## Convenções
@@ -216,7 +216,7 @@ Construídos uma vez (M5) e usados pelos 3 serviços (D-002). Para o Desenvolvim
 | Código | Descrição | Persona | Prioridade | Origem |
 |---|---|---|---|---|
 | RF-30.40 | O admin deve carregar ficheiros num projeto, associados a uma fase e a um papel: **entregável**, **prova** ou **interno** | PER-01 | Must | visão §5.1 |
-| RF-30.41 | O cliente pode carregar **referências** apenas nas fases de briefing e revisão (Académico: fases 1 e 5; Design: fases 1 e 4) | PER-03, PER-04 | Must | D-010, Q-006 |
+| RF-30.41 | O cliente pode carregar **referências** apenas nas fases de briefing e revisão (Académico: fases 1 e 5; Design: fases 1 e 4) e, no Académico, como anexo de um pedido de ajuste na fase 7 (PA-001) | PER-03, PER-04 | Must | D-010, Q-006 |
 | RF-30.42 | Limites do cliente: **JPG, PNG, WebP, HEIC, PDF, DOC, DOCX**; até **10 MB** por ficheiro e **10 ficheiros por fase**. Fora dos limites, aparece uma mensagem clara antes do envio | PER-03, PER-04 | Must | Q-021, D-024 |
 | RF-30.43 | Os ficheiros guardam **versões**: um ficheiro novo com o mesmo papel não apaga o anterior | PER-01 | Must | RF-10.73, RF-20.84 |
 | RF-30.44 | Um ficheiro pode ficar **bloqueado** até um pagamento estar pago (ex.: entrega final do Académico). O cliente vê que existe, mas não o descarrega | PER-01, PER-03 | Must | D-013 |
