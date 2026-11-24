@@ -109,3 +109,5 @@
 | D-104 | 2026-11-24 | Hierarquia das referências: DS V1 > logótipo > documento de layouts > capturas (estas só para estrutura e tom) | Q-067 | — | Assumida |
 | D-105 | 2026-11-24 | Ações do cliente em **folhas** (bottom sheet no telemóvel, painel lateral no computador); páginas só para as 4–5 entradas do menu | M4-02 | Uma página por ação | Assumida |
 | D-106 | 2026-11-24 | Depois de uma ação, volta à Visão geral com confirmação curta; emails e WhatsApp usam links profundos para a tela certa | M4-02 | — | Assumida |
+| D-107 | 2026-11-24 | Wireframes da M4 em HTML no repositório (`docs/04-ux-ui/wireframes/*.html` + `ds.css` com os tokens do DS V1) e captura PNG | Q-073 | Figma; esquemas em texto | Aprovada |
+| D-108 | 2026-11-24 | Barra de fases segmentada com "Fase N de 7" + nome da fase no telemóvel; nomes completos na página Projeto | M4-03 | Pontos com nomes | Assumida — confirmar no G2 |

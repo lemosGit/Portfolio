@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wireframe — Área do Cliente Académico · GeniusFrela</title>
+  <link rel="stylesheet" href="ds.css" />
+</head>
+<body data-service="academic">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.3-.7a11.3 11.3 0 0 1-4.4-3.9c-.3-.5-1.1-1.5-1.1-2.9s.7-2 1-2.3a1 1 0 0 1 .7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6a8 8 0 0 0 1.5 1.8 7 7 0 0 0 2.1 1.3c.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.4.2.5.3a2 2 0 0 1-.1 1.2z"/></symbol>
+  <symbol id="i-g" viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#4C8DFF"/></linearGradient></defs><path d="M17 6.5A7 7 0 1 0 19 12h-6"/></symbol>
+</svg>
+
+<main class="doc">
+  <h1>Área do Cliente — Académico</h1>
+  <p>Wireframes da M4-03 (#34) com o Design System V1: neutros comuns, acento Âmbar Saber, Space Grotesk nos números e títulos, Inter no resto. Telemóvel a 360 px (o dispositivo da PER-03 e da PER-05) e computador. Telas definidas em <code>fluxo-telas.md</code>; blocos em <code>layout-blocos.md</code>.</p>
+  <div class="legend">
+    <span class="state done">Concluído</span>
+    <span class="state now">Em curso (cor do módulo)</span>
+    <span class="state action">Aguarda a sua resposta</span>
+    <span class="state planned">Planeado</span>
+  </div>
+
+  <!-- ===================== TEL-10 em três momentos ===================== -->
+  <h2>Visão geral (TEL-10)</h2>
+  <p>O prazo é o que o estudante quer saber primeiro, por isso é o maior elemento do ecrã. Por baixo: o próximo passo, com um só botão, e só quando a ação é do cliente. O resto fica para "ver detalhes".</p>
+  <div class="row">
+
+    <!-- A: orçamento por aceitar -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Académico</span><span class="project-name">Monografia</span></div>
+            <span class="avatar">KA</span>
+          </div>
+          <div class="card countdown">
+            <div><span class="num">18</span><span class="unit">dias</span></div>
+            <p class="what">até 12 de dezembro <span>(prazo proposto)</span></p>
+          </div>
+          <div class="stack" style="gap:6px">
+            <div class="phases"><i class="done"></i><i class="action"></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="phase-caption"><span>Fase 2 de 7</span><b>Orçamento e aceite</b></div>
+          </div>
+          <div class="card next stack">
+            <span class="state action">Aguarda a sua resposta</span>
+            <h3>O orçamento está pronto</h3>
+            <p>50 000 Kz, com sinal de 25 000 Kz. Começamos assim que aceitar e o sinal estiver pago.</p>
+            <a class="btn primary block" href="#">Ver orçamento</a>
+          </div>
+          <a class="link" href="#">Ver detalhes do trabalho</a>
+        </div>
+        <a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a>
+        <nav class="bottomnav" aria-label="Área do cliente">
+          <a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a>
+          <a href="#"><svg><use href="#i-layers"/></svg>Projeto</a>
+          <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+          <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+        </nav>
+      </div>
+      <figcaption><b>A · Orçamento por aceitar.</b> Coral porque a ação é do cliente. O botão abre a folha TEL-20.</figcaption>
+    </figure>
+
+    <!-- B: em desenvolvimento -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Académico</span><span class="project-name">Monografia</span></div>
+            <span class="avatar">KA</span>
+          </div>
+          <div class="card countdown">
+            <div><span class="num">12</span><span class="unit">dias</span></div>
+            <p class="what">até 12 de dezembro</p>
+          </div>
+          <div class="stack" style="gap:6px">
+            <div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></div>
+            <div class="phase-caption"><span>Fase 4 de 7</span><b>Desenvolvimento</b></div>
+          </div>
+          <div class="card next stack">
+            <span class="state now">Em curso</span>
+            <h3>A escrever o capítulo 4</h3>
+            <div class="stack" style="gap:6px">
+              <div class="split small"><span class="muted">3 de 5 capítulos</span><b style="color:var(--m-soft)">49%</b></div>
+              <div class="bar"><i style="width:49%"></i></div>
+            </div>
+            <p class="small">Não precisa de fazer nada. Avisamos quando a revisão começar.</p>
+          </div>
+          <div class="card">
+            <div class="split"><span class="small muted">Pagamentos</span><span class="state done">Sinal pago</span></div>
+            <p class="small" style="margin-top:6px">Falta 25 000 Kz, antes da entrega final.</p>
+          </div>
+          <a class="link" href="#">Ver detalhes do trabalho</a>
+        </div>
+        <a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a>
+        <nav class="bottomnav" aria-label="Área do cliente">
+          <a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a>
+          <a href="#"><svg><use href="#i-layers"/></svg>Projeto</a>
+          <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+          <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+        </nav>
+      </div>
+      <figcaption><b>B · Em desenvolvimento.</b> Sem ação do cliente, não há botão primário: só o estado e o progresso dos capítulos (D-015: sem texto).</figcaption>
+    </figure>
+
+    <!-- C: entrega pronta, falta o restante -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Académico</span><span class="project-name">Monografia</span></div>
+            <span class="avatar">KA</span>
+          </div>
+          <div class="card countdown">
+            <div><span class="num">2</span><span class="unit">dias</span></div>
+            <p class="what">até 12 de dezembro <span class="state now" style="margin-left:6px">Prazo próximo</span></p>
+          </div>
+          <div class="stack" style="gap:6px">
+            <div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="action"></i><i></i></div>
+            <div class="phase-caption"><span>Fase 6 de 7</span><b>Entrega final</b></div>
+          </div>
+          <div class="card next stack">
+            <span class="state action">Aguarda a sua resposta</span>
+            <h3>O trabalho está pronto</h3>
+            <p>Os ficheiros PDF e Word ficam disponíveis assim que o restante, 25 000 Kz, estiver pago.</p>
+            <a class="btn primary block" href="#">Ver como pagar</a>
+          </div>
+          <div class="card split small"><span>PDF e Word prontos</span><span class="muted">Bloqueados até ao pagamento</span></div>
+        </div>
+        <a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a>
+        <nav class="bottomnav" aria-label="Área do cliente">
+          <a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a>
+          <a href="#"><svg><use href="#i-layers"/></svg>Projeto</a>
+          <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+          <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+        </nav>
+      </div>
+      <figcaption><b>C · Entrega à espera do restante.</b> A ≤ 3 dias a contagem ganha a etiqueta "Prazo próximo", na cor do módulo (D-088). Os ficheiros aparecem, mas bloqueados (RF-30.44).</figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== TEL-11 + folhas ===================== -->
+  <h2>Projeto e folhas (TEL-11, TEL-20, TEL-14, TEL-13)</h2>
+  <p>As ações abrem uma folha que sobe de baixo; o "voltar" do Android fecha-a (D-105).</p>
+  <div class="row">
+
+    <!-- TEL-11 -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Académico</span><span class="project-name">Monografia</span></div>
+            <span class="avatar">KA</span>
+          </div>
+          <h3 style="font:600 28px/36px var(--font-display);margin-top:4px">O seu trabalho</h3>
+          <div class="card">
+            <div class="list">
+              <div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Pedido e briefing</span><span class="small muted">20 nov</span></div>
+              <div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Orçamento e aceite</span><span class="small muted">22 nov</span></div>
+              <div><span style="display:flex;gap:10px;align-items:center"><span class="tick done"><svg width="12" height="12"><use href="#i-check"/></svg></span>Estrutura (índice)</span><span class="small muted">24 nov</span></div>
+              <div style="flex-direction:column;align-items:stretch;gap:10px">
+                <div class="split"><span style="display:flex;gap:10px;align-items:center"><span class="tick now"></span><b>Desenvolvimento</b></span><span class="state now">Em curso</span></div>
+                <div class="stack" style="gap:8px;padding-left:30px">
+                  <div class="split small"><span>1. Introdução</span><span style="color:var(--state-done)">Pronto</span></div>
+                  <div class="split small"><span>2. Enquadramento teórico</span><span style="color:var(--state-done)">Pronto</span></div>
+                  <div class="split small"><span>3. Metodologia</span><span style="color:var(--state-done)">Pronto</span></div>
+                  <div class="split small"><span>4. Resultados</span><span style="color:var(--m-soft)">A escrever</span></div>
+                  <div class="split small"><span class="muted">5. Conclusões</span><span class="muted">Por começar</span></div>
+                </div>
+              </div>
+              <div><span style="display:flex;gap:10px;align-items:center" class="muted"><span class="tick todo"></span>Revisão e formatação</span></div>
+              <div><span style="display:flex;gap:10px;align-items:center" class="muted"><span class="tick todo"></span>Entrega final</span></div>
+              <div><span style="display:flex;gap:10px;align-items:center" class="muted"><span class="tick todo"></span>Ajustes</span><span class="small muted">7 dias</span></div>
+            </div>
+          </div>
+        </div>
+        <nav class="bottomnav" aria-label="Área do cliente">
+          <a href="#"><svg><use href="#i-home"/></svg>Visão geral</a>
+          <a href="#" aria-current="page"><svg><use href="#i-layers"/></svg>Projeto</a>
+          <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+          <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+        </nav>
+      </div>
+      <figcaption><b>TEL-11 · Projeto.</b> As 7 fases na vertical; os capítulos abrem dentro da fase em curso, só com o título e o estado.</figcaption>
+    </figure>
+
+    <!-- TEL-20 aceitar orçamento -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll" style="opacity:.35">
+          <div class="card countdown"><div><span class="num">18</span><span class="unit">dias</span></div></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="sheet" role="dialog" aria-label="Orçamento">
+          <span class="handle"></span>
+          <h3>Orçamento</h3>
+          <div class="sub list">
+            <div><span class="muted">Total</span><b>50 000 Kz</b></div>
+            <div><span class="muted">Sinal, para começar</span><b>25 000 Kz</b></div>
+            <div><span class="muted">Restante, antes da entrega</span><b>25 000 Kz</b></div>
+            <div><span class="muted">Entrega</span><b>12 de dezembro</b></div>
+          </div>
+          <p class="small muted">O sinal não é devolvido se desistir depois de pagar, porque cobre o trabalho já começado.</p>
+          <div class="stack" style="gap:8px">
+            <a class="btn primary block" href="#">Aceitar orçamento</a>
+            <a class="btn quiet" href="#" style="align-self:center">Pedir alterações</a>
+          </div>
+        </div>
+      </div>
+      <figcaption><b>TEL-20 · Aceitar o orçamento.</b> Os valores vêm do <code>snapshot</code> (D-049). A regra do sinal aparece antes do botão (RN-13). "Pedir alterações" abre um campo de comentário obrigatório.</figcaption>
+    </figure>
+
+    <!-- TEL-14 pedir ajuste -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll" style="opacity:.35">
+          <div class="card countdown"><div><span class="num">4</span><span class="unit">dias</span></div></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="sheet" role="dialog" aria-label="Pedir ajuste">
+          <span class="handle"></span>
+          <h3>Pedir um ajuste</h3>
+          <p class="small muted">Restam 4 dos 7 dias de ajustes. Ajustes que cumprem a ficha estão incluídos; mudar o tema ou o nº de páginas é trabalho novo.</p>
+          <div class="field">O orientador pediu para acrescentar a tabela de inquéritos no capítulo 3…</div>
+          <div class="attach"><svg width="18" height="18"><use href="#i-clip"/></svg>Juntar ficheiro (opcional, até 10 MB)</div>
+          <a class="btn primary block" href="#">Enviar pedido</a>
+        </div>
+      </div>
+      <figcaption><b>TEL-14 · Pedir ajuste.</b> Dias restantes à vista e a regra do que está incluído (RN-31, RN-32), dita em linguagem simples. Anexo opcional (PA-001).</figcaption>
+    </figure>
+  </div>
+
+  <div class="row" style="margin-top:var(--s6)">
+    <!-- TEL-13 ficha -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll" style="opacity:.35">
+          <div class="card countdown"><div><span class="num">12</span><span class="unit">dias</span></div></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="sheet" role="dialog" aria-label="Detalhes do trabalho">
+          <span class="handle"></span>
+          <h3>Detalhes do trabalho</h3>
+          <div class="sub list">
+            <div><span class="muted">Tema</span><span style="text-align:right">Microcrédito e as zungueiras de Luanda</span></div>
+            <div><span class="muted">Tipo</span><span>Monografia</span></div>
+            <div><span class="muted">Instituição</span><span>Universidade Agostinho Neto</span></div>
+            <div><span class="muted">Curso</span><span>Economia</span></div>
+            <div><span class="muted">Normas</span><span>APA 7.ª edição</span></div>
+            <div><span class="muted">Páginas</span><span>45</span></div>
+          </div>
+          <a class="link" href="#">Há algum erro? Diga-nos nas mensagens</a>
+        </div>
+      </div>
+      <figcaption><b>TEL-13 · Ficha do trabalho.</b> Só leitura. Um erro corrige-se pelas mensagens ligadas à fase 1 (RF-10.13).</figcaption>
+    </figure>
+
+    <!-- Fase de ajustes -->
+    <figure class="shot">
+      <div class="phone">
+        <div class="scroll">
+          <div class="topbar">
+            <div class="project"><svg class="logo" width="28" height="28"><use href="#i-g"/></svg><span class="chip-service">Académico</span><span class="project-name">Monografia</span></div>
+            <span class="avatar">KA</span>
+          </div>
+          <div class="card countdown">
+            <div><span class="num">4</span><span class="unit">dias</span></div>
+            <p class="what">para pedir ajustes <span>(até 19 dez)</span></p>
+          </div>
+          <div class="stack" style="gap:6px">
+            <div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i></div>
+            <div class="phase-caption"><span>Fase 7 de 7</span><b>Ajustes</b></div>
+          </div>
+          <div class="card stack">
+            <span class="state done">Entregue a 12 dez</span>
+            <div class="list">
+              <div><span>Monografia_final.pdf</span><a class="link" href="#">Descarregar</a></div>
+              <div><span>Monografia_final.docx</span><a class="link" href="#">Descarregar</a></div>
+            </div>
+          </div>
+          <a class="btn secondary block" href="#">Pedir um ajuste</a>
+        </div>
+        <a class="fab-wa" href="#" aria-label="Falar no WhatsApp"><svg width="26" height="26" style="color:#0B0F17"><use href="#i-wa"/></svg></a>
+        <nav class="bottomnav" aria-label="Área do cliente">
+          <a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a>
+          <a href="#"><svg><use href="#i-layers"/></svg>Projeto</a>
+          <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+          <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+        </nav>
+      </div>
+      <figcaption><b>D · Depois da entrega.</b> A contagem passa a ser dos dias de ajustes (RF-10.83). Pedir ajuste é secundário: a entrega já está feita.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== Computador ===================== -->
+  <h2>Visão geral no computador</h2>
+  <p>Mesma ordem e mesmos blocos; a barra lateral substitui a barra inferior e o conteúdo abre em duas colunas.</p>
+  <div class="desktop">
+    <aside class="side">
+      <div style="display:flex;align-items:center;gap:10px"><svg width="28" height="28"><use href="#i-g"/></svg><b style="font:600 18px/1 var(--font-display)">GeniusFrela</b></div>
+      <div class="card" style="padding:12px">
+        <span class="chip-service">Académico</span>
+        <p style="color:var(--n-ink);font-weight:600;margin-top:8px">Monografia</p>
+        <p class="small muted">Trocar de projeto</p>
+      </div>
+      <nav aria-label="Área do cliente">
+        <a href="#" aria-current="page"><svg><use href="#i-home"/></svg>Visão geral</a>
+        <a href="#"><svg><use href="#i-layers"/></svg>Projeto</a>
+        <a href="#"><svg><use href="#i-folder"/></svg>Ficheiros</a>
+        <a href="#"><svg><use href="#i-msg"/></svg>Mensagens</a>
+      </nav>
+      <a class="btn whatsapp" href="#" style="margin-top:auto"><svg width="18" height="18"><use href="#i-wa"/></svg>Falar no WhatsApp</a>
+    </aside>
+    <section class="main">
+      <div class="split">
+        <h3 style="font:600 28px/36px var(--font-display)">Olá, Kiala</h3>
+        <span class="avatar">KA</span>
+      </div>
+      <div class="stack" style="gap:8px">
+        <div class="phases"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i></div>
+        <div class="phase-caption"><span>Fase 4 de 7</span><b>Desenvolvimento</b></div>
+      </div>
+      <div class="grid-2">
+        <div class="card countdown" style="padding:var(--s6)">
+          <div><span class="num" style="font-size:120px">12</span><span class="unit">dias</span></div>
+          <p class="what">até 12 de dezembro</p>
+          <div class="stack" style="gap:6px;margin-top:var(--s5)">
+            <div class="split small"><span class="muted">3 de 5 capítulos</span><b style="color:var(--m-soft)">49%</b></div>
+            <div class="bar"><i style="width:49%"></i></div>
+          </div>
+        </div>
+        <div class="stack" style="gap:var(--s4)">
+          <div class="card next stack">
+            <span class="state now">Em curso</span>
+            <h3>A escrever o capítulo 4</h3>
+            <p>Não precisa de fazer nada. Avisamos quando a revisão começar.</p>
+          </div>
+          <div class="card stack">
+            <div class="split"><span class="small muted">Pagamentos</span><span class="state done">Sinal pago</span></div>
+            <p class="small">Falta 25 000 Kz, antes da entrega final.</p>
+            <a class="link" href="#">Ver pagamentos</a>
+          </div>
+          <a class="link" href="#">Ver detalhes do trabalho</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>
