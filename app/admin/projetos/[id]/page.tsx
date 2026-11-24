@@ -23,7 +23,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { sb } = await requireAdmin();
   const p = await getProjectById(sb, id);
   if (!p) notFound();
-  const v = await withProgress(p);
+  const v = await withProgress(p, sb);
 
   const now = Date.now();
   const upcoming = p.meetings.filter((m) => new Date(m.endsAt).getTime() > now).reverse();
@@ -116,12 +116,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             }}
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Estado" hint="Projetos pausados ou entregues saem da visão geral.">
+            <Field label="Estado" hint="Projetos pausados, entregues ou cancelados saem da visão geral.">
               <select name="estado" defaultValue={p.status} className={inputCls}>
                 <option value="ativo" className="bg-raised">Ativo</option>
                 <option value="pausado" className="bg-raised">Pausado</option>
                 <option value="entregue" className="bg-raised">Entregue</option>
+                <option value="cancelado" className="bg-raised">Cancelado</option>
               </select>
+            </Field>
+            <Field label="Motivo da mudança de estado" hint="Fica no histórico. Obrigatório para pausar, cancelar ou reabrir.">
+              <input name="motivo" maxLength={500} className={inputCls} placeholder="Ex.: a pedido do cliente, em exames" />
             </Field>
             <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
               <input

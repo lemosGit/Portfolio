@@ -92,10 +92,11 @@ export function Badge({ tone = "neutral", children }: { tone?: "ok" | "warn" | "
   );
 }
 
-const STATUS: Record<ProjectStatus, { label: string; tone: "ok" | "warn" | "accent" }> = {
+const STATUS: Record<ProjectStatus, { label: string; tone: "ok" | "warn" | "accent" | "neutral" }> = {
   ativo: { label: "Ativo", tone: "accent" },
   pausado: { label: "Pausado", tone: "warn" },
   entregue: { label: "Entregue", tone: "ok" },
+  cancelado: { label: "Cancelado", tone: "neutral" },
 };
 
 export const ProjectStatusBadge = ({ status }: { status: ProjectStatus }) => (
