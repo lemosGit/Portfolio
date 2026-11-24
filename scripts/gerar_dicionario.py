@@ -132,6 +132,7 @@ TABELAS = {
             c("due_on", "date", "sim", "Data limite; passada e pendente = em atraso (D-053)"),
             c("status", "text", "não", "Estado do pagamento", default="'pendente'", tam="enum"),
             c("paid_on", "date", "sim", "Obrigatório se e só se `pago` (check)"),
+            c("extra_rounds", "smallint", "não", "Rondas de revisão que um extra acrescenta (RN-36, D-119); 0 fora dos extras", default="0"),
             c("gates_phase_id", "uuid", "sim", "Fase que não passa a em curso sem este pagamento pago (D-052)", "FK→project_phases.id"),
             POR(), CRIADO(), ATUAL(),
         ]),
