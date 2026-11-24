@@ -1,0 +1,60 @@
+erDiagram
+  clients ||--o{ projects : "tem"
+  projects ||--o{ project_phases : "tem 0 (Desenvolvimento) ou 7"
+  phase_templates |o--o{ project_phases : "copiada para"
+  project_phases ||--o{ phase_events : "regista"
+  projects ||--o{ phase_events : "agrupa"
+
+  projects {
+    uuid id PK
+    uuid client_id FK
+    text slug UK
+    text service_type "development, academic, design (imutavel)"
+    text status "ativo, pausado, entregue, cancelado"
+    date due_on "prazo acordado"
+    timestamptz completed_at "inicio dos 90 dias (RN-08)"
+    timestamptz cancelled_at
+    text github_owner "so development"
+    text github_repo "so development"
+    jsonb phase_map "so development"
+  }
+  phase_templates {
+    uuid id PK
+    text service_type "academic, design"
+    smallint position "UK com service_type"
+    text key "UK com service_type"
+    text name
+    text description
+    boolean client_can_upload
+    boolean can_be_skipped
+    boolean active
+  }
+  project_phases {
+    uuid id PK
+    uuid project_id FK
+    uuid template_id FK "nulo se o modelo for apagado"
+    smallint position "UK com project_id"
+    text key
+    text name "copia do modelo"
+    text description "copia do modelo"
+    boolean client_can_upload "copia do modelo"
+    boolean can_be_skipped "copia do modelo"
+    text status "6 estados"
+    date due_on "opcional"
+    text next_step
+    text next_step_owner "geniusfrela, cliente"
+    smallint progress "0 a 100, opcional"
+    timestamptz started_at
+    timestamptz completed_at
+    timestamptz updated_at
+  }
+  phase_events {
+    uuid id PK
+    uuid project_id FK
+    uuid project_phase_id FK
+    text from_status
+    text to_status
+    text note
+    uuid actor_id FK
+    timestamptz created_at
+  }

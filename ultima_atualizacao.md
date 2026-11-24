@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M1-09 Validar os requisitos (G1) — **Aprovado** | #19 | `docs/00-gestao/actas/G1-requisitos.md` |
-| ⏭️ Próxima | M2-01 Modelar o service_type e as fases como dados | #20 | `docs/02-modelagem/` |
-| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG do diagrama de contexto por gerar | | |
+| ✅ Última feita | M2-01 Modelar o service_type e as fases como dados | #20 | `docs/02-modelagem/mer/fases-servicos.md` |
+| ⏭️ Próxima | M2-02 Modelar Pagamentos, Aprovações e Ficheiros | #21 | `docs/02-modelagem/mer/blocos-comuns.md` |
+| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, MER fases): falta autorizar o `mermaid-cli` | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -29,3 +29,8 @@
 | 2026-11-23 | M1-07 | #17 | Regras de negócio: 38 RN (Q-028…Q-031, D-033…D-037); horário corrigido na PER-01 | `docs/01-requisitos/regras-negocio.md`, `personas.md` |
 | 2026-11-23 | M1-08 | #18 | MoSCoW (83 Must / 36 Should / 2 Could / 15 Won't), 5 RF novos, 36 US, matriz RF↔PER↔US (Q-032…Q-035, D-038…D-041) | `priorizacao-moscow.md`, `user-stories.md`, `rastreabilidade.md`, `scripts/gerar_us.py` |
 | 2026-11-23 | M1-09 | #19 | **G1 aprovado** (Q-036…Q-041); decisões assumidas confirmadas | `docs/00-gestao/actas/G1-requisitos.md` |
+
+## 🗒️ Registo — M2 Modelagem
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-23 | M2-01 | #20 | MER de service_type, phase_templates, project_phases, phase_events (Q-042…Q-045, D-042…D-047) | `docs/02-modelagem/mer/fases-servicos.md`, `src/mer-fases.mmd` |
