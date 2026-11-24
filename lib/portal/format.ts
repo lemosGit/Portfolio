@@ -1,3 +1,4 @@
+import { now as clockNow, nowMs } from "@/lib/clock";
 const TZ = "Africa/Luanda";
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -30,7 +31,7 @@ export function time(iso: string) {
 }
 
 /** "há 12 minutos", "ontem", "há 3 dias" */
-export function relative(iso: string, now = Date.now()) {
+export function relative(iso: string, now = nowMs()) {
   const diff = Math.round((now - new Date(iso).getTime()) / 60_000);
   if (diff < 1) return "agora mesmo";
   if (diff < 60) return `há ${diff} ${diff === 1 ? "minuto" : "minutos"}`;
@@ -45,12 +46,12 @@ export function relative(iso: string, now = Date.now()) {
 /** Igual a relative(), mas "hoje" para qualquer momento do próprio dia. */
 export function dayLabel(iso: string) {
   const d = new Date(iso);
-  const today = new Date();
+  const today = clockNow();
   if (d.toDateString() === today.toDateString()) return "hoje";
   return relative(iso);
 }
 
-export function greeting(now = new Date()) {
+export function greeting(now = clockNow()) {
   const h = Number(now.toLocaleTimeString("pt-PT", { hour: "2-digit", hour12: false, timeZone: TZ }));
   if (h < 12) return "Bom dia";
   if (h < 19) return "Boa tarde";

@@ -5,10 +5,11 @@
  */
 import { PHASES } from "./phases";
 import type { Client, Feedback, Project, Task } from "./types";
+import { now as clockNow, nowMs } from "@/lib/clock";
 
 const DAY = 86_400_000;
 function at(days: number, hour = 10, minute = 0) {
-  const d = new Date(Date.now() + days * DAY);
+  const d = new Date(nowMs() + days * DAY);
   d.setHours(hour, minute, 0, 0);
   return d.toISOString();
 }
@@ -208,7 +209,7 @@ export const projects: Project[] = [
         notes: "Protótipo aprovado com ajustes no fluxo de carregamento de saldo.",
       },
     ],
-    syncedAt: at(0, new Date().getHours(), Math.max(0, new Date().getMinutes() - 3)),
+    syncedAt: at(0, clockNow().getHours(), Math.max(0, clockNow().getMinutes() - 3)),
     source: "exemplo",
   },
 ];

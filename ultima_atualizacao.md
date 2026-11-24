@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M4-06 Tokens validados + M4-07 **G2 aprovado** — M4 fechada | #37, #38 | `docs/04-ux-ui/design-system.md`, `docs/00-gestao/actas/G2-design.md` |
-| ⏭️ Próxima | M5-01 Configurar testes (Vitest + Playwright) e CI | #39 | `vitest.config.ts`, `playwright.config.ts`, `.github/workflows/ci.yml` |
+| ✅ Última feita | M5-01 Configurar testes (Vitest + Playwright) e CI | #39 | `docs/05-qa/testes.md`, `.github/workflows/ci.yml` |
+| ⏭️ Próxima | M5-02 Criar a migração do service_type e das fases como dados | #40 | `supabase/migrations/0006_*.sql` |
 | ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -61,3 +61,8 @@
 | 2026-11-24 | M4-05 | #36 | Wireframe dos blocos comuns e do link mágico (8 ecrãs); logótipo corrigido nos 3 wireframes (D-111, D-112) | `docs/04-ux-ui/wireframes/blocos-comuns.html`, `blocos-comuns.md`, `img/*.png` |
 | 2026-11-24 | M4-06 | #37 | Tokens por serviço validados nos 3 wireframes (0 cores fora dos tokens) | `docs/04-ux-ui/design-system.md` |
 | 2026-11-24 | M4-07 | #38 | **G2 aprovado** (Q-074…Q-079); D-108…D-111 confirmadas | `docs/00-gestao/actas/G2-design.md` |
+
+## 🗒️ Registo — M5 Fundação
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-24 | M5-01 | #39 | Vitest (13 testes), Playwright (14 E2E + 12 capturas de referência do Tech), CI, `lib/clock.ts` (D-113…D-115) | `vitest.config.ts`, `playwright.config.ts`, `tests/`, `.github/workflows/ci.yml`, `docs/05-qa/testes.md` |

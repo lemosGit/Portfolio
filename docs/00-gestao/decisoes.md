@@ -115,3 +115,6 @@
 | D-110 | 2026-11-24 | Sem rondas incluídas, a folha de revisão mostra as duas saídas (aprovar ou pedir revisão extra) em vez de bloquear | RN-36, M4-04 | Desativar o botão | Aprovada no G2 (Q-074…Q-076) |
 | D-111 | 2026-11-24 | Tokens da marca para login, link mágico e admin (`data-service="brand"`): primária `#8B7CF6` (DS V1); suave `#C9C2FB`, tinta `#1C1838`, sobre `#0B0F17` derivados (AA verificado) | M4-05 | Usar os tokens do Design | Aprovada no G2 (Q-074…Q-076) |
 | D-112 | 2026-11-24 | Nos wireframes, o logótipo é o "G" em arco com ponto e "Frela" em gradiente (ficha R2); o ícone anterior parecia o "G" da Google. Na M5 usa-se `components/BrandMark.tsx` | Revisão M4-05 | — | Aprovada (correção) |
+| D-113 | 2026-11-24 | `lib/clock.ts`: `PORTAL_FIXED_NOW` fixa a hora nos testes (dados de exemplo e datas relativas); sem a variável é a hora real | M5-01 | Mascarar zonas nas capturas | Assumida |
+| D-114 | 2026-11-24 | Capturas de referência (`@visual`) só locais; o CI corre typecheck, Vitest e E2E de comportamento | M5-01 | Capturas no CI com contentor fixo | Assumida |
+| D-115 | 2026-11-24 | Playwright usa o Google Chrome instalado localmente e o Chromium no CI; servidor de teste em modo de demonstração (sem segredos) | M5-01 | Descarregar o Chromium localmente | Assumida |

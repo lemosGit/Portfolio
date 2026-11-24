@@ -7,6 +7,7 @@
 import { emptyPhases, loadRepoPhases } from "@/lib/github/phases";
 import { clients, feedbackSeed, projects } from "./mock-data";
 import type { Client, Feedback, PhaseView, Project, ProjectView } from "./types";
+import { now as clockNow, nowMs } from "@/lib/clock";
 
 const DAY = 86_400_000;
 
@@ -37,7 +38,7 @@ export async function syncPhases(
   repo: string | null | undefined,
   phaseMap: Record<string, number> | null = null,
 ): Promise<Pick<Project, "phases" | "source" | "syncedAt">> {
-  const now = new Date().toISOString();
+  const now = clockNow().toISOString();
   if (!owner || !repo) return { phases: emptyPhases(), source: "erro", syncedAt: now };
   try {
     const r = await loadRepoPhases(owner, repo, phaseMap);
@@ -69,7 +70,7 @@ export function toView(p: Project): ProjectView {
   );
   const total = phaseViews.reduce((s, ph) => s + ph.total, 0);
   const closedTotal = phaseViews.reduce((s, ph) => s + ph.closedCount, 0);
-  const now = Date.now();
+  const now = nowMs();
 
   const weekly = Array.from({ length: 7 }, (_, i) => {
     const dayStart = new Date(now - (6 - i) * DAY);
