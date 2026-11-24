@@ -32,3 +32,8 @@ next-env.d.ts
 env.local
 .obsidian/
 .mcp.json
+
+# testes
+/test-results/
+/playwright-report/
+/blob-report/
