@@ -105,3 +105,5 @@
 | D-100 | 2026-11-24 | Buckets privados sem políticas para `authenticated`; acesso só por URL assinada gerada no servidor | ADR-003 | Políticas de Storage por pasta | Assumida |
 | D-101 | 2026-11-24 | Tabelas de histórico sem `update`/`delete` para ninguém | RNF-308 | Admin pode corrigir | Assumida |
 | D-102 | 2026-11-24 | Ficar no plano Hobby da Vercel por agora; risco R-01 aceite, revisto no fim de cada milestone e antes da release v1.1 | Q-072 | Vercel Pro; mudar de alojamento | Aprovada |
+| D-103 | 2026-11-24 | As referências visuais ficam em `docs/references/` (já citadas por muitos documentos); `docs/04-ux-ui/referencias.md` descreve-as | M4-01 | Mover para `docs/04-ux-ui/referencias/` | Assumida |
+| D-104 | 2026-11-24 | Hierarquia das referências: DS V1 > logótipo > documento de layouts > capturas (estas só para estrutura e tom) | Q-067 | — | Assumida |
