@@ -63,7 +63,7 @@ sequenceDiagram
 | L7 | Um cliente criado só com link mágico tem `must_change_password = false` | Não há senha obrigatória (RF-30.53, D-023) | D-070 |
 | L8 | Validade de 24 h = `Email OTP Expiration` do projeto em 86 400 s (o máximo) | RNF-301 | D-023 |
 
-**A confirmar no spike M3-02 (#27):** que `auth.admin.generateLink` devolve o `hashed_token` aceite por `verifyOtp`; que gerar um link novo invalida o anterior também no Auth; e quanto dura a sessão no plano gratuito (*refresh token* sem limite de tempo).
+**Confirmado no spike M3-02 (ADR-002):** `generateLink` devolve o `hashed_token` aceite por `verifyOtp({ type: "email" })`; um link novo invalida o anterior no Auth; o token é de uso único; a sessão não tem limite no plano gratuito. Armadilha: um utilizador por confirmar recebe um link `signup` (D-077).
 
 ### Nova tabela `access_links` (RF-30.57)
 | Coluna | Tipo | Nulo | Default | Regra |
