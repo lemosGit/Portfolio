@@ -58,6 +58,10 @@
 | Q-052 | 2026-11-24 | M2 | Textos-chave do Design: campos fixos ou lista? | Lista livre rótulo + valor | D-057 |
 | Q-053 | 2026-11-24 | M2 | É preciso guardar cada versão do índice? | Não: lista atual + cópia no snapshot da aprovação | D-058 |
 | Q-054 | 2026-11-24 | M2 | PA-001: o cliente pode anexar ficheiros ao pedido de ajuste? | Sim (RF-30.41 e RN-09 atualizados) | PA-001, D-061 |
+| Q-055 | 2026-11-24 | M2 | Uma fase concluída pode ser reaberta? | Sim, só pelo admin, com motivo | D-062, PA-002 |
+| Q-056 | 2026-11-24 | M2 | Pode haver uma fase em curso antes de a anterior estar concluída? | Sim, sequência flexível | D-063, PA-002 |
+| Q-057 | 2026-11-24 | M2 | O tempo em pausa desliza o prazo? | Sim, se a pausa for a pedido do cliente | D-064, PA-002 |
+| Q-058 | 2026-11-24 | M2 | Um projeto entregue pode ser reaberto? | Sim, só pelo admin, com motivo | D-065, PA-002 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

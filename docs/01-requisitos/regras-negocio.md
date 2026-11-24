@@ -1,5 +1,5 @@
 # Regras de negócio — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M1-07] · Issue: #17 · Versão: 1.1 (PA-001) · Data: 2026-11-24
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M1-07] · Issue: #17 · Versão: 1.2 (PA-001, PA-002) · Data: 2026-11-24
 > Depende de: `requisitos-funcionais.md` (RF-10, RF-20, RF-30), `requisitos-nao-funcionais.md`, `personas.md` · Perguntas/decisões usadas: Q-012…Q-014, Q-016…Q-019, Q-022, Q-023, Q-028…Q-031, D-009, D-012…D-027, D-033…D-037
 
 ## Convenções
@@ -42,6 +42,10 @@
 | RN-22 | Com uma ação do cliente pendente há **2 dias**, o cliente recebe um **lembrete** por email | Sistema | RF-30.61 | Q-029, D-034 |
 | RN-23 | Quando o prazo desliza, o cliente vê a nova data e o motivo ("à espera da sua aprovação desde DD/MM") | Sistema | RF-10.80 | D-034 |
 | RN-24 | Um atraso **da GeniusFrela** não desliza o prazo: a contagem fica a vermelho (atrasado) e o admin escreve o próximo passo | Sistema | RF-10.82, RF-30.04 | L§6 |
+| RN-25 | O tempo em que o projeto está **pausado a pedido do cliente** também desliza o prazo. Uma pausa por causa da GeniusFrela não desliza (RN-24) | Sistema | RF-30.07 | PA-002, D-064 |
+| RN-26 | Várias fases podem estar em curso ao mesmo tempo; a fase mostrada em destaque é a primeira por concluir | Sistema | RF-30.04, RF-10.03, RF-20.03 | PA-002, D-063 |
+| RN-27 | Só o admin reabre uma **fase concluída**, com motivo registado | Sistema | RF-30.04 | PA-002, D-062 |
+| RN-28 | Só o admin reabre um **projeto entregue**, com motivo; a contagem dos 90 dias dos ficheiros para. Um projeto **cancelado** não se reabre | Sistema | RF-30.06, RN-08 | PA-002, D-065 |
 
 ## RN-3 Ajustes, revisões e trabalho novo
 

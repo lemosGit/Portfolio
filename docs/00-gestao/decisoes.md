@@ -64,3 +64,8 @@
 | D-059 | 2026-11-24 | O projeto Académico conclui-se por job diário no fim do prazo de ajustes sem pedidos abertos | RN-34 | Conclusão manual | Assumida |
 | D-060 | 2026-11-24 | Sem tabela `design_proofs`: provas = `deliverables` `prova`; rondas = respostas `pedir_alteracoes`; incluídas = `quotes.rounds_included` | D-048, D-049, D-050 | Tabela própria de provas | Assumida |
 | D-061 | 2026-11-24 | A fase `ajustes` do Académico aceita anexos do cliente (`client_can_upload = true`) | RF-10.71, PA-001, Q-054 | Anexos só nas mensagens | Aprovada (PA-001) |
+| D-062 | 2026-11-24 | Fase `concluida → em_curso` só pelo admin, com motivo; as outras fases não mudam | Q-055 | Concluída é final | Aprovada (PA-002) |
+| D-063 | 2026-11-24 | Sequência de fases flexível: várias em curso; fase atual = primeira por concluir | Q-056 | Só a fase atual em curso | Aprovada (PA-002) |
+| D-064 | 2026-11-24 | Pausa a pedido do cliente (`client_requested = true`) desliza o prazo; pausa da GeniusFrela não | Q-057 | Sempre; nunca | Aprovada (PA-002) |
+| D-065 | 2026-11-24 | Projeto `entregue → ativo` só pelo admin, com motivo; limpa `completed_at`; `cancelado` é final | Q-058 | Entregue é final | Aprovada (PA-002) |
+| D-066 | 2026-11-24 | Nova tabela `project_status_events` (só inserção, lida pelo cliente) para os intervalos de pausa e as reaberturas | D-064, D-065 | Usar o `activity_log` (só admin) | Assumida |

@@ -17,6 +17,7 @@
 | `phase_templates` | sim | 9 | M2-01 · §3.2 | Modelo de fases de cada serviço (Académico e Design). O Desenvolvimento usa o GitHub. |
 | `project_phases` | sim | 17 | M2-01 · §3.3 | Fases de um projeto Académico ou Design, copiadas do modelo (D-042). |
 | `phase_events` | sim | 8 | M2-01 · §3.4 | Histórico das mudanças de estado das fases; só inserção. Base do prazo ajustado (RN-21). |
+| `project_status_events` | sim | 8 | M2-05 · `mer/fases-servicos.md` §3.5 | Histórico das mudanças de estado do projeto; só inserção. Dá os intervalos de pausa a pedido do cliente (D-064, D-066). |
 | `quotes` | sim | 15 | M2-02 · `mer/blocos-comuns.md` §3.1 | Orçamento versionado. Ao ser aceite gera o sinal e o restante (D-050). |
 | `payments` | sim | 13 | M2-02 · §3.2 | Pagamentos registados pelo admin; pagos fora do portal (D-009). |
 | `approvals` | sim | 13 | M2-02 · §3.3 | Pedido de aprovação de uma versão concreta, com cópia fixa do que o cliente viu (D-049). |
@@ -99,6 +100,20 @@ Histórico das mudanças de estado das fases; só inserção. Base do prazo ajus
 | phase_events | `note` | text | ≤ 500 | sim | — | — | Motivo mostrado ao cliente |
 | phase_events | `actor_id` | uuid | — | sim | FK→auth.users.id | `auth.uid()` | Autor; nulo quando é o sistema (on delete set null) |
 | phase_events | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
+
+### `project_status_events`
+Histórico das mudanças de estado do projeto; só inserção. Dá os intervalos de pausa a pedido do cliente (D-064, D-066).
+
+| Tabela | Atributo | Tipo | Tamanho | Nulo | Chave | Default | Descrição |
+|---|---|---|---|---|---|---|---|
+| project_status_events | `id` | uuid | — | não | PK | `gen_random_uuid()` | Identificador |
+| project_status_events | `project_id` | uuid | — | não | FK→projects.id | — | Projeto (on delete cascade) |
+| project_status_events | `from_status` | text | enum | sim | — | — | Estado anterior; nulo na criação |
+| project_status_events | `to_status` | text | enum | não | — | — | Estado novo |
+| project_status_events | `client_requested` | boolean | — | não | — | `false` | Pausa a pedido do cliente: desliza o prazo |
+| project_status_events | `note` | text | ≤ 500 | sim | — | — | Motivo; obrigatório em pausa, cancelamento e reabertura |
+| project_status_events | `actor_id` | uuid | — | sim | FK→auth.users.id | `auth.uid()` | Autor; nulo quando é o sistema (on delete set null) |
+| project_status_events | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
 
 ### `quotes`
 Orçamento versionado. Ao ser aceite gera o sinal e o restante (D-050).
@@ -302,7 +317,7 @@ Ficha técnica da peça de Design (1:1 com o projeto `design`).
 | Coluna | Valores |
 |---|---|
 | `projects.service_type` | development · academic · design |
-| `projects.status` | ativo · pausado · entregue · cancelado |
+| `projects.status, project_status_events.from_status/to_status` | ativo · pausado · entregue · cancelado |
 | `phase_templates.service_type` | academic · design |
 | `project_phases.status, phase_events.from_status/to_status` | por_iniciar · em_curso · aguarda_cliente · concluida · atrasada · nao_aplicavel |
 | `project_phases.next_step_owner` | geniusfrela · cliente |
@@ -341,6 +356,7 @@ Feita pelo script a cada geração. Os diagramas mostram só os atributos princi
 | `mer-fases.mmd` | `phase_templates` | 9 | 9 | — |
 | `mer-fases.mmd` | `project_phases` | 17 | 17 | — |
 | `mer-fases.mmd` | `phase_events` | 8 | 8 | — |
+| `mer-fases.mmd` | `project_status_events` | 8 | 8 | — |
 | `mer-fichas.mmd` | `academic_briefs` | 13 | 13 | — |
 | `mer-fichas.mmd` | `academic_sections` | 6 | 6 | — |
 | `mer-fichas.mmd` | `adjustment_requests` | 10 | 10 | — |

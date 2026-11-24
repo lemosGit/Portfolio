@@ -1,0 +1,9 @@
+stateDiagram-v2
+  [*] --> pendente : admin pede
+  pendente --> aprovada : cliente aprovar
+  pendente --> alteracoes_pedidas : cliente pedir alteracoes com comentario
+  pendente --> cancelada : admin retira ou substitui
+  aprovada --> pendente : admin reabrir com motivo
+  alteracoes_pedidas --> [*] : nova versao gera novo pedido
+  aprovada --> [*]
+  cancelada --> [*]

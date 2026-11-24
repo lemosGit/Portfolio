@@ -11,7 +11,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 MOD = RAIZ / "docs" / "02-modelagem"
-HOJE = "2026-11-24"
+HOJE = "2026-11-24"  # v1.1: project_status_events (M2-05)
 
 # Coluna: (nome, tipo, tamanho, nulo, chave, default, descrição)
 # chave: "PK", "FK→tabela.coluna", "UK(...)", combinações com " · "
@@ -86,6 +86,18 @@ TABELAS = {
             c("from_status", "text", "sim", "Estado anterior; nulo na criação", tam="enum"),
             c("to_status", "text", "não", "Estado novo", tam="enum"),
             c("note", "text", "sim", "Motivo mostrado ao cliente", tam="≤ 500"),
+            POR("actor_id", "Autor; nulo quando é o sistema"),
+            CRIADO(),
+        ]),
+    "project_status_events": dict(
+        origem="M2-05 · `mer/fases-servicos.md` §3.5", nova=True,
+        descr="Histórico das mudanças de estado do projeto; só inserção. Dá os intervalos de pausa a pedido do cliente (D-064, D-066).",
+        cols=[
+            ID(), PROJ(),
+            c("from_status", "text", "sim", "Estado anterior; nulo na criação", tam="enum"),
+            c("to_status", "text", "não", "Estado novo", tam="enum"),
+            c("client_requested", "boolean", "não", "Pausa a pedido do cliente: desliza o prazo", default="false"),
+            c("note", "text", "sim", "Motivo; obrigatório em pausa, cancelamento e reabertura", tam="≤ 500"),
             POR("actor_id", "Autor; nulo quando é o sistema"),
             CRIADO(),
         ]),
@@ -270,7 +282,7 @@ TABELAS = {
 
 ENUMS = [
     ("projects.service_type", "development · academic · design"),
-    ("projects.status", "ativo · pausado · entregue · cancelado"),
+    ("projects.status, project_status_events.from_status/to_status", "ativo · pausado · entregue · cancelado"),
     ("phase_templates.service_type", "academic · design"),
     ("project_phases.status, phase_events.from_status/to_status", "por_iniciar · em_curso · aguarda_cliente · concluida · atrasada · nao_aplicavel"),
     ("project_phases.next_step_owner", "geniusfrela · cliente"),

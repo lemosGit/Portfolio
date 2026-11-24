@@ -1,0 +1,6 @@
+stateDiagram-v2
+  [*] --> aberto : cliente pede dentro do prazo
+  aberto --> resolvido : admin carrega nova versao
+  aberto --> recusado : admin recusa com nota
+  resolvido --> [*]
+  recusado --> [*]

@@ -1,5 +1,5 @@
 # MER — Tipo de serviço e fases como dados
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-01] · Issue: #20 · Versão: 1.0 · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-01] · Issue: #20 · Versão: 1.1 (M2-05: project_status_events) · Data: 2026-11-24
 > Depende de: `supabase/migrations/0001…0004`, `lib/portal/phases.ts`, `docs/01-requisitos/requisitos-funcionais.md` (RF-30.0x, RF-10.0x, RF-20.0x), `regras-negocio.md` · Perguntas/decisões usadas: Q-001, Q-042…Q-045, D-001, D-005, D-014, D-020, D-034, D-042…D-047
 
 ## 1. O que este modelo resolve
@@ -22,6 +22,7 @@ erDiagram
   phase_templates |o--o{ project_phases : "copiada para"
   project_phases ||--o{ phase_events : "regista"
   projects ||--o{ phase_events : "agrupa"
+  projects ||--o{ project_status_events : "historico do projeto"
 
   projects {
     uuid id PK
@@ -72,6 +73,16 @@ erDiagram
     uuid project_phase_id FK
     text from_status
     text to_status
+    text note
+    uuid actor_id FK
+    timestamptz created_at
+  }
+  project_status_events {
+    uuid id PK
+    uuid project_id FK
+    text from_status
+    text to_status
+    boolean client_requested "pausa a pedido do cliente desliza o prazo"
     text note
     uuid actor_id FK
     timestamptz created_at
@@ -133,6 +144,19 @@ Os projetos que já existem ficam com `service_type = 'development'` pelo defaul
 
 Os eventos são **só de inserção**: ninguém, nem o admin, os altera ou apaga pela API (RNF-308).
 
+### 3.5 `project_status_events` (nova, M2-05 — D-066)
+| Coluna | Tipo | Nulo | Default | Regra |
+|---|---|---|---|---|
+| `id` | uuid | não | `gen_random_uuid()` | PK |
+| `project_id` | uuid | não | — | FK → `projects.id` on delete cascade |
+| `from_status`, `to_status` | text | sim / não | — | estados de `projects.status` |
+| `client_requested` | boolean | não | `false` | só faz sentido em `pausado`: com `true`, o tempo em pausa **desliza o prazo** (D-064) |
+| `note` | text | sim | — | motivo; **obrigatório** em `pausado`, `cancelado` e na reabertura `entregue → ativo` (D-065) |
+| `actor_id` | uuid | sim | `auth.uid()` | FK → `auth.users.id` |
+| `created_at` | timestamptz | não | `now()` | |
+
+Preenchida por trigger em cada mudança de `projects.status`. Só inserção; o cliente lê a do seu projeto.
+
 ## 4. Estados de uma fase
 | Estado (`status`) | Mostrado ao cliente | Quem o põe | Conta para o prazo? |
 |---|---|---|---|
@@ -160,7 +184,7 @@ Os eventos são **só de inserção**: ninguém, nem o admin, os altera ou apaga
 ## 6. Prazo ajustado (RN-21…RN-23)
 - `projects.due_on` guarda **sempre o prazo acordado**. Não é reescrito.
 - **Dias de espera** = soma dos intervalos em que uma fase do projeto esteve em `aguarda_cliente`, calculada a partir de `phase_events` (um intervalo ainda aberto conta até agora).
-- **Prazo ajustado** = `due_on` + dias de espera, arredondados para cima. É calculado por uma função SQL `project_adjusted_due(project_id)` ou por uma view. Fica disponível para o cliente e para o admin (RF-30.07).
+- **Prazo ajustado** = `due_on` + dias de espera + dias em pausa a pedido do cliente (`project_status_events`, D-064), sem contar duas vezes os intervalos sobrepostos, arredondado para cima. É calculado por uma função SQL `project_adjusted_due(project_id)` ou por uma view. Fica disponível para o cliente e para o admin (RF-30.07).
 - O motivo mostrado ("à espera da sua aprovação desde DD/MM") vem do `note` e da data do evento que abriu a espera.
 
 ## 7. Conteúdo dos modelos (seed)
