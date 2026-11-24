@@ -67,7 +67,7 @@ export function ProjectFields({ d = {}, showSlug }: { d?: Defaults; showSlug?: b
           )}
         </div>
         <span className="mt-1.5 block text-xs text-ink-faint">
-          Aparece ao fundo do resumo, na área do cliente. JPG, PNG ou WebP, até 5 MB.
+          Aparece ao fundo do resumo, na área do cliente. JPG, PNG ou WebP, até 4 MB.
         </span>
       </div>
     </div>
