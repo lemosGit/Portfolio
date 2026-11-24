@@ -45,3 +45,12 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  base-de-dados:
+    name: Migrações e testes SQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # Postgres 17 em Docker com o auth/storage do Supabase simulados (supabase/tests/_supabase_stub.sql).
+      - run: bash scripts/db-test.sh

@@ -8,6 +8,7 @@
 | `npm test` | Vitest: `tests/unit/**/*.test.ts` | local + CI |
 | `npm run e2e` | Playwright: comportamento do portal (sem `@visual`), a 360 px e 1280 px | local + CI |
 | `npm run e2e:visual` | Playwright: compara com as **capturas de referência** em `tests/e2e/__screenshots__/` | **só local** |
+| `bash scripts/db-test.sh` | Aplica `supabase/migrations/*.sql` num Postgres 17 local (Docker), com o auth/storage do Supabase simulados, e corre `supabase/tests/[0-9]*.sql` | local + CI |
 | `npm run e2e:update` | Regera as capturas de referência | só quando uma mudança visual for **intencional e aprovada** |
 
 ## Como funciona
@@ -24,3 +25,8 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 
 ## CI
 `.github/workflows/ci.yml`, em cada PR e em cada push para `main`: `npm ci` → typecheck → Vitest → Playwright (E2E). Se falhar, o relatório do Playwright fica como artefacto durante 7 dias.
+
+## Base de dados
+- `supabase/tests/_supabase_stub.sql` simula `auth.users`, `auth.uid()`, `auth.jwt()`, os papéis `anon`/`authenticated` e o `storage`.
+- `supabase/tests/0006_fases.sql`: triggers B1–B6, transições de fase e de projeto, prazo ajustado (com sobreposição de intervalos) e RLS por papel (admin, cliente A, cliente B, anon). Um `assert` falhado pára o script.
+- **Antes de aplicar uma migração na produção:** `bash scripts/db-test.sh` verde + backup (RNF-604).
