@@ -45,7 +45,7 @@ export function Roadmap({ phases, compact = false }: { phases: PhaseView[]; comp
                       : "Por iniciar"}
               </p>
               {ph.status === "current" && (
-                <span className="mt-2.5 inline-block rounded-md bg-[#b59fe1]/10 px-2 py-0.5 text-xs font-medium text-[#cbbaf0]">
+                <span className="mt-2.5 inline-block rounded-md bg-accent-soft/10 px-2 py-0.5 text-xs font-medium text-accent-soft">
                   {ph.percent}%
                 </span>
               )}
@@ -69,8 +69,8 @@ function StepDot({ status, n }: { status: PhaseView["status"]; n: number }) {
   }
   if (status === "current") {
     return (
-      <span className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border border-[#b59fe1]/70 bg-[#b59fe1]/10 ring-4 ring-[#b59fe1]/10">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#b59fe1]" aria-hidden />
+      <span className="relative z-10 grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full border border-accent-soft/70 bg-accent-soft/10 ring-4 ring-accent-soft/10">
+        <span className="h-2.5 w-2.5 rounded-full bg-accent-soft" aria-hidden />
       </span>
     );
   }

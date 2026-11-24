@@ -34,9 +34,9 @@ export default async function Overview() {
       {project.needsClient.length > 0 && (
         <section
           aria-labelledby="needs-title"
-          className="flex flex-col gap-4 rounded-2xl border border-amber-300/20 bg-amber-300/[0.045] p-4 sm:flex-row sm:items-center sm:px-5"
+          className="flex flex-col gap-4 rounded-2xl border border-action/25 bg-action/[0.05] p-4 sm:flex-row sm:items-center sm:px-5"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-300/15 text-amber-300">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-action/15 text-action">
             <Hand size={18} aria-hidden />
           </span>
           <div className="min-w-0 flex-1">

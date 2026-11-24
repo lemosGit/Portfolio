@@ -11,7 +11,7 @@ export default async function PortalLayout({ children }: { children: React.React
   const { client, project, projects, unread } = await requirePortal();
 
   return (
-    <div className="app relative min-h-dvh overflow-x-clip">
+    <div className="app relative min-h-dvh overflow-x-clip" data-service={project.serviceType ?? "development"}>
       <div aria-hidden className="app-ambient">
         <i />
         <i />
@@ -24,7 +24,7 @@ export default async function PortalLayout({ children }: { children: React.React
         unread={unread}
       />
 
-      <div className="relative lg:pl-[288px]">
+      <div className="relative pb-16 lg:pb-0 lg:pl-[288px]">
         <main id="conteudo" className="mx-auto max-w-[1560px] px-4 pb-10 pt-6 sm:px-6 lg:px-10 lg:pt-9">
           {children}
         </main>

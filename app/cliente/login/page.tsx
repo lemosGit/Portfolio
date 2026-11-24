@@ -29,7 +29,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const help = `mailto:${profile.email}?subject=Recuperar%20acesso%20%C3%A0%20%C3%A1rea%20do%20cliente`;
 
   return (
-    <main id="conteudo" className="app relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+    <main id="conteudo" className="app relative grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]" data-service="brand">
       <div aria-hidden className="app-ambient">
         <i />
         <i />
@@ -88,7 +88,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         aria-label="O que encontra na área do cliente"
         style={{
           background:
-            "radial-gradient(70% 55% at 50% 38%, rgba(110,80,230,0.2), transparent 70%), radial-gradient(40% 30% at 85% 90%, rgba(95,212,232,0.07), transparent 70%), linear-gradient(180deg, #1d1730, #151122)",
+            "radial-gradient(70% 55% at 50% 38%, rgb(139 124 246 / 0.16), transparent 70%), radial-gradient(40% 30% at 85% 90%, rgb(76 141 255 / 0.08), transparent 70%), linear-gradient(180deg, #172033, #111723)",
         }}
       >
         <p className="kicker">Clareza em cada etapa</p>
@@ -109,7 +109,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               </div>
             </div>
             <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[64%] rounded-full" style={{ background: "linear-gradient(90deg, #8b6cff, #5fd4e8)" }} />
+              <div className="h-full w-[64%] rounded-full" style={{ background: "linear-gradient(90deg, #8b7cf6, #4c8dff)" }} />
             </div>
             <p className="mt-2 flex justify-between text-[11px] text-ink-faint">
               <span>Desenvolvimento</span>
@@ -141,7 +141,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <ul className="mt-7 grid grid-cols-3 gap-4 border-t border-line pt-5 text-left">
             {FEATURES.map(({ icon: Icon, title, text }) => (
               <li key={title} className="flex items-start gap-3">
-                <Icon size={17} className="mt-0.5 shrink-0 text-[#a99bf0]" aria-hidden />
+                <Icon size={17} className="mt-0.5 shrink-0 text-accent-soft" aria-hidden />
                 <span>
                   <span className="block text-[13px] text-ink">{title}</span>
                   <span className="block text-[11px] text-ink-faint">{text}</span>

@@ -67,7 +67,7 @@ export function LoginForm({ helpHref }: { helpHref: string }) {
       </div>
 
       {state.error && (
-        <p id="login-error" role="alert" className="rounded-xl border border-[#ff8fa3]/25 bg-[#ff8fa3]/[0.06] px-4 py-3 text-[13px] text-[#ffb3c0]">
+        <p id="login-error" role="alert" className="rounded-xl border border-action/25 bg-action/[0.06] px-4 py-3 text-[13px] text-action">
           {state.error}
         </p>
       )}

@@ -41,7 +41,7 @@ export function CoverBackdrop({ src }: { src?: string }) {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(22,18,33,0.97) 0%, rgba(22,18,33,0.85) 45%, rgba(22,18,33,0.6) 100%)",
+            "linear-gradient(90deg, rgb(var(--c-surface) / 0.97) 0%, rgb(var(--c-surface) / 0.85) 45%, rgb(var(--c-surface) / 0.6) 100%)",
         }}
       />
     </div>
