@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-12 Gerar e enviar o link mágico pelo admin | #50 | `lib/access/`, `app/cliente/entrar/page.tsx`, `app/admin/_components/AccessLinkPanel.tsx` |
-| ⏭️ Próxima | M5-13 Testar as políticas RLS das novas tabelas | #51 | — |
+| ✅ Última feita | M5-13 Testar as políticas RLS das novas tabelas | #51 | `supabase/tests/0090_rls.sql`, `supabase/tests/concorrencia.sh`, `docs/05-qa/relatorios/M5-13-rls.md` |
+| ⏭️ Próxima | M5-14 Acrescentar projetos Académico e Design aos dados de exemplo | #52 | — |
 | ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -78,3 +78,4 @@
 | 2026-11-24 | M5-10 | #48 | Bloco Aprovações: pedir (índice, prova, entrega), cancelar e reabrir no admin; cliente aprova em 2 passos ou pede alterações com comentário; histórico; próximo passo do cliente; email ao João; 4 unitários, 1 E2E, captura do Académico atualizada (Q-085, D-134…D-136) | `lib/approvals/`, `app/cliente/_blocks/approvals.tsx`, `app/cliente/_components/ApprovalCard.tsx`, `app/admin/projetos/[id]/aprovacoes/page.tsx` |
 | 2026-11-24 | M5-11 | #49 | Bloco Pagamentos: admin regista sinal/restante/extra, marca pago com data, desfaz e anula; extra pede aceitação; cliente vê total/pago/em falta e estados (em atraso calculado em Luanda); próximo passo "Pagar…"; 7 unitários, 1 E2E, captura do Académico atualizada (Q-086, D-137…D-139) | `lib/payments/model.ts`, `app/cliente/_blocks/payments.tsx`, `app/admin/projetos/[id]/pagamentos/page.tsx`, `tests/unit/payments.test.ts` |
 | 2026-11-24 | M5-12 | #50 | Link mágico: gerar no projeto (limite 5/h, recusa links `signup`), Copiar / WhatsApp / Email, `/cliente/entrar` (GET mostra, POST entra), ecrã de link inválido com WhatsApp; 5 unitários, 1 E2E; **teste real em produção com o cliente de teste**, dados temporários apagados (Q-087, Q-088, D-140…D-142) | `lib/access/`, `app/cliente/entrar/page.tsx`, `app/admin/_components/AccessLinkPanel.tsx`, `middleware.ts` |
+| 2026-11-24 | M5-13 | #51 | Testes RLS T1–T15: matriz A×B em 17 tabelas (ler, inserir, alterar, apagar), RPCs, históricos só de inserção, `anon` (incl. `EXECUTE`), aprovação em paralelo, Storage sem URL assinada em produção (apagado), Security Advisor; testes de mutação 3/3; T13/T14 adiados (Q-089, D-143, D-144) | `supabase/tests/0090_rls.sql`, `supabase/tests/concorrencia.sh`, `scripts/teste-storage-t9.mjs`, `docs/05-qa/relatorios/M5-13-rls.md` |

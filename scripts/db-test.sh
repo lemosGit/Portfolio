@@ -13,4 +13,5 @@ run() { docker exec -i "$NAME" psql -v ON_ERROR_STOP=1 -q -U postgres -d postgre
 run < supabase/tests/_supabase_stub.sql
 for f in supabase/migrations/*.sql; do echo "→ $f"; run < "$f"; done
 for t in supabase/tests/[0-9]*.sql; do echo "→ $t"; run < "$t"; done
+echo "→ supabase/tests/concorrencia.sh"; bash supabase/tests/concorrencia.sh "$NAME"
 echo "✔ migrações e testes OK"
