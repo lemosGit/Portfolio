@@ -36,3 +36,14 @@ test.describe("@visual Académico — referência", () => {
     await expect(page).toHaveScreenshot("academico-visao-geral.png", { fullPage: true });
   });
 });
+
+test.describe("@visual Design — referência", () => {
+  test.beforeEach(async ({ context, baseURL }) => {
+    await context.addCookies([{ name: "jp_portal_session", value: "c_teresa", url: baseURL! }]);
+  });
+  test("Design Visão geral @visual", async ({ page }) => {
+    await page.goto("/cliente");
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page).toHaveScreenshot("design-visao-geral.png", { fullPage: true });
+  });
+});

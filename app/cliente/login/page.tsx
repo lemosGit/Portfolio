@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft, CalendarDays, Check, GitBranch, Smartphone, Sparkles } from "lucide-react";
 import { BrandLockup } from "@/components/BrandMark";
 import { profile } from "@/lib/data";
-import { DEMO_CREDENTIALS } from "@/lib/portal/mock-data";
+import { DEMO_ACCOUNTS, DEMO_CREDENTIALS } from "@/lib/portal/mock-data";
 import { supabaseEnabled } from "@/lib/supabase/config";
 import { PhoneOrbit } from "../_components/Visuals";
 import { LoginForm } from "./LoginForm";
@@ -73,10 +73,18 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
                 </a>
               </p>
             ) : (
-              <p className="text-xs leading-relaxed text-ink-faint">
-                Acesso de demonstração: <span className="text-ink-dim">{DEMO_CREDENTIALS.email}</span>, senha{" "}
-                <span className="text-ink-dim">{DEMO_CREDENTIALS.password}</span>
-              </p>
+              <div className="text-xs leading-relaxed text-ink-faint">
+                <p>
+                  Contas de demonstração, todas com a senha <span className="text-ink-dim">{DEMO_CREDENTIALS.password}</span>:
+                </p>
+                <ul className="mt-1.5 space-y-0.5">
+                  {DEMO_ACCOUNTS.map((a) => (
+                    <li key={a.email}>
+                      {a.service}: <span className="text-ink-dim">{a.email}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         </div>

@@ -96,6 +96,7 @@ Issue criada com confirmação do utilizador (2026-11-24): #122 [M5-09b] Gerar m
 Teste real M5-12 (2026-11-24): app local com o `.env.local`, conta `cliente.teste@` do Auth; criados o cliente "Cliente de teste" e o projeto Académico `zz-teste-link-magico`; GET não gastou o token, POST entrou no projeto, `access_links` ficou `usado`, `must_change_password` passou a falso, 2.º uso → "Este link já não é válido". Projeto, cliente e links apagados no fim (verificado: 0 links restantes).
 | Q-089 | 2026-11-24 | M5 | M5-13 (T9): pôr 1 KB de teste em `project-files` e `client-uploads` de produção para provar que não se lê sem URL assinada, e apagar logo? | Sim; testado e apagado (0 restantes) | `scripts/teste-storage-t9.mjs`, `docs/05-qa/relatorios/M5-13-rls.md` |
 Consulta: Supabase MCP `get_advisors(security)` na M5-13 (2026-11-24) para o T15: 0 avisos de RLS em falta ou `search_path`; ficam 2 SECURITY DEFINER previstos e a *leaked password protection* (D-143).
+| Q-090 | 2026-11-24 | M5 | M5-14: aprova a captura nova "Design Visão geral" e a do Login com as 3 contas de demonstração? | Sim (aprovadas depois de vistas) | D-145, `tests/e2e/__screenshots__/…/design-visao-geral-*.png`, `login-*.png` |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
