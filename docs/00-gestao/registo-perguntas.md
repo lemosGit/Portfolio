@@ -76,9 +76,11 @@
 | Q-070 | 2026-11-24 | M3 | Como se navega no telemóvel? | Barra inferior com ícones, nos 3 serviços | D-093 |
 | Q-071 | 2026-11-24 | M3 | Como proteger as escritas do cliente (aprovar, pedir ajuste…)? | Funções SQL (RPC) + triggers | D-098, seguranca.md §3 |
 | Q-072 | 2026-11-24 | M3 | R-01: o que fazer com o plano Hobby da Vercel (uso não comercial)? | Ficar no Hobby por agora | D-102, riscos.md R-01 |
+| Q-073 | 2026-11-24 | M4 | Em que formato ficam os wireframes da M4? | HTML no repositório, com o DS V1 | D-107 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
 Permissão negada: `npx @mermaid-js/mermaid-cli` para gerar `docs/02-modelagem/img/mer-fases.png` (M2-01, 2026-11-23). A fonte `.mmd` fica no repositório.
 Consulta de documentação: Supabase (MCP `search_docs`), fluxo SSR com `token_hash` + `verifyOtp` (M2-06, 2026-11-24). O retorno de `generateLink` (`hashed_token`) fica para o spike M3-02.
 Spike M3-02 (2026-11-24): `docs/03-arquitetura/spikes/spike-link-magico.mjs` corrido na produção só com o cliente de teste; efeito lateral: o email do cliente de teste ficou confirmado (1.ª execução devolveu um link `signup`).
+Skill usada: `frontend-design` na M4-03 (wireframe HTML do Académico), 2026-11-24.
