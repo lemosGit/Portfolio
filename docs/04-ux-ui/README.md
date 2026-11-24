@@ -8,3 +8,5 @@
 | [`wireframes/academico.md`](wireframes/academico.md) | M4-03 (#34) | Académico: 4 estados da Visão geral, Projeto, 3 folhas, computador — [`academico.html`](wireframes/academico.html), [`ds.css`](wireframes/ds.css) |
 | [`wireframes/design.md`](wireframes/design.md) | M4-04 (#35) | Design: 3 estados da Visão geral, galeria, comparar, pedir revisão, aprovar arte, sem rondas, computador — [`design.html`](wireframes/design.html) |
 | [`wireframes/blocos-comuns.md`](wireframes/blocos-comuns.md) | M4-05 (#36) | Entrar pelo link, link inválido, gerar link (admin), pagamentos, ficheiros, enviar, mensagens, projetos — [`blocos-comuns.html`](wireframes/blocos-comuns.html) |
+| [`design-system.md`](design-system.md) | M4-06 (#37) | Tokens por serviço (incl. marca) e validação nos wireframes |
+| `../00-gestao/actas/G2-design.md` | M4-07 (#38) | Aprovação do design (G2) |
