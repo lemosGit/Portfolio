@@ -85,6 +85,7 @@
 | Q-079 | 2026-11-24 | M4 (G2) | Faz o merge da M4 na main? | Sim | PRs #107…#112 |
 | Q-080 | 2026-11-24 | M5 | Como fazer o backup antes da migração 0006, se o backup semanal nunca correu (faltam os segredos)? | Exportação local agora; o João define os segredos depois | D-118, R-08 |
 | Q-081 | 2026-11-24 | M5 | Aprova o novo aspeto do portal (DS V1) e a troca das 12 capturas de referência? | Sim | D-125, `tests/e2e/__screenshots__/` |
+| Q-082 | 2026-11-24 | M5 | Aprova a etiqueta do serviço no cabeçalho e o esqueleto do Académico (barra de fases + próximo passo)? | Sim | D-126, capturas de referência |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

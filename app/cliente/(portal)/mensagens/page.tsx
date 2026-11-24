@@ -28,7 +28,7 @@ export default async function MessagesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader section="Mensagens" eyebrow="Canal direto" title="Conversa com a GeniusFrela" unread={unread} source={project.source} />
+      <PageHeader section="Mensagens" eyebrow="Canal direto" title="Conversa com a GeniusFrela" unread={unread} source={project.source} serviceType={project.serviceType} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="thread-title" className="panel p-5 sm:p-7">

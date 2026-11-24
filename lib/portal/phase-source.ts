@@ -8,7 +8,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { now } from "@/lib/clock";
 import { syncPhases } from "./data";
-import type { DbPhaseState, Phase, Project, ServiceType } from "./types";
+import { DB_PHASE_COLS, mapDbPhases, type DbPhaseRow } from "./db-phases";
+import type { Project, ServiceType } from "./types";
+
+export { DB_PHASE_COLS, mapDbPhases, type DbPhaseRow };
 
 export type PhaseSourceKind = "github" | "database";
 export type PhaseLoad = Pick<Project, "phases" | "source" | "syncedAt">;
@@ -25,42 +28,6 @@ export type PhaseSourceInput = {
 export interface PhaseSource {
   kind: PhaseSourceKind;
   load(project: PhaseSourceInput, sb?: SupabaseClient): Promise<PhaseLoad>;
-}
-
-/** Linha de project_phases, tal como vem do Supabase. */
-export type DbPhaseRow = {
-  position: number;
-  key: string;
-  name: string;
-  description: string;
-  status: DbPhaseState;
-  due_on: string | null;
-  next_step: string | null;
-  next_step_owner: "geniusfrela" | "cliente" | null;
-  progress: number | null;
-  client_can_upload: boolean;
-};
-
-export const DB_PHASE_COLS =
-  "position, key, name, description, status, due_on, next_step, next_step_owner, progress, client_can_upload";
-
-/** project_phases → Phase (ordenadas por position). Pura, para testar sem BD. */
-export function mapDbPhases(rows: DbPhaseRow[]): Phase[] {
-  return [...rows]
-    .sort((a, b) => a.position - b.position)
-    .map((r) => ({
-      number: r.position,
-      title: r.name,
-      description: r.description,
-      dueOn: r.due_on ?? undefined,
-      closed: r.status === "concluida",
-      tasks: [],
-      key: r.key,
-      state: r.status,
-      nextStep: r.next_step ? { text: r.next_step, owner: r.next_step_owner } : undefined,
-      progress: r.status === "concluida" ? 1 : r.progress != null ? r.progress / 100 : undefined,
-      clientCanUpload: r.client_can_upload,
-    }));
 }
 
 export const githubSource: PhaseSource = {

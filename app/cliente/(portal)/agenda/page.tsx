@@ -1,5 +1,7 @@
 import { CalendarPlus, Clock, Users } from "lucide-react";
 import { dayParts, longDate, time } from "@/lib/portal/format";
+import { redirect } from "next/navigation";
+import { hasRoute } from "@/lib/portal/service-layouts";
 import { requirePortal } from "@/lib/portal/session";
 import { Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
@@ -9,6 +11,8 @@ export const metadata = { title: "Agenda" };
 
 export default async function AgendaPage() {
   const { project, unread } = await requirePortal();
+  // A Agenda só existe no Tech; nos outros serviços volta à Visão geral (D-096).
+  if (!hasRoute(project.serviceType, "/cliente/agenda")) redirect("/cliente");
   const next = project.nextMeeting;
 
   return (
@@ -18,7 +22,7 @@ export default async function AgendaPage() {
         eyebrow="Sempre alinhados"
         title="Reuniões"
         unread={unread}
-        source={project.source}
+        source={project.source} serviceType={project.serviceType}
       />
 
       <div className="grid gap-6 lg:grid-cols-2">

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Bell, MessageCircle } from "lucide-react";
+import { layoutFor } from "@/lib/portal/service-layouts";
 import type { ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +11,8 @@ type Props = {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   source: ProjectView["source"];
+  /** Serviço do projeto: mostra a etiqueta na cor do módulo (DS V1). */
+  serviceType?: ProjectView["serviceType"];
   unread: number;
 };
 
@@ -18,12 +21,17 @@ const SYNC_LABEL: Record<Exclude<Props["source"], "github" | "bd">, string> = {
   erro: "Progresso indisponível",
 };
 
-export function PageHeader({ section, eyebrow, title, subtitle, source, unread }: Props) {
+export function PageHeader({ section, eyebrow, title, subtitle, source, serviceType, unread }: Props) {
   const ok = source !== "erro";
   return (
     <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
       <div className="min-w-0">
-        <p className="kicker">{eyebrow ?? section}</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex h-6 items-center rounded-lg bg-[var(--m-tint)] px-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-accent-soft">
+            {layoutFor(serviceType).label}
+          </span>
+          <p className="kicker">{eyebrow ?? section}</p>
+        </div>
         <h1 className="mt-4 font-display text-[28px] font-normal leading-[1.12] tracking-[-0.03em] text-ink md:text-[32px]">
           {title}
         </h1>

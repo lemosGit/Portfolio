@@ -30,3 +30,7 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 - `supabase/tests/_supabase_stub.sql` simula `auth.users`, `auth.uid()`, `auth.jwt()`, os papéis `anon`/`authenticated` e o `storage`.
 - `supabase/tests/0006_fases.sql`: triggers B1–B6, transições de fase e de projeto, prazo ajustado (com sobreposição de intervalos) e RLS por papel (admin, cliente A, cliente B, anon). Um `assert` falhado pára o script.
 - **Antes de aplicar uma migração na produção:** `bash scripts/db-test.sh` verde + backup (RNF-604).
+
+## Esqueleto genérico (M5-06)
+- `tests/e2e/academico.spec.ts`: com o cliente de exemplo `c_kiala` (Académico): etiqueta, barra de fases, próximo passo, menu de 4 entradas, redirecionamento da Agenda.
+- Capturas de referência atualizadas a 2026-11-24 (Q-082): as do Tech ganharam a etiqueta "TECH"; novas `academico-visao-geral-*`. A extração dos blocos do Tech foi verificada **antes** da etiqueta, com as capturas antigas a passar sem alteração.
