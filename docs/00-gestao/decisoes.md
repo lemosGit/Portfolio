@@ -69,7 +69,7 @@
 | D-064 | 2026-11-24 | Pausa a pedido do cliente (`client_requested = true`) desliza o prazo; pausa da GeniusFrela não | Q-057 | Sempre; nunca | Aprovada (PA-002) |
 | D-065 | 2026-11-24 | Projeto `entregue → ativo` só pelo admin, com motivo; limpa `completed_at`; `cancelado` é final | Q-058 | Entregue é final | Aprovada (PA-002) |
 | D-066 | 2026-11-24 | Nova tabela `project_status_events` (só inserção, lida pelo cliente) para os intervalos de pausa e as reaberturas | D-064, D-065 | Usar o `activity_log` (só admin) | Assumida |
-| D-067 | 2026-11-24 | O link mágico aponta para `/cliente/entrar?t=…`; o servidor troca o `token_hash` por sessão com `verifyOtp` | Docs Supabase (SSR) | URL de verificação do Supabase | Assumida — confirmar no spike M3-02 |
+| D-067 | 2026-11-24 | O link mágico aponta para `/cliente/entrar?t=…`; o servidor troca o `token_hash` por sessão com `verifyOtp` | Docs Supabase (SSR) | URL de verificação do Supabase | Aprovada — confirmada no spike (ADR-002) |
 | D-068 | 2026-11-24 | GET mostra a página com o botão "Entrar"; só o POST gasta o token | Q-059 | Entrada automática | Aprovada |
 | D-069 | 2026-11-24 | `access_links` guarda só o SHA-256 do token; um link novo substitui os anteriores | RF-30.57, RNF-306 | Guardar o token | Assumida |
 | D-070 | 2026-11-24 | Clientes criados só com link mágico ficam com `must_change_password = false` | D-023 | Pedir senha no 1.º acesso | Assumida |
@@ -78,3 +78,7 @@
 | D-073 | 2026-11-24 | `PhaseSource` (github / database) devolve `Phase[]`; `Phase` ganha campos opcionais; `ProjectView` mantém a forma | Q-063 | Tipos separados por fonte | Aprovada (ADR-001) |
 | D-074 | 2026-11-24 | Gráfico semanal, atividade recente e "precisa de si" (issues) só no Desenvolvimento | ADR-001 | Calcular a partir de `phase_events` | Assumida |
 | D-075 | 2026-11-24 | `PhaseStatus` ganha `skipped` (só a fonte BD o usa) | ADR-001 | Mostrar "não aplicável" como `done` | Assumida |
+| D-076 | 2026-11-24 | Link gerado com `auth.admin.generateLink({ type: "magiclink" })` e validado com `verifyOtp({ token_hash, type: "email" })` | Q-064 (spike S1–S3) | `signInWithOtp`; código de 6 dígitos; token próprio | Aprovada (ADR-002) |
+| D-077 | 2026-11-24 | Se `verification_type !== "magiclink"`, a geração pára e o admin é avisado (conta por confirmar) | Spike S5 | Aceitar o link `signup` | Assumida |
+| D-078 | 2026-11-24 | *Email OTP Expiration* = 86 400 s no painel do Supabase, no checklist da release | D-023, spike | Deixar 3600 s | Assumida |
+| D-079 | 2026-11-24 | Sessão sem limite (plano gratuito); o admin corta o acesso apagando a conta ou mudando o email | Spike S4 | Plano Pro com limites | Assumida |

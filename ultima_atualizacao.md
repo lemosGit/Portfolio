@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M3-01 Escrever o ADR das fases na BD vs GitHub | #26 | `docs/03-arquitetura/adr/ADR-001-fases-bd-vs-github.md` |
-| ⏭️ Próxima | M3-02 Investigar e decidir o link mágico | #27 | `docs/03-arquitetura/adr/ADR-002-link-magico.md` |
-| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M3-02 Investigar e decidir o link mágico | #27 | `docs/03-arquitetura/adr/ADR-002-link-magico.md` |
+| ⏭️ Próxima | M3-03 Decidir o armazenamento de ficheiros e entregáveis | #28 | `docs/03-arquitetura/adr/ADR-003-ficheiros.md` |
+| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -44,3 +44,4 @@
 | Data | Código | Issue | Tarefa | Entregáveis |
 |------|--------|-------|--------|-------------|
 | 2026-11-24 | M3-01 | #26 | ADR-001: `PhaseSource` (github / database), % do projeto, impacto em `toView` (Q-062, Q-063, D-072…D-075) | `docs/03-arquitetura/adr/ADR-001-fases-bd-vs-github.md` |
+| 2026-11-24 | M3-02 | #27 | ADR-002 + spike real (S1–S6 confirmados; armadilha do link `signup`); riscos R-05, R-06 (Q-064, D-076…D-079) | `docs/03-arquitetura/adr/ADR-002-link-magico.md`, `spikes/spike-link-magico.mjs` |

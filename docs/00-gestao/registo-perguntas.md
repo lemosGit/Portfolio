@@ -67,8 +67,10 @@
 | Q-061 | 2026-11-24 | M2 | Como confirma o cliente a aprovação da arte? | Caixa "Confirmo" + botão | D-071, sequencias.md A1 |
 | Q-062 | 2026-11-24 | M3 | Como se calcula a % de um projeto Académico ou Design? | Fases concluídas + parte das fases em curso, sem as "não aplicável" | D-072, ADR-001 |
 | Q-063 | 2026-11-24 | M3 | Como encaixar as fases da BD no tipo atual? | Mesmo tipo `Phase`, com campos opcionais; `ProjectView` não muda | D-073, ADR-001 |
+| Q-064 | 2026-11-24 | M3 | Posso testar o link mágico na produção com o cliente de teste? | Sim, só com o cliente de teste | ADR-002 (spike), D-076 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
 Permissão negada: `npx @mermaid-js/mermaid-cli` para gerar `docs/02-modelagem/img/mer-fases.png` (M2-01, 2026-11-23). A fonte `.mmd` fica no repositório.
 Consulta de documentação: Supabase (MCP `search_docs`), fluxo SSR com `token_hash` + `verifyOtp` (M2-06, 2026-11-24). O retorno de `generateLink` (`hashed_token`) fica para o spike M3-02.
+Spike M3-02 (2026-11-24): `docs/03-arquitetura/spikes/spike-link-magico.mjs` corrido na produção só com o cliente de teste; efeito lateral: o email do cliente de teste ficou confirmado (1.ª execução devolveu um link `signup`).

@@ -7,3 +7,5 @@
 | R-02 | Os 24 h do link mágico são o máximo do Supabase; um cliente pode abrir o link tarde | Média | Baixo | Ecrã de link expirado com botão para pedir outro pelo WhatsApp (RF-30.51) | João | Mitigado |
 | R-03 | O Storage não tem backup (D-031); uma falha perde provas e entregáveis | Baixa | Alto | Originais no computador do admin (RNF-603); rever no gatilho RNF-505 | João | Aceite |
 | R-04 | O Storage gratuito (1 GB) esgota-se com provas e PDFs | Média | Médio | Limites de upload (D-024), miniaturas WebP, retenção de 90 dias (D-025), gatilho a 80% (D-029) | João | Mitigado |
+| R-05 | No Android, o WhatsApp pode abrir o link num browser interno; a sessão fica lá e o Chrome não a vê | Média | Médio | Testar num Android real (M9-05); sugerir "Abrir no Chrome" e "Definir uma senha" na 1.ª entrada | João | Aberto |
+| R-06 | *Email OTP Expiration* fica nos 3600 s por omissão e o link expira em 1 h | Média | Baixo | Checklist da release (M10-01): pôr 86 400 s no painel (D-078) | João | Aberto |
