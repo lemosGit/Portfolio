@@ -38,3 +38,16 @@ test("a página do projeto abre sem erros", async ({ page }) => {
   expect(res?.status()).toBe(200);
   expect(errors).toEqual([]);
 });
+
+test("Ficheiros: versões por série, a atual marcada e sem envio fora do briefing/revisão (M5-09)", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/cliente/entregas");
+  await expect(page.getByRole("heading", { name: "Ficheiros do projeto" })).toBeVisible();
+  await expect(page.getByText("Índice proposto")).toBeVisible();
+  await expect(page.getByText("atual", { exact: true })).toBeVisible();
+  await expect(page.getByText("normas-apa-universidade.pdf")).toBeVisible();
+  await expect(page.getByText("Nesta fase não é preciso enviar nada", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Descarregar" }).first()).toBeVisible();
+  expect(errors).toEqual([]);
+});

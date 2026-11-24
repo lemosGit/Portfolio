@@ -9,7 +9,7 @@ import type { Client, Feedback, Project, Task } from "./types";
 import { now as clockNow, nowMs } from "@/lib/clock";
 
 const DAY = 86_400_000;
-function at(days: number, hour = 10, minute = 0) {
+export function at(days: number, hour = 10, minute = 0) {
   const d = new Date(nowMs() + days * DAY);
   d.setHours(hour, minute, 0, 0);
   return d.toISOString();

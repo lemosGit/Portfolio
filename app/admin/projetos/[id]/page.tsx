@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, Eye, Globe, ListChecks, MessageSquare, Smartphone, Trash2 } from "lucide-react";
+import { ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSquare, Smartphone, Trash2 } from "lucide-react";
 import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
@@ -48,9 +48,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </>
         }
         actions={
-          <Link href={`/admin/mensagens/${p.id}`} className="btn-quiet h-11 py-0">
-            <MessageSquare size={16} aria-hidden /> Mensagens
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/admin/projetos/${p.id}/ficheiros`} className="btn-quiet h-11 py-0">
+              <FolderOpen size={16} aria-hidden /> Ficheiros
+            </Link>
+            <Link href={`/admin/mensagens/${p.id}`} className="btn-quiet h-11 py-0">
+              <MessageSquare size={16} aria-hidden /> Mensagens
+            </Link>
+          </div>
         }
       />
 
