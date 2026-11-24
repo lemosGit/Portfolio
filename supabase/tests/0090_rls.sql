@@ -213,7 +213,8 @@ declare fn text;
 begin
   foreach fn in array array['public.respond_approval(uuid, text, text, uuid)', 'public.admin_set_phase_status(uuid, text, text)',
                             'public.admin_set_project_status(uuid, text, text, boolean)', 'public.project_adjusted_due(uuid)',
-                            'public.design_rounds(uuid)', 'public.mark_password_changed()'] loop
+                            'public.design_rounds(uuid)', 'public.mark_password_changed()',
+                            'public.files_purge_on(public.projects)'] loop
     assert not has_function_privilege('anon', fn, 'execute'), format('T12: anon tem EXECUTE em %s', fn);
     assert has_function_privilege('authenticated', fn, 'execute'), format('authenticated sem EXECUTE em %s', fn);
   end loop;

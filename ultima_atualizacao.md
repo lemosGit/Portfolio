@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-14 Acrescentar projetos Académico e Design aos dados de exemplo | #52 | `lib/portal/mock-data.ts`, `lib/files/demo.ts`, `app/cliente/login/page.tsx` |
-| ⏭️ Próxima | M5-09b Miniaturas WebP e limpeza diária (#122), depois M5-99 Demo v0.1 (#53) | #122, #53 | — |
-| ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M5-09b Gerar miniaturas WebP e limpar ficheiros diariamente | #122 | `lib/files/browser-images.ts`, `lib/files/cleanup.ts`, `app/api/cron/limpeza/route.ts`, `supabase/migrations/0008_files_retention.sql` |
+| ⏭️ Próxima | M5-99 Demo e entrega parcial v0.1 (precisa da cadeia #119…#128 na `main`) | #53 | — |
+| ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -80,3 +80,4 @@
 | 2026-11-24 | M5-12 | #50 | Link mágico: gerar no projeto (limite 5/h, recusa links `signup`), Copiar / WhatsApp / Email, `/cliente/entrar` (GET mostra, POST entra), ecrã de link inválido com WhatsApp; 5 unitários, 1 E2E; **teste real em produção com o cliente de teste**, dados temporários apagados (Q-087, Q-088, D-140…D-142) | `lib/access/`, `app/cliente/entrar/page.tsx`, `app/admin/_components/AccessLinkPanel.tsx`, `middleware.ts` |
 | 2026-11-24 | M5-13 | #51 | Testes RLS T1–T15: matriz A×B em 17 tabelas (ler, inserir, alterar, apagar), RPCs, históricos só de inserção, `anon` (incl. `EXECUTE`), aprovação em paralelo, Storage sem URL assinada em produção (apagado), Security Advisor; testes de mutação 3/3; T13/T14 adiados (Q-089, D-143, D-144) | `supabase/tests/0090_rls.sql`, `supabase/tests/concorrencia.sh`, `scripts/teste-storage-t9.mjs`, `docs/05-qa/relatorios/M5-13-rls.md` |
 | 2026-11-24 | M5-14 | #52 | Modo de demonstração com os 3 layouts: cliente e projeto Design (convite na 2.ª ronda, aprovação pendente, pagamentos, provas), 3 contas no login; 6 E2E novos (login → layout por serviço, Design), captura do Design nova e do Login atualizada e aprovadas (Q-090, D-145) | `lib/portal/mock-data.ts`, `lib/files/demo.ts`, `app/cliente/login/page.tsx`, `tests/e2e/servicos.spec.ts` |
+| 2026-11-24 | M5-09b | #122 | Miniaturas WebP no browser validadas no servidor, "Original" só a pedido, fotos do cliente reduzidas; limpeza diária (aviso por email, purga aos 90 dias, órfãos), "Adiar 30 dias" e nota ao cliente; migração 0008 aplicada em produção; 7 unitários, T13 em E2E, SQL da retenção (Q-091, Q-092, D-146, D-147) | `lib/files/`, `app/api/cron/limpeza/route.ts`, `vercel.json`, `supabase/migrations/0008_files_retention.sql`, `supabase/tests/0008_retencao.sql` |

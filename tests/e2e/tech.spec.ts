@@ -46,3 +46,8 @@ test.describe("link mágico (M5-12)", () => {
     expect(errors).toEqual([]);
   });
 });
+
+test("T13: a limpeza diária recusa pedidos sem o CRON_SECRET (#122)", async ({ request }) => {
+  expect((await request.get("/api/cron/limpeza")).status()).toBe(401);
+  expect((await request.get("/api/cron/limpeza", { headers: { Authorization: "Bearer errado" } })).status()).toBe(401);
+});

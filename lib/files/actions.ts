@@ -30,6 +30,10 @@ import {
   type Bucket,
   type FileMeta,
   type FileRole,
+  PREVIEW,
+  hasPreview,
+  previewOk,
+  previewPath,
   uploadOpen,
 } from "./rules";
 import { readTicket, signTicket, type TicketFile } from "./ticket";
@@ -50,7 +54,7 @@ export type StartInput = {
 };
 
 export type StartResult =
-  | { ok: true; ticket: string; uploads: { name: string; url: string; mime: string }[] }
+  | { ok: true; ticket: string; uploads: { name: string; url: string; mime: string; previewUrl?: string }[] }
   | { ok: false; error: string };
 
 export type DoneResult = { ok: true; message: string } | { ok: false; error: string };
@@ -91,7 +95,9 @@ export async function startUpload(input: StartInput): Promise<StartResult> {
   for (const f of files) {
     const c = checkFile(bucket, f);
     if ("error" in c) return { ok: false, error: c.error };
-    checked.push({ id: randomUUID(), path: "", name: f.name.trim(), mime: c.mime, size: f.size, ext: c.ext });
+    // A pré-visualização só se pede para imagens e dentro do limite (o servidor volta a validar no passo 3).
+    const wantsPreview = hasPreview(c.mime) && Number(f.preview) > 0 && Number(f.preview) <= PREVIEW.maxBytes;
+    checked.push({ id: randomUUID(), path: "", name: f.name.trim(), mime: c.mime, size: f.size, ext: c.ext, ...(wantsPreview && { previewPath: "" }) });
   }
 
   // O projeto tem de ser visível com a sessão de quem pede (RLS: dono ou admin).
@@ -181,12 +187,19 @@ export async function startUpload(input: StartInput): Promise<StartResult> {
   if (notes && notes.length > 1000) return { ok: false, error: "As notas têm no máximo 1000 caracteres." };
 
   const deliverableId = randomUUID();
-  const uploads: { name: string; url: string; mime: string }[] = [];
+  const uploads: { name: string; url: string; mime: string; previewUrl?: string }[] = [];
   for (const f of checked) {
     f.path = storagePath(project.id, deliverableId, f.id, f.ext);
     const { data, error } = await st.from(bucket).createSignedUploadUrl(f.path);
     if (error || !data) return { ok: false, error: `Não foi possível preparar o envio: ${error?.message ?? "erro"}` };
-    uploads.push({ name: f.name, url: data.signedUrl, mime: f.mime });
+    let previewUrl: string | undefined;
+    if (f.previewPath !== undefined) {
+      f.previewPath = previewPath(f.path);
+      const pv = await st.from(bucket).createSignedUploadUrl(f.previewPath);
+      if (pv.data) previewUrl = pv.data.signedUrl;
+      else delete f.previewPath; // sem pré-visualização: segue só com o original
+    }
+    uploads.push({ name: f.name, url: data.signedUrl, mime: f.mime, ...(previewUrl && { previewUrl }) });
   }
 
   const ticket = signTicket({
@@ -228,7 +241,7 @@ export async function confirmUpload(token: string): Promise<DoneResult> {
   if ("error" in t) return { ok: false, error: t.error };
   const st = storage();
   if (!st) return { ok: false, error: "Falta a SUPABASE_SECRET_KEY no servidor." };
-  const paths = t.files.map((f) => f.path);
+  const paths = t.files.flatMap((f) => (f.previewPath ? [f.path, f.previewPath] : [f.path]));
   const discard = async (error: string): Promise<DoneResult> => {
     await st.from(t.bucket).remove(paths);
     return { ok: false, error };
@@ -243,6 +256,21 @@ export async function confirmUpload(token: string): Promise<DoneResult> {
       return discard(`“${f.name}” não parece ser um ficheiro ${f.name.split(".").pop()?.toUpperCase() ?? ""} válido.`); // D-084
     }
     real.push(p.size);
+  }
+
+  // Pré-visualizações (ADR-003 §3): RIFF…WEBP, ≤ 150 KB, ≤ 1600 px. Uma inválida apaga-se e a versão fica sem ela.
+  const thumbs: (string | null)[] = [];
+  for (const f of t.files) {
+    if (!f.previewPath) {
+      thumbs.push(null);
+      continue;
+    }
+    const pv = await probe(st, t.bucket, f.previewPath);
+    if (pv && previewOk(pv.head, pv.size)) thumbs.push(f.previewPath);
+    else {
+      if (pv) await st.from(t.bucket).remove([f.previewPath]);
+      thumbs.push(null);
+    }
   }
 
   // Admin grava com a sua sessão (RLS); o cliente não tem política de insert: chave secreta,
@@ -281,6 +309,7 @@ export async function confirmUpload(token: string): Promise<DoneResult> {
       original_name: f.name,
       mime_type: f.mime,
       size_bytes: real[i],
+      thumb_path: thumbs[i],
     })),
   );
   if (fe) {

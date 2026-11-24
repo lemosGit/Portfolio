@@ -8,7 +8,8 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, TriangleAlert, Upload } from "lucide-react";
 import { confirmUpload, startUpload, type StartInput } from "@/lib/files/actions";
-import { checkFile, humanSize, type Bucket } from "@/lib/files/rules";
+import { makePreview, reduceClientPhoto } from "@/lib/files/browser-images";
+import { checkFile, humanSize, resolveMime, type Bucket } from "@/lib/files/rules";
 import { cn } from "@/lib/utils";
 
 type Msg = { tone: "ok" | "error"; text: string } | null;
@@ -46,6 +47,14 @@ export function Uploader({
     setMsg(null);
     setBusy("A preparar…");
     try {
+      // Fotos do cliente > 2 MB reduzidas a 2560 px; miniaturas WebP de 1600 px / 150 KB (D-082).
+      const ready = await Promise.all(
+        files.map(async (f) => {
+          const mime = resolveMime(f.name, f.type);
+          const file = bucket === "client-uploads" ? await reduceClientPhoto(f, mime) : f;
+          return { file, preview: await makePreview(file, mime) };
+        }),
+      );
       const start = await startUpload({
         ...base,
         phaseId: get("fase") ?? base.phaseId,
@@ -53,7 +62,7 @@ export function Uploader({
         series: get("serie"),
         title: get("titulo"),
         notes: get("notas"),
-        files: files.map((f) => ({ name: f.name, type: f.type, size: f.size })),
+        files: ready.map(({ file, preview }) => ({ name: file.name, type: file.type, size: file.size, preview: preview?.size })),
       });
       if (!start.ok) return setMsg({ tone: "error", text: start.error });
 
@@ -61,12 +70,21 @@ export function Uploader({
         setBusy(`A enviar ${i + 1} de ${start.uploads.length}…`);
         const res = await fetch(u.url, {
           method: "PUT",
-          body: files[i],
+          body: ready[i].file,
           headers: { "content-type": u.mime, "x-upsert": "false", "cache-control": "max-age=3600" },
         });
         if (!res.ok) {
           const body = (await res.json().catch(() => ({}))) as { message?: string };
           return setMsg({ tone: "error", text: `“${u.name}” não foi enviado${body.message ? `: ${body.message}` : ""}.` });
+        }
+        // A miniatura é um extra: se falhar, o servidor regista a versão sem ela.
+        const pv = ready[i].preview;
+        if (u.previewUrl && pv) {
+          await fetch(u.previewUrl, {
+            method: "PUT",
+            body: pv,
+            headers: { "content-type": "image/webp", "x-upsert": "false", "cache-control": "max-age=3600" },
+          }).catch(() => undefined);
         }
       }
 

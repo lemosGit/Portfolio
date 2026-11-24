@@ -58,7 +58,13 @@ function FileRow({ f, locked, purged }: { f: FileItem; locked: boolean; purged: 
   const Icon = f.mime.startsWith("image/") ? ImageIcon : FileText;
   return (
     <li className="flex flex-wrap items-center gap-3 text-sm">
-      <Icon size={15} aria-hidden className="shrink-0 text-ink-faint" />
+      {f.thumbUrl && !locked && !purged ? (
+        // Miniatura WebP comprimida; o original só se descarrega a pedido (RF-20.83, RF-30.46).
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={f.thumbUrl} alt={`Pré-visualização de ${f.name}`} loading="lazy" className="h-28 w-full rounded-xl border border-line object-contain sm:h-24 sm:w-32" />
+      ) : (
+        <Icon size={15} aria-hidden className="shrink-0 text-ink-faint" />
+      )}
       <span className="min-w-0 flex-1 truncate text-ink">{f.name}</span>
       <span className="text-xs text-ink-faint">{humanSize(f.size)}</span>
       {purged ? (
@@ -79,7 +85,7 @@ function FileRow({ f, locked, purged }: { f: FileItem; locked: boolean; purged: 
           }}
           className="btn-quiet h-9 py-0 text-[13px]"
         >
-          <Download size={14} aria-hidden /> {state.busy ? "…" : "Descarregar"}
+          <Download size={14} aria-hidden /> {state.busy ? "…" : f.thumbUrl ? "Original" : "Descarregar"}
         </button>
       )}
       {state.error && (

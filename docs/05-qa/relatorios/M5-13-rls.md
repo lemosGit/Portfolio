@@ -26,7 +26,7 @@
 | T10 | A lê `deliverables` internos, `activity_log`, `access_links`, `phase_templates` | `0090_rls.sql` (+ `quotes` rascunho em `0007`) | ✅ 0 linhas |
 | T11 | Admin faz `update`/`delete` em `phase_events`, `project_status_events`, `approval_responses`, `activity_log`; `delete` em `payments`, `approvals` | `0090_rls.sql` | ✅ 0 linhas afetadas |
 | T12 | `anon` lê as 17 tabelas e executa as 6 RPCs; **e não tem `EXECUTE`** nelas (só no `keepalive`) | `0090_rls.sql` | ✅ negado |
-| T13 | `GET /api/cron/limpeza` sem `CRON_SECRET` | — | ⏭️ a rota nasce na **#122 (M5-09b)**; o teste vai com ela (D-144) |
+| T13 | `GET /api/cron/limpeza` sem `CRON_SECRET` (ou com um errado) | `tests/e2e/tech.spec.ts` (#122) | ✅ 401 |
 | T14 | Pedido de ajuste fora do prazo | — | ⏭️ `adjustment_requests` é da **M6** (D-144) |
 | T15 | Security Advisor sem RLS em falta nem `search_path` | MCP `get_advisors` (2026-11-24) | ✅ 0 desses avisos. Ficam 3 avisos aceites, abaixo |
 
