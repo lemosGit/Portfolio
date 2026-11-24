@@ -1,0 +1,19 @@
+
+
+## Tarefa
+vamos tornar o designer ainda mais simples para o usuario 
+Na visao Geral
+o texto: O projeto está a evoluir. Veja onde estamos, o que mudou e o que vem a seguir. devemos remover
+o text : Acompanhe cada etapa, reveja os últimos avanços e partilhe feedback diretamente com a equipa. tambem pode remover
+o Progresso deve paresentar o percentual em um tamanho maior o texto: Descoberta & Requisitos
+
+47 de 56 tarefas concluídas tambem pode remover, nao precisa mostrar que esta conectado com o github porque isto é para o desenvolvidor ao fundo do resumo pode ter a foto
+do projeto, e tambem deve ser registrada novo campo no cadastro do projeto para carregar imagem para gerar mais engajamento no cliente
+
+na navegacao Meu projeto tambem pode remover textos desnecessario, a ideia é quando o cliente queira saber os detalhes deve ter uma seta em ver detalhes, 
+e ai sim pode mostrar alguns detalhes, mas na primeira vistas nao precisa ter muitos texto para ler, deve ser intuitivo e comprensivel,
+aplica este metodo em todas as navegacoes 
+
+
+## restricoes
+Nao tocar no designer das cores apenas simplificar o maiximo possivel que foi pedido na tarefa.

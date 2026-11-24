@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M3-06 Definir a matriz de segurança e as políticas RLS — **M3 fechada** | #31 | `docs/03-arquitetura/seguranca.md` |
-| ⏭️ Próxima | M4-01 Organizar as referências visuais (base: Design System V1) | #32 | `docs/04-ux-ui/referencias.md` |
+| ✅ Última feita | M4-01 Organizar as referências visuais | #32 | `docs/04-ux-ui/referencias.md` |
+| ⏭️ Próxima | M4-02 Desenhar o fluxo de telas por serviço | #33 | `docs/04-ux-ui/fluxo-telas.md` |
 | ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -50,3 +50,8 @@
 | 2026-11-24 | M3-04 | #29 | ADR-004 com base no Design System V1; contraste AA verificado; PA-003 aprovado (D-004 substituída) (Q-067, Q-068, D-086…D-091) | `docs/03-arquitetura/adr/ADR-004-tema-por-servico.md`, `docs/references/designer_system/` |
 | 2026-11-24 | M3-05 | #30 | Layout por blocos: esqueleto, navegação (barra inferior), 25 blocos, `SERVICE_LAYOUTS`, migração do Tech em 5 passos (Q-069, Q-070, D-092…D-097) | `docs/03-arquitetura/layout-blocos.md` |
 | 2026-11-24 | M3-06 | #31 | Matriz de segurança: 4 papéis, 20 tabelas, RPC do cliente, 15 testes; R-01 aceite (Q-071, Q-072, D-098…D-102) | `docs/03-arquitetura/seguranca.md` |
+
+## 🗒️ Registo — M4 UX/UI
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-24 | M4-01 | #32 | Referências R1–R6 com o que se aproveita; documento de layouts e capturas guardados no git (D-103, D-104) | `docs/04-ux-ui/referencias.md`, `docs/references/1/`, `docs/references/2/` |
