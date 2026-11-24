@@ -49,6 +49,10 @@
 | Q-043 | 2026-11-23 | M2 | Como guardar as mudanças de estado das fases? | Tabela de eventos `phase_events` | D-043, §3.4, §6 |
 | Q-044 | 2026-11-23 | M2 | Cada fase tem data-limite? | Só o projeto tem prazo; cada fase pode ter uma data opcional | D-044, §3.3 |
 | Q-045 | 2026-11-23 | M2 | Quem cria as fases de um projeto novo? | A base de dados, por trigger | D-045, §5 (B1) |
+| Q-046 | 2026-11-24 | M2 | Como modelar versões com vários ficheiros (prova com várias imagens, PDF + Word)? | Entregável (versão) com N ficheiros | D-048, mer/blocos-comuns.md §3.5–3.6 |
+| Q-047 | 2026-11-24 | M2 | Como guardar o que o cliente aprovou? | Um pedido por versão com cópia fixa (snapshot); respostas numa tabela própria | D-049, §3.3–3.4 |
+| Q-048 | 2026-11-24 | M2 | Onde fica o orçamento? | Tabela `quotes`, que ao ser aceite gera o sinal e o restante | D-050, §3.1 |
+| Q-049 | 2026-11-24 | M2 | Como fazer a auditoria de pagamentos, orçamentos e ficheiros? | Log genérico `activity_log` preenchido por triggers | D-051, §3.7 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

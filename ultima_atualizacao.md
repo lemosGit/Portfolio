@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M2-01 Modelar o service_type e as fases como dados | #20 | `docs/02-modelagem/mer/fases-servicos.md` |
-| ⏭️ Próxima | M2-02 Modelar Pagamentos, Aprovações e Ficheiros | #21 | `docs/02-modelagem/mer/blocos-comuns.md` |
-| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, MER fases): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M2-02 Modelar Pagamentos, Aprovações e Ficheiros | #21 | `docs/02-modelagem/mer/blocos-comuns.md` |
+| ⏭️ Próxima | M2-03 Modelar as fichas específicas de cada serviço | #22 | `docs/02-modelagem/mer/fichas-servico.md` |
+| ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, MER fases, MER blocos comuns): falta autorizar o `mermaid-cli` | | |
 <!-- ESTADO:FIM -->
 
 ## 🗒️ Registo — M0
@@ -34,3 +34,4 @@
 | Data | Código | Issue | Tarefa | Entregáveis |
 |------|--------|-------|--------|-------------|
 | 2026-11-23 | M2-01 | #20 | MER de service_type, phase_templates, project_phases, phase_events (Q-042…Q-045, D-042…D-047) | `docs/02-modelagem/mer/fases-servicos.md`, `src/mer-fases.mmd` |
+| 2026-11-24 | M2-02 | #21 | MER de quotes, payments, approvals, approval_responses, deliverables, files, activity_log (Q-046…Q-049, D-048…D-054) | `docs/02-modelagem/mer/blocos-comuns.md`, `src/mer-blocos-comuns.mmd` |
