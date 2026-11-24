@@ -57,3 +57,10 @@
 | D-052 | 2026-11-24 | `payments.gates_phase_id`: um trigger recusa pôr a fase em curso enquanto o pagamento não estiver pago | RN-11, RN-15 | Só verificação na aplicação | Assumida |
 | D-053 | 2026-11-24 | "Em atraso" e as rondas restantes são calculados na leitura, não gravados | D-046, RF-20.41 | Gravar por job / contador | Assumida |
 | D-054 | 2026-11-24 | O admin pode enviar também AI, PSD e ZIP até 50 MB (ficheiros finais); os limites de D-024 são só do cliente | RNF-503 | Mesmos limites do cliente | Assumida |
+| D-055 | 2026-11-24 | Fichas em tabelas próprias 1:1 por serviço (`academic_briefs`, `design_specs`), não em `projects.spec jsonb` | Q-050 | `spec jsonb` validado | Aprovada |
+| D-056 | 2026-11-24 | Pedidos de ajuste em `adjustment_requests` (aberto, resolvido, recusado), com ligação à versão que resolveu | Q-051 | Mensagens com etiqueta | Aprovada |
+| D-057 | 2026-11-24 | Textos-chave do Design como lista livre rótulo + valor (`key_texts jsonb`, até 20) | Q-052 | Colunas fixas | Aprovada |
+| D-058 | 2026-11-24 | `academic_sections` guarda o índice atual; cada versão enviada fica no `snapshot` da aprovação | Q-053 | Tabela de versões do índice | Aprovada |
+| D-059 | 2026-11-24 | O projeto Académico conclui-se por job diário no fim do prazo de ajustes sem pedidos abertos | RN-34 | Conclusão manual | Assumida |
+| D-060 | 2026-11-24 | Sem tabela `design_proofs`: provas = `deliverables` `prova`; rondas = respostas `pedir_alteracoes`; incluídas = `quotes.rounds_included` | D-048, D-049, D-050 | Tabela própria de provas | Assumida |
+| D-061 | 2026-11-24 | A fase `ajustes` do Académico aceita anexos do cliente (`client_can_upload = true`) | RF-10.71, PA-001, Q-054 | Anexos só nas mensagens | Aprovada (PA-001) |

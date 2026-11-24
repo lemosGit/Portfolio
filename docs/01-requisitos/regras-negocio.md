@@ -1,5 +1,5 @@
 # Regras de negócio — Área do Cliente multi-serviço
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M1-07] · Issue: #17 · Versão: 1.0 · Data: 2026-11-23
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M1-07] · Issue: #17 · Versão: 1.1 (PA-001) · Data: 2026-11-24
 > Depende de: `requisitos-funcionais.md` (RF-10, RF-20, RF-30), `requisitos-nao-funcionais.md`, `personas.md` · Perguntas/decisões usadas: Q-012…Q-014, Q-016…Q-019, Q-022, Q-023, Q-028…Q-031, D-009, D-012…D-027, D-033…D-037
 
 ## Convenções
@@ -21,7 +21,7 @@
 | RN-06 | "Pedir alterações" exige sempre um comentário | Sistema | RF-30.31 | visão §5.1 |
 | RN-07 | Um **extra** (trabalho fora do orçamento) só conta depois de o cliente o **aceitar** | Sistema | RF-30.25 | D-017 |
 | RN-08 | Ficheiros de um projeto concluído são apagados **90 dias** depois da conclusão; o admin é avisado 7 dias antes e pode adiar | Sistema | RF-30.47 | D-025 |
-| RN-09 | O cliente só envia ficheiros nas fases de **briefing e revisão**, até 10 MB cada e 10 por fase | Sistema | RF-30.41, RF-30.42 | D-010, D-024 |
+| RN-09 | O cliente só envia ficheiros nas fases de **briefing e revisão** e, no Académico, como anexo de um pedido de ajuste (PA-001), até 10 MB cada e 10 por fase | Sistema | RF-30.41, RF-30.42 | D-010, D-024 |
 | RN-10 | Nenhum cliente, trabalho ou peça aparece no portfólio público sem **autorização escrita** | Admin | RNF-402 | D-030 |
 
 ## RN-1 Início do trabalho e pagamentos

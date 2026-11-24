@@ -1,0 +1,63 @@
+erDiagram
+  projects ||--o| academic_briefs : "ficha do trabalho (so academic)"
+  projects ||--o{ academic_sections : "indice e capitulos"
+  projects ||--o{ adjustment_requests : "pedidos de ajuste"
+  projects ||--o| design_specs : "ficha tecnica (so design)"
+  deliverables |o--o{ adjustment_requests : "anexo do cliente"
+  deliverables |o--o{ adjustment_requests : "versao que resolveu"
+
+  academic_briefs {
+    uuid project_id PK "e FK"
+    text topic
+    text work_type "escolar, universitario, relatorio, formatacao, revisao"
+    text education_level "ensino_medio, licenciatura, mestrado, outro"
+    text institution
+    text discipline
+    text citation_style "APA, ABNT, NP 405, instituicao, outra"
+    text citation_notes
+    smallint pages_target "maior que 0"
+    boolean uses_chapters "D-014"
+    smallint adjust_days "7 por omissao"
+    timestamptz delivered_at "inicio dos ajustes"
+    timestamptz updated_at
+  }
+  academic_sections {
+    uuid id PK
+    uuid project_id FK
+    smallint position "UK com project_id"
+    text title
+    text status "por_iniciar, em_curso, concluido"
+    timestamptz updated_at
+  }
+  adjustment_requests {
+    uuid id PK
+    uuid project_id FK
+    text description
+    uuid attachment_deliverable_id FK
+    text status "aberto, resolvido, recusado"
+    uuid resolved_by_deliverable_id FK
+    text admin_note
+    uuid created_by FK
+    timestamptz created_at
+    timestamptz resolved_at
+  }
+  design_specs {
+    uuid project_id PK "e FK"
+    text piece_type "logotipo_identidade, convite_digital, convite_impresso, lona, camisola, outro"
+    text piece_label
+    numeric width_cm
+    numeric height_cm
+    text size_notes "ex tamanhos de camisolas"
+    text material
+    integer quantity "maior que 0"
+    text finish
+    boolean has_print
+    boolean has_digital_files
+    date event_date "opcional"
+    jsonb key_texts "lista de rotulo e valor"
+    text production_status "a_imprimir, pronto"
+    timestamptz pickup_at
+    text pickup_place
+    timestamptz delivered_at
+    timestamptz updated_at
+  }

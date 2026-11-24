@@ -53,6 +53,11 @@
 | Q-047 | 2026-11-24 | M2 | Como guardar o que o cliente aprovou? | Um pedido por versão com cópia fixa (snapshot); respostas numa tabela própria | D-049, §3.3–3.4 |
 | Q-048 | 2026-11-24 | M2 | Onde fica o orçamento? | Tabela `quotes`, que ao ser aceite gera o sinal e o restante | D-050, §3.1 |
 | Q-049 | 2026-11-24 | M2 | Como fazer a auditoria de pagamentos, orçamentos e ficheiros? | Log genérico `activity_log` preenchido por triggers | D-051, §3.7 |
+| Q-050 | 2026-11-24 | M2 | Onde ficam as fichas de cada serviço? | Uma tabela por serviço, 1:1 com o projeto | D-055, mer/fichas-servico.md |
+| Q-051 | 2026-11-24 | M2 | Onde ficam os pedidos de ajuste? | Tabela `adjustment_requests` | D-056 |
+| Q-052 | 2026-11-24 | M2 | Textos-chave do Design: campos fixos ou lista? | Lista livre rótulo + valor | D-057 |
+| Q-053 | 2026-11-24 | M2 | É preciso guardar cada versão do índice? | Não: lista atual + cópia no snapshot da aprovação | D-058 |
+| Q-054 | 2026-11-24 | M2 | PA-001: o cliente pode anexar ficheiros ao pedido de ajuste? | Sim (RF-30.41 e RN-09 atualizados) | PA-001, D-061 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

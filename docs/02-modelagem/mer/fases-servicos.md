@@ -172,7 +172,7 @@ Os eventos são **só de inserção**: ninguém, nem o admin, os altera ou apaga
 | academic | 4 | `desenvolvimento` | Desenvolvimento | não | não |
 | academic | 5 | `revisao-formatacao` | Revisão e formatação | sim | não |
 | academic | 6 | `entrega-final` | Entrega final | não | não |
-| academic | 7 | `ajustes` | Ajustes | não | não |
+| academic | 7 | `ajustes` | Ajustes | sim (anexo do pedido de ajuste, D-061) | não |
 | design | 1 | `briefing` | Briefing | sim | não |
 | design | 2 | `orcamento-sinal` | Orçamento e sinal | não | não |
 | design | 3 | `conceito` | Conceito / esboço | não | não |
