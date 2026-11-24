@@ -41,6 +41,7 @@ erDiagram
     date due_on "opcional"
     text status "por_aceitar, pendente, pago, anulado"
     date paid_on "obrigatorio se pago"
+    smallint extra_rounds "rondas que o extra acrescenta"
     uuid gates_phase_id FK "fase que nao avanca sem o pagamento"
     timestamptz created_at
   }

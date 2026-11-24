@@ -60,6 +60,7 @@ erDiagram
     date due_on "opcional"
     text status "por_aceitar, pendente, pago, anulado"
     date paid_on "obrigatorio se pago"
+    smallint extra_rounds "rondas que o extra acrescenta"
     uuid gates_phase_id FK "fase que nao avanca sem o pagamento"
     timestamptz created_at
   }
@@ -168,6 +169,7 @@ Só pode haver **um** orçamento `enviado` ou `aceite` por projeto (índice úni
 | `due_on` | date | sim | — | data limite opcional |
 | `status` | text | não | `'pendente'` | `por_aceitar` (extra à espera do aceite, RN-07) · `pendente` · `pago` · `anulado` |
 | `paid_on` | date | sim | — | `check ((status = 'pago') = (paid_on is not null))` |
+| `extra_rounds` | smallint | não | `0` | rondas de revisão que um extra acrescenta (RN-36); só nos `extra` (D-119, M5-03) |
 | `gates_phase_id` | uuid | sim | — | FK → `project_phases`: a fase que **não pode passar a em curso** enquanto este pagamento não estiver pago (RN-11, RN-15) |
 | `created_by`, `created_at`, `updated_at` | — | — | — | |
 

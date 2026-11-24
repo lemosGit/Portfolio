@@ -19,7 +19,7 @@
 | `phase_events` | sim | 8 | M2-01 · §3.4 | Histórico das mudanças de estado das fases; só inserção. Base do prazo ajustado (RN-21). |
 | `project_status_events` | sim | 8 | M2-05 · `mer/fases-servicos.md` §3.5 | Histórico das mudanças de estado do projeto; só inserção. Dá os intervalos de pausa a pedido do cliente (D-064, D-066). |
 | `quotes` | sim | 15 | M2-02 · `mer/blocos-comuns.md` §3.1 | Orçamento versionado. Ao ser aceite gera o sinal e o restante (D-050). |
-| `payments` | sim | 13 | M2-02 · §3.2 | Pagamentos registados pelo admin; pagos fora do portal (D-009). |
+| `payments` | sim | 14 | M2-02 · §3.2 | Pagamentos registados pelo admin; pagos fora do portal (D-009). |
 | `approvals` | sim | 13 | M2-02 · §3.3 | Pedido de aprovação de uma versão concreta, com cópia fixa do que o cliente viu (D-049). |
 | `approval_responses` | sim | 8 | M2-02 · §3.4 | Respostas do cliente e reaberturas do admin; só inserção. Um trigger atualiza `approvals.status`. |
 | `deliverables` | sim | 14 | M2-02 · §3.5 | Uma versão (V1, V2…) de um objeto, com 1 ou mais ficheiros (D-048). |
@@ -151,6 +151,7 @@ Pagamentos registados pelo admin; pagos fora do portal (D-009).
 | payments | `due_on` | date | — | sim | — | — | Data limite; passada e pendente = em atraso (D-053) |
 | payments | `status` | text | enum | não | — | `'pendente'` | Estado do pagamento |
 | payments | `paid_on` | date | — | sim | — | — | Obrigatório se e só se `pago` (check) |
+| payments | `extra_rounds` | smallint | — | não | — | `0` | Rondas de revisão que um extra acrescenta (RN-36, D-119); 0 fora dos extras |
 | payments | `gates_phase_id` | uuid | — | sim | FK→project_phases.id | — | Fase que não passa a em curso sem este pagamento pago (D-052) |
 | payments | `created_by` | uuid | — | sim | FK→auth.users.id | `auth.uid()` | Quem criou (on delete set null) |
 | payments | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
@@ -367,7 +368,7 @@ Feita pelo script a cada geração. Os diagramas mostram só os atributos princi
 | Diagrama | Entidade | Atributos no MER | Colunas no dicionário | Só no dicionário |
 |---|---|---|---|---|
 | `mer-blocos-comuns.mmd` | `quotes` | 12 | 15 | `sent_at`, `created_by`, `created_at` |
-| `mer-blocos-comuns.mmd` | `payments` | 11 | 13 | `created_by`, `updated_at` |
+| `mer-blocos-comuns.mmd` | `payments` | 12 | 14 | `created_by`, `updated_at` |
 | `mer-blocos-comuns.mmd` | `approvals` | 12 | 13 | `requested_by` |
 | `mer-blocos-comuns.mmd` | `approval_responses` | 8 | 8 | — |
 | `mer-blocos-comuns.mmd` | `deliverables` | 11 | 14 | `title`, `notes`, `created_by` |

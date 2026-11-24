@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-02 Migração 0006 (service_type e fases) — **aplicada em produção** | #40 | `supabase/migrations/0006_service_type_phases.sql` |
-| ⏭️ Próxima | M5-03 Criar a migração de pagamentos, aprovações e ficheiros | #41 | `supabase/migrations/0007_*.sql` |
+| ✅ Última feita | M5-03 Migração 0007 (orçamentos, pagamentos, aprovações, ficheiros) — **aplicada em produção** | #41 | `supabase/migrations/0007_pagamentos_aprovacoes_ficheiros.sql` |
+| ⏭️ Próxima | M5-04 Abstrair a fonte das fases (GitHub \| BD) | #42 | `lib/portal/phase-source.ts` |
 | ❓ Perguntas em aberto | **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · R-06 pôr OTP a 86 400 s no painel · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -67,3 +67,4 @@
 |------|--------|-------|--------|-------------|
 | 2026-11-24 | M5-01 | #39 | Vitest (13 testes), Playwright (14 E2E + 12 capturas de referência do Tech), CI, `lib/clock.ts` (D-113…D-115) | `vitest.config.ts`, `playwright.config.ts`, `tests/`, `.github/workflows/ci.yml`, `docs/05-qa/testes.md` |
 | 2026-11-24 | M5-02 | #40 | Migração 0006 testada localmente (Docker) e aplicada em produção após backup JSON; 2 projetos Tech intactos; Security Advisor sem avisos novos; testes SQL no CI (Q-080, D-116…D-118, R-08) | `supabase/migrations/0006_service_type_phases.sql`, `supabase/tests/`, `scripts/db-test.sh` |
+| 2026-11-24 | M5-03 | #41 | Migração 0007 testada localmente (fluxos completos de Académico e Design, RLS) e aplicada em produção; buckets privados criados; dados intactos (D-119…D-122) | `supabase/migrations/0007_pagamentos_aprovacoes_ficheiros.sql`, `supabase/tests/0007_blocos.sql` |
