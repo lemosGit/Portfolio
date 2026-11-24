@@ -1,5 +1,5 @@
 # MER — Pagamentos, Aprovações e Ficheiros
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.0 · Data: 2026-11-24
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.1 (revisão cruzada M2-04) · Data: 2026-11-24
 > Depende de: `mer/fases-servicos.md` (M2-01), `requisitos-funcionais.md` (RF-30.2, RF-30.3, RF-30.4), `regras-negocio.md`, `requisitos-nao-funcionais.md` (RNF-3) · Perguntas/decisões usadas: Q-046…Q-049, D-009, D-013, D-017, D-018, D-022, D-024, D-025, D-026, D-033, D-037, D-048…D-054
 
 ## 1. O que este modelo resolve
@@ -33,6 +33,7 @@ erDiagram
   deliverables |o--o{ approvals : "aprovacao da versao"
   payments |o--o{ approvals : "aceite do extra"
   approvals ||--o{ approval_responses : "recebe"
+  deliverables |o--o{ approval_responses : "anexo do cliente"
 
   quotes {
     uuid id PK
@@ -80,6 +81,7 @@ erDiagram
     uuid approval_id FK
     text kind "aprovar, pedir_alteracoes, reabrir"
     text comment "obrigatorio em pedir_alteracoes e reabrir"
+    uuid attachment_deliverable_id FK
     uuid actor_id FK
     text actor_role "client, admin"
     timestamptz created_at
@@ -112,7 +114,7 @@ erDiagram
   activity_log {
     bigint id PK
     uuid project_id FK
-    text entity "quote, payment, deliverable, file, approval"
+    text entity "quote, payment, deliverable, file, approval, fichas"
     uuid entity_id
     text action "insert, update, delete, purge"
     jsonb before
@@ -241,7 +243,7 @@ Limite do cliente: **10 ficheiros por fase** (RN-09), verificado por trigger con
 |---|---|---|---|---|
 | `id` | bigint identity | não | — | PK |
 | `project_id` | uuid | sim | — | FK → `projects` on delete set null (o rasto sobrevive ao projeto) |
-| `entity` | text | não | — | `quote`, `payment`, `deliverable`, `file`, `approval` |
+| `entity` | text | não | — | `quote`, `payment`, `deliverable`, `file`, `approval`, `academic_brief`, `design_spec` (as fichas da M2-03, regra F6) |
 | `entity_id` | uuid | não | — | |
 | `action` | text | não | — | `insert`, `update`, `delete`, `purge` |
 | `before`, `after` | jsonb | sim | — | a linha antes e depois |
