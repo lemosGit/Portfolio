@@ -14,6 +14,7 @@ erDiagram
   deliverables |o--o{ approvals : "aprovacao da versao"
   payments |o--o{ approvals : "aceite do extra"
   approvals ||--o{ approval_responses : "recebe"
+  deliverables |o--o{ approval_responses : "anexo do cliente"
 
   quotes {
     uuid id PK
@@ -61,6 +62,7 @@ erDiagram
     uuid approval_id FK
     text kind "aprovar, pedir_alteracoes, reabrir"
     text comment "obrigatorio em pedir_alteracoes e reabrir"
+    uuid attachment_deliverable_id FK
     uuid actor_id FK
     text actor_role "client, admin"
     timestamptz created_at
@@ -93,7 +95,7 @@ erDiagram
   activity_log {
     bigint id PK
     uuid project_id FK
-    text entity "quote, payment, deliverable, file, approval"
+    text entity "quote, payment, deliverable, file, approval, fichas"
     uuid entity_id
     text action "insert, update, delete, purge"
     jsonb before
