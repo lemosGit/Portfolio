@@ -4,7 +4,7 @@
 | Ficheiro | Tarefa | Conteúdo |
 |---|---|---|
 | [`referencias.md`](referencias.md) | M4-01 (#32) | Fichas das referências visuais e o que se aproveita de cada uma |
-| `fluxo-telas.md` | M4-02 (#33) | Fluxo de telas por serviço *(por fazer)* |
+| [`fluxo-telas.md`](fluxo-telas.md) | M4-02 (#33) | 35 telas (TEL-01…TEL-59), variações por serviço, fluxos de entrada, Académico, Design, Tech e admin |
 | `wireframes/academico.md` | M4-03 (#34) | Área do Cliente Académico *(por fazer)* |
 | `wireframes/design.md` | M4-04 (#35) | Área do Cliente Design *(por fazer)* |
 | `wireframes/blocos-comuns.md` | M4-05 (#36) | Blocos comuns e ecrã do link mágico *(por fazer)* |
