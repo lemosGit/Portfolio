@@ -1,0 +1,43 @@
+sequenceDiagram
+  autonumber
+  actor A as Admin (PER-01)
+  participant P as Painel /admin (Server Action)
+  participant DB as Supabase BD
+  participant AU as Supabase Auth (admin API)
+  participant WA as WhatsApp / Resend
+  actor C as Cliente (PER-04)
+  participant E as /cliente/entrar
+
+  A->>P: Gerar link (projeto X)
+  P->>DB: requireAdminStrict + contar access_links da ultima hora
+  alt 5 ou mais na ultima hora (D-032)
+    P-->>A: Limite atingido, tente mais tarde
+  else dentro do limite
+    P->>AU: generateLink(type magiclink, email do cliente)
+    AU-->>P: hashed_token (validade 24 h)
+    P->>DB: insert access_links(sha256 do token, canal, expires_at) e marca os anteriores como substituidos
+    P-->>A: URL /cliente/entrar?t=token + Copiar, WhatsApp, Email
+  end
+  alt Abrir no WhatsApp
+    A->>WA: wa.me com a mensagem e o URL
+  else Enviar por email (Should)
+    P->>WA: Resend envia o URL
+  end
+  WA-->>C: mensagem com o link
+  Note over WA,E: A pre-visualizacao do WhatsApp faz GET, que nao gasta o token
+  C->>E: GET /cliente/entrar?t=token
+  E->>DB: procura access_links pelo sha256
+  alt nao existe, usado, substituido ou expirado
+    E-->>C: Este link ja nao e valido + botao WhatsApp (RF-30.51)
+  else valido
+    E-->>C: Ola, Teresa + botao Entrar no seu projeto
+    C->>E: POST Entrar
+    E->>AU: verifyOtp(token_hash, type email)
+    alt token recusado pelo Auth
+      E-->>C: Este link ja nao e valido + botao WhatsApp
+    else sessao criada
+      AU-->>E: sessao (cookies, sessao longa)
+      E->>DB: access_links.used_at = agora
+      E-->>C: redirect /cliente/projeto-x
+    end
+  end

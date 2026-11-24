@@ -25,6 +25,7 @@
 | `deliverables` | sim | 14 | M2-02 · §3.5 | Uma versão (V1, V2…) de um objeto, com 1 ou mais ficheiros (D-048). |
 | `files` | sim | 12 | M2-02 · §3.6 | Ficheiros de uma versão, no bucket privado `project-files`. |
 | `activity_log` | sim | 9 | M2-02 · §3.7 | Auditoria genérica, só inserção, lida só pelo admin (D-051). |
+| `access_links` | sim | 10 | M2-06 · `sequencia/sequencias.md` §1 | Registo dos links mágicos (RF-30.57); guarda só o SHA-256 do token (D-069). |
 | `academic_briefs` | sim | 13 | M2-03 · `mer/fichas-servico.md` §3.1 | Ficha do trabalho académico (1:1 com o projeto `academic`). |
 | `academic_sections` | sim | 6 | M2-03 · §3.2 | Índice atual e estado de cada capítulo (D-058). |
 | `adjustment_requests` | sim | 10 | M2-03 · §3.3 | Pedidos de ajuste depois da entrega final do Académico (D-056). |
@@ -241,6 +242,22 @@ Auditoria genérica, só inserção, lida só pelo admin (D-051).
 | activity_log | `actor_id` | uuid | — | sim | FK→auth.users.id | `auth.uid()` | Autor; nulo quando é o sistema (on delete set null) |
 | activity_log | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
 
+### `access_links`
+Registo dos links mágicos (RF-30.57); guarda só o SHA-256 do token (D-069).
+
+| Tabela | Atributo | Tipo | Tamanho | Nulo | Chave | Default | Descrição |
+|---|---|---|---|---|---|---|---|
+| access_links | `id` | uuid | — | não | PK | `gen_random_uuid()` | Identificador |
+| access_links | `client_id` | uuid | — | não | FK→clients.id | — | Cliente (on delete cascade) |
+| access_links | `project_id` | uuid | — | não | FK→projects.id | — | Projeto para onde o link leva (on delete cascade) |
+| access_links | `token_digest` | text | 64 | não | UK | — | SHA-256 (hex) do hashed_token |
+| access_links | `channel` | text | enum | não | — | — | Canal usado pelo admin |
+| access_links | `status` | text | enum | não | — | `'ativo'` | Estado do link; expirado = calculado |
+| access_links | `expires_at` | timestamptz | — | não | — | — | created_at + 24 h (RNF-301) |
+| access_links | `used_at` | timestamptz | — | sim | — | — | Entrada com sucesso |
+| access_links | `created_by` | uuid | — | sim | FK→auth.users.id | `auth.uid()` | Quem criou (on delete set null) |
+| access_links | `created_at` | timestamptz | — | não | — | `now()` | Data de criação |
+
 ### `academic_briefs`
 Ficha do trabalho académico (1:1 com o projeto `academic`).
 
@@ -338,6 +355,8 @@ Ficha técnica da peça de Design (1:1 com o projeto `design`).
 | `adjustment_requests.status` | aberto · resolvido · recusado |
 | `design_specs.piece_type` | logotipo_identidade · convite_digital · convite_impresso · lona · camisola · outro |
 | `design_specs.production_status` | a_imprimir · pronto |
+| `access_links.channel` | copiar · whatsapp · email |
+| `access_links.status` | ativo · usado · substituido (expirado = calculado) |
 
 ## 4. Revisão cruzada MER ↔ dicionário
 
@@ -352,6 +371,7 @@ Feita pelo script a cada geração. Os diagramas mostram só os atributos princi
 | `mer-blocos-comuns.mmd` | `deliverables` | 11 | 14 | `title`, `notes`, `created_by` |
 | `mer-blocos-comuns.mmd` | `files` | 10 | 12 | `width`, `height` |
 | `mer-blocos-comuns.mmd` | `activity_log` | 9 | 9 | — |
+| `mer-blocos-comuns.mmd` | `access_links` | 8 | 10 | `created_by`, `created_at` |
 | `mer-fases.mmd` | `projects` | 11 | 11 | — |
 | `mer-fases.mmd` | `phase_templates` | 9 | 9 | — |
 | `mer-fases.mmd` | `project_phases` | 17 | 17 | — |

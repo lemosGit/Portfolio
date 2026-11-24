@@ -213,6 +213,20 @@ TABELAS = {
             POR("actor_id", "Autor; nulo quando é o sistema"),
             CRIADO(),
         ]),
+    "access_links": dict(
+        origem="M2-06 · `sequencia/sequencias.md` §1", nova=True,
+        descr="Registo dos links mágicos (RF-30.57); guarda só o SHA-256 do token (D-069).",
+        cols=[
+            ID(),
+            c("client_id", "uuid", "não", "Cliente (on delete cascade)", "FK→clients.id"),
+            PROJ("Projeto para onde o link leva"),
+            c("token_digest", "text", "não", "SHA-256 (hex) do hashed_token", "UK", tam="64"),
+            c("channel", "text", "não", "Canal usado pelo admin", tam="enum"),
+            c("status", "text", "não", "Estado do link; expirado = calculado", default="'ativo'", tam="enum"),
+            c("expires_at", "timestamptz", "não", "created_at + 24 h (RNF-301)"),
+            c("used_at", "timestamptz", "sim", "Entrada com sucesso"),
+            POR(), CRIADO(),
+        ]),
     # ---------------- M2-03 ----------------
     "academic_briefs": dict(
         origem="M2-03 · `mer/fichas-servico.md` §3.1", nova=True,
@@ -303,6 +317,8 @@ ENUMS = [
     ("adjustment_requests.status", "aberto · resolvido · recusado"),
     ("design_specs.piece_type", "logotipo_identidade · convite_digital · convite_impresso · lona · camisola · outro"),
     ("design_specs.production_status", "a_imprimir · pronto"),
+    ("access_links.channel", "copiar · whatsapp · email"),
+    ("access_links.status", "ativo · usado · substituido (expirado = calculado)"),
 ]
 
 # Entidades fora do âmbito deste dicionário que aparecem nos diagramas

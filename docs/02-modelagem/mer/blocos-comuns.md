@@ -1,5 +1,5 @@
 # MER — Pagamentos, Aprovações e Ficheiros
-> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.1 (revisão cruzada M2-04) · Data: 2026-11-24
+> Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M2-02] · Issue: #21 · Versão: 1.2 (M2-06: access_links) · Data: 2026-11-24
 > Depende de: `mer/fases-servicos.md` (M2-01), `requisitos-funcionais.md` (RF-30.2, RF-30.3, RF-30.4), `regras-negocio.md`, `requisitos-nao-funcionais.md` (RNF-3) · Perguntas/decisões usadas: Q-046…Q-049, D-009, D-013, D-017, D-018, D-022, D-024, D-025, D-026, D-033, D-037, D-048…D-054
 
 ## 1. O que este modelo resolve
@@ -34,6 +34,7 @@ erDiagram
   payments |o--o{ approvals : "aceite do extra"
   approvals ||--o{ approval_responses : "recebe"
   deliverables |o--o{ approval_responses : "anexo do cliente"
+  projects ||--o{ access_links : "links magicos (M2-06)"
 
   quotes {
     uuid id PK
@@ -121,6 +122,16 @@ erDiagram
     jsonb after
     uuid actor_id FK
     timestamptz created_at
+  }
+  access_links {
+    uuid id PK
+    uuid client_id FK
+    uuid project_id FK
+    text token_digest UK "SHA-256, nunca o token"
+    text channel "copiar, whatsapp, email"
+    text status "ativo, usado, substituido"
+    timestamptz expires_at "24 h"
+    timestamptz used_at
   }
 ```
 
@@ -292,7 +303,7 @@ Um trigger em `project_phases` recusa passar uma fase a `em_curso` com um pagame
 | Storage `project-files` | sem acesso direto: tudo por URL assinada gerada no servidor | tudo, pelo servidor |
 
 ## 7. Fora deste modelo
-- **Link mágico** (registo de geração, canal e uso, RF-30.57): modelado na M2-06 (#25) e na M3-02 (#27).
+- **Link mágico** (RF-30.57): tabela `access_links`, descrita em `sequencia/sequencias.md` §1 (M2-06) e mostrada no diagrama acima.
 - **Mensagens**: continua a tabela `feedback`. Em Académico e Design, uma mensagem `fase` guarda em `target_ref` a `position` da fase.
 - **Fichas, capítulos e o prazo de ajustes**: M2-03 (#22).
 
