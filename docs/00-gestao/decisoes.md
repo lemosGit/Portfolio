@@ -94,3 +94,9 @@
 | D-089 | 2026-11-24 | Botão primário com texto escuro (`--m-on`); secundário com tinta + borda; Planeado só como ponto/borda (contraste) | ADR-004 §6 | Texto branco | Assumida |
 | D-090 | 2026-11-24 | Inter (via `@fontsource-variable/inter`) substitui o Manrope na `.app`; o portal público mantém as letras até ser revisto | ADR-004 §5 | Mudar tudo já | Assumida |
 | D-091 | 2026-11-24 | Admin, login e portal público usam a marca (violeta + azul), sem `data-service` | DS V1 (regra 3) | Acento do último projeto aberto | Assumida |
+| D-092 | 2026-11-24 | Académico e Design com 4 entradas de menu (Visão geral, Projeto, Ficheiros, Mensagens); o Tech mantém 5 | Q-069 | 5 iguais; uma só página | Aprovada |
+| D-093 | 2026-11-24 | Telemóvel: barra inferior com ícones nos 3 serviços (também o Tech); computador: barra lateral | Q-070 | Menu hambúrguer | Aprovada |
+| D-094 | 2026-11-24 | `SERVICE_LAYOUTS` em código TypeScript (`lib/portal/service-layouts.ts`) | layout-blocos.md | Configuração na BD | Assumida |
+| D-095 | 2026-11-24 | Um loader por página (`loadBlocks`) com consultas em paralelo; os blocos só recebem dados | RNF-101 | Cada bloco consulta | Assumida |
+| D-096 | 2026-11-24 | Rotas mantidas; rótulo por serviço ("Entregas" → "Ficheiros"); `/cliente/agenda` redireciona sem Agenda | RNF-701 | Rotas novas por serviço | Assumida |
+| D-097 | 2026-11-24 | Migração do Tech em 5 passos com capturas de referência; a mudança visual para o DS V1 é um passo próprio aprovado pelo João | RNF-701, PA-003 | Migrar tudo de uma vez | Assumida |
