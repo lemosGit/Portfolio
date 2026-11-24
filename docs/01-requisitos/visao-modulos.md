@@ -78,7 +78,7 @@ flowchart LR
 ### 5.1 Comum aos 3 serviços (M5)
 - `service_type` no projeto (`development` | `academic` | `design`), escolhido no admin ao criar o projeto.
 - **Fases como dados** para Académico e Design (`phase_templates` + `project_phases`), avançadas pelo admin. O Desenvolvimento continua a usar o GitHub (D-001).
-- **Tema por serviço:** `--accent` e `--accent-2` sobre a base ameixa e lavanda atual (D-004).
+- **Tema por serviço:** neutros comuns e acentos por módulo do **Design System V1** (Azul Sistema, Lilás Criativo, Âmbar Saber), aplicados por `data-service` (ADR-004; substitui a D-004).
 - **Esqueleto comum:** etiqueta do serviço · prazo · estado · barra de fases · fase atual + próximo passo.
 - **Ficheiros:** o admin envia entregáveis e provas. O **cliente envia referências** nas fases de briefing e revisão, com limite de tamanho e tipos (D-010).
 - **Aprovações:** aprovar ou pedir alterações, com comentário e histórico. Só o admin reabre.
@@ -87,11 +87,11 @@ flowchart LR
 
 ### 5.2 Académico (M6)
 Fases: Pedido e briefing → Orçamento e aceite → Estrutura (índice) → Desenvolvimento → Revisão e formatação → Entrega final → Ajustes.
-Blocos: **contagem do prazo** em destaque · progresso por **capítulos** · **ficha do trabalho** (instituição, nível, disciplina, normas, nº de páginas). Acento âmbar `#F59E0B`.
+Blocos: **contagem do prazo** em destaque · progresso por **capítulos** · **ficha do trabalho** (instituição, nível, disciplina, normas, nº de páginas). Acento **Âmbar Saber** `#E8B65A` (Design System V1, ADR-004).
 
 ### 5.3 Design (M7)
 Fases: Briefing → Orçamento e sinal → Conceito → Revisões → Aprovação final da arte → Produção/impressão → Entrega/levantamento.
-Blocos: **galeria de provas** (V1, V2…) · **contador de rondas** incluídas · **ficha técnica** · **aviso**: depois de aprovar a arte, a produção não pode ser alterada. Acento magenta `#EC4899`.
+Blocos: **galeria de provas** (V1, V2…) · **contador de rondas** incluídas · **ficha técnica** · **aviso**: depois de aprovar a arte, a produção não pode ser alterada. Acento **Lilás Criativo** `#A78BFA` (Design System V1, ADR-004).
 
 ### 5.4 Portal público (*should*)
 Uma página por serviço e um filtro por serviço no Portfólio (M6-08, M7-08).
