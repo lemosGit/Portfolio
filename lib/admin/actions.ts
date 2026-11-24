@@ -143,7 +143,8 @@ const slugTaken = (e: { code?: string; message: string }) => e.code === "23505" 
 
 const COVER_BUCKET = "project-covers";
 const COVER_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/avif": "avif" };
-const COVER_MAX = 5 * 1024 * 1024;
+// 4 MB: a capa passa pela Server Action e a Vercel corta pedidos acima de 4,5 MB (ADR-003, R-07).
+const COVER_MAX = 4 * 1024 * 1024;
 
 type Sb = Awaited<ReturnType<typeof requireAdmin>>["sb"];
 
@@ -152,7 +153,7 @@ function readCover(f: FormData): File | undefined | { error: string } {
   const file = f.get("capa");
   if (!(file instanceof File) || file.size === 0) return undefined;
   if (!COVER_TYPES[file.type]) return { error: "A imagem tem de ser JPG, PNG, WebP ou AVIF." };
-  if (file.size > COVER_MAX) return { error: "A imagem passa dos 5 MB. Escolha uma mais leve." };
+  if (file.size > COVER_MAX) return { error: "A imagem passa dos 4 MB. Escolha uma mais leve." };
   return file;
 }
 
