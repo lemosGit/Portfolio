@@ -5,6 +5,7 @@
 import type { BlockId } from "@/lib/portal/service-layouts";
 import { Approvals } from "./approvals";
 import { NextStep, PhaseBar } from "./common";
+import { Payments } from "./payments";
 import { TechDemoFeedback, TechHeroProgress, TechNeedsClient, TechRoadmapMeetingNews } from "./tech";
 import type { BlockProps } from "./types";
 
@@ -16,6 +17,7 @@ const BLOCKS: Record<BlockId, (p: BlockProps) => React.ReactNode> = {
   "phase-bar": PhaseBar,
   "next-step": NextStep,
   approvals: Approvals,
+  payments: Payments,
 };
 
 export function Blocks({ ids, ...props }: BlockProps & { ids: BlockId[] }) {

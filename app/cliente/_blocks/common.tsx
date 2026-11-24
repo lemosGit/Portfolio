@@ -4,6 +4,7 @@
  * (coral, só quando a ação é do cliente), Planeado (cinzento), Atrasada (cor do módulo + etiqueta).
  */
 import { approvalTitle } from "@/lib/approvals/model";
+import { blockingPayment, kz, payLabel } from "@/lib/payments/model";
 import type { PhaseView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import type { BlockProps } from "./types";
@@ -82,7 +83,9 @@ export function NextStep({ project }: BlockProps) {
   const allDone = project.phaseViews.every((p) => p.status === "done" || p.status === "skipped");
   // Um pedido de aprovação pendente é sempre um passo do cliente (M5-10, D-136).
   const pending = (project.approvals ?? []).filter((a) => a.status === "pendente");
-  const clientTurn = isWaiting(ph) || ph.nextStep?.owner === "cliente" || pending.length > 0;
+  // RF-30.24: um pagamento por pagar que trava uma fase por começar é o passo do cliente.
+  const blocking = blockingPayment(project.payments ?? [], Object.fromEntries(project.phaseViews.map((p) => [p.key ?? "", p.state ?? ""])));
+  const clientTurn = isWaiting(ph) || ph.nextStep?.owner === "cliente" || pending.length > 0 || Boolean(blocking);
   const tone: Tone = allDone ? "done" : clientTurn ? "action" : ph.status === "pending" ? "planned" : "now";
   const label = allDone
     ? "Concluído"
@@ -96,7 +99,9 @@ export function NextStep({ project }: BlockProps) {
       ? pending.length === 1
         ? `Tem um pedido à sua espera: ${approvalTitle(pending[0])}. Veja-o em Aprovações, mais abaixo.`
         : `Tem ${pending.length} pedidos à sua espera. Veja-os em Aprovações, mais abaixo.`
-      : (ph.nextStep?.text ??
+      : blocking && !(isWaiting(ph) || ph.nextStep?.owner === "cliente")
+        ? `${payLabel(blocking)}: ${kz(blocking.amountKz)}. A fase “${blocking.gatesPhase?.name}” começa depois do pagamento.`
+        : (ph.nextStep?.text ??
         (clientTurn ? "Há um passo do seu lado. Veja os detalhes." : ph.description || "Estamos a tratar desta fase."));
 
   return (

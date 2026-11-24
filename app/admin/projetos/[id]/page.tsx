@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSquare, Smartphone, Trash2 } from "lucide-react";
+import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSquare, Smartphone, Trash2, Wallet } from "lucide-react";
 import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
@@ -50,9 +50,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         actions={
           <div className="flex flex-wrap gap-2">
             {p.serviceType !== "development" && (
-              <Link href={`/admin/projetos/${p.id}/aprovacoes`} className="btn-quiet h-11 py-0">
-                <BadgeCheck size={16} aria-hidden /> Aprovações
-              </Link>
+              <>
+                <Link href={`/admin/projetos/${p.id}/aprovacoes`} className="btn-quiet h-11 py-0">
+                  <BadgeCheck size={16} aria-hidden /> Aprovações
+                </Link>
+                <Link href={`/admin/projetos/${p.id}/pagamentos`} className="btn-quiet h-11 py-0">
+                  <Wallet size={16} aria-hidden /> Pagamentos
+                </Link>
+              </>
             )}
             <Link href={`/admin/projetos/${p.id}/ficheiros`} className="btn-quiet h-11 py-0">
               <FolderOpen size={16} aria-hidden /> Ficheiros

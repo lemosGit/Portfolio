@@ -1,3 +1,4 @@
+import type { Payment } from "@/lib/payments/model";
 import type { Approval } from "@/lib/approvals/model";
 /**
  * Tipos do Portal do Cliente.
@@ -111,6 +112,8 @@ export type Project = {
   serviceType?: ServiceType;
   /** Aprovações (Académico e Design, M5-10): pendentes primeiro. */
   approvals?: Approval[];
+  /** Pagamentos (Académico e Design, M5-11). O cliente não vê os anulados (RLS). */
+  payments?: Payment[];
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */
   source: "github" | "bd" | "exemplo" | "erro";
 };
