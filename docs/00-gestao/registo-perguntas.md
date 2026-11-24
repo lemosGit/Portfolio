@@ -62,7 +62,11 @@
 | Q-056 | 2026-11-24 | M2 | Pode haver uma fase em curso antes de a anterior estar concluída? | Sim, sequência flexível | D-063, PA-002 |
 | Q-057 | 2026-11-24 | M2 | O tempo em pausa desliza o prazo? | Sim, se a pausa for a pedido do cliente | D-064, PA-002 |
 | Q-058 | 2026-11-24 | M2 | Um projeto entregue pode ser reaberto? | Sim, só pelo admin, com motivo | D-065, PA-002 |
+| Q-059 | 2026-11-24 | M2 | Como evitar que a pré-visualização do WhatsApp gaste o link de uso único? | Página com botão "Entrar"; só o POST gasta o token | D-068, sequencia/sequencias.md L2 |
+| Q-060 | 2026-11-24 | M2 | Com o link expirado, o cliente pede um novo sozinho? | Não, só pelo WhatsApp (RF-30.51 sem alterações) | sequencias.md L6 |
+| Q-061 | 2026-11-24 | M2 | Como confirma o cliente a aprovação da arte? | Caixa "Confirmo" + botão | D-071, sequencias.md A1 |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
 Permissão negada: `npx @mermaid-js/mermaid-cli` para gerar `docs/02-modelagem/img/mer-fases.png` (M2-01, 2026-11-23). A fonte `.mmd` fica no repositório.
+Consulta de documentação: Supabase (MCP `search_docs`), fluxo SSR com `token_hash` + `verifyOtp` (M2-06, 2026-11-24). O retorno de `generateLink` (`hashed_token`) fica para o spike M3-02.

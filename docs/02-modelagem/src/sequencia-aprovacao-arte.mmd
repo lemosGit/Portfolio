@@ -1,0 +1,33 @@
+sequenceDiagram
+  autonumber
+  actor C as Cliente (PER-04)
+  participant UI as Area do Cliente
+  participant SA as Server Action
+  participant DB as Supabase BD (triggers)
+  actor A as Admin (PER-01)
+
+  C->>UI: abre a prova atual (V3) e toca Aprovar arte
+  UI-->>C: aviso de irreversibilidade + textos-chave, quantidade, data do evento
+  C->>UI: marca Confirmo que esta tudo certo
+  UI-->>C: botao Aprovar para producao fica ativo
+  C->>SA: Aprovar (approval_id, versao V3)
+  SA->>DB: insert approval_responses(aprovar)
+  alt pedido ja nao esta pendente ou V3 ja nao e a versao atual
+    DB-->>SA: erro
+    SA-->>C: Ha uma versao mais recente, veja a prova atual
+  else aceite
+    DB->>DB: approvals aprovada, decided_at, snapshot fica fixo
+    DB->>DB: fase aprovacao-arte concluida (phase_events)
+    DB->>DB: activity_log
+    SA-->>C: Arte aprovada. Proximo passo: Pagar o restante
+    SA-)A: email: arte V3 aprovada (Should)
+  end
+  Note over C,DB: A producao nao comeca: payments restante tem gates_phase_id = producao (RN-15)
+  A->>SA: regista o restante como pago (paid_on)
+  SA->>DB: update payments pago
+  A->>SA: inicia a fase producao
+  SA->>DB: update project_phases producao em_curso
+  DB->>DB: trigger D-052 confirma que nao ha pagamento por pagar
+  DB-->>SA: ok
+  Note over DB: A partir daqui reabrir a arte e recusado (RN-43, RF-20.54)
+  C->>UI: ve o estado A imprimir

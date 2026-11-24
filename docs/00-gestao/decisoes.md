@@ -69,3 +69,8 @@
 | D-064 | 2026-11-24 | Pausa a pedido do cliente (`client_requested = true`) desliza o prazo; pausa da GeniusFrela não | Q-057 | Sempre; nunca | Aprovada (PA-002) |
 | D-065 | 2026-11-24 | Projeto `entregue → ativo` só pelo admin, com motivo; limpa `completed_at`; `cancelado` é final | Q-058 | Entregue é final | Aprovada (PA-002) |
 | D-066 | 2026-11-24 | Nova tabela `project_status_events` (só inserção, lida pelo cliente) para os intervalos de pausa e as reaberturas | D-064, D-065 | Usar o `activity_log` (só admin) | Assumida |
+| D-067 | 2026-11-24 | O link mágico aponta para `/cliente/entrar?t=…`; o servidor troca o `token_hash` por sessão com `verifyOtp` | Docs Supabase (SSR) | URL de verificação do Supabase | Assumida — confirmar no spike M3-02 |
+| D-068 | 2026-11-24 | GET mostra a página com o botão "Entrar"; só o POST gasta o token | Q-059 | Entrada automática | Aprovada |
+| D-069 | 2026-11-24 | `access_links` guarda só o SHA-256 do token; um link novo substitui os anteriores | RF-30.57, RNF-306 | Guardar o token | Assumida |
+| D-070 | 2026-11-24 | Clientes criados só com link mágico ficam com `must_change_password = false` | D-023 | Pedir senha no 1.º acesso | Assumida |
+| D-071 | 2026-11-24 | Aprovação da arte: caixa "Confirmo que os nomes, a data e a quantidade estão certos" ativa o botão | Q-061 | Só o botão; escrever APROVO | Aprovada |
