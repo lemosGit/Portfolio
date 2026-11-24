@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M2-06 Desenhar as sequências do link mágico e da aprovação da arte — **M2 fechada** | #25 | `docs/02-modelagem/sequencia/sequencias.md` |
-| ⏭️ Próxima | M3-01 Escrever o ADR das fases na BD vs GitHub | #26 | `docs/03-arquitetura/adr/ADR-001-*.md` |
+| ✅ Última feita | M3-01 Escrever o ADR das fases na BD vs GitHub | #26 | `docs/03-arquitetura/adr/ADR-001-fases-bd-vs-github.md` |
+| ⏭️ Próxima | M3-02 Investigar e decidir o link mágico | #27 | `docs/03-arquitetura/adr/ADR-002-link-magico.md` |
 | ❓ Perguntas em aberto | Datas das milestones M2–M10 · R-01 Vercel Hobby (decidir na M3) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 <!-- ESTADO:FIM -->
 
@@ -39,3 +39,8 @@
 | 2026-11-24 | M2-04 | #23 | Dicionário de dados (15 tabelas, 176 colunas, 22 domínios) e revisão cruzada (RV-01…RV-03) | `docs/02-modelagem/dicionario-dados.md`, `revisao-modelagem.md`, `scripts/gerar_dicionario.py` |
 | 2026-11-24 | M2-05 | #24 | 7 diagramas de estados com tabelas de transição; `project_status_events`; PA-002 aprovado (Q-055…Q-058, D-062…D-066) | `docs/02-modelagem/estados/estados.md`, `src/estados-*.mmd`, `regras-negocio.md` v1.2 |
 | 2026-11-24 | M2-06 | #25 | Sequências do link mágico e da aprovação da arte; tabela `access_links` (Q-059…Q-061, D-067…D-071) | `docs/02-modelagem/sequencia/sequencias.md`, `src/sequencia-*.mmd` |
+
+## 🗒️ Registo — M3 Arquitetura
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-24 | M3-01 | #26 | ADR-001: `PhaseSource` (github / database), % do projeto, impacto em `toView` (Q-062, Q-063, D-072…D-075) | `docs/03-arquitetura/adr/ADR-001-fases-bd-vs-github.md` |
