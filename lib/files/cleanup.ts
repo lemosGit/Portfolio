@@ -4,13 +4,14 @@
  * 2. Apaga do Storage os ficheiros dos projetos com a data de limpeza já passada; fica o registo
  *    (`purged_at`; o trigger de auditoria grava "purge" no activity_log).
  * 3. Apaga os uploads órfãos (sem linha em `files`) com mais de 24 h.
- * A conclusão automática do Académico (ADR-003 §4.4) chega com os pedidos de ajuste (M6).
+ * 4. Conclui os projetos Académico cujo prazo de ajustes terminou sem pedidos abertos (RN-34, D-059, M6-06).
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { profile } from "@/lib/data";
 import { sendEmail } from "@/lib/email/send";
 import { retentionWarningEmail } from "@/lib/email/templates";
 import { todayLuanda } from "@/lib/payments/model";
+import { adjustWindow } from "@/lib/academic/adjustments";
 import { classify, isOrphan } from "./retention";
 import type { Bucket } from "./rules";
 
@@ -30,6 +31,8 @@ export type CleanupReport = {
   warned: string[];
   purged: { projectId: string; files: number }[];
   orphans: number;
+  /** Projetos Académico concluídos sozinhos (RN-34). */
+  concluded: string[];
   errors: string[];
 };
 
@@ -51,7 +54,7 @@ async function listAll(sb: SupabaseClient, bucket: Bucket, prefix = "", depth = 
 }
 
 export async function runCleanup(sb: SupabaseClient, now = Date.now()): Promise<CleanupReport> {
-  const report: CleanupReport = { warned: [], purged: [], orphans: 0, errors: [] };
+  const report: CleanupReport = { warned: [], purged: [], orphans: 0, concluded: [], errors: [] };
   const today = todayLuanda(now);
 
   // 1–2. Projetos concluídos ou cancelados com ficheiros por apagar.
@@ -107,6 +110,26 @@ export async function runCleanup(sb: SupabaseClient, now = Date.now()): Promise<
     await sb.from("files").update({ purged_at: at }).eq("project_id", p.id).is("purged_at", null);
     await sb.from("deliverables").update({ purged_at: at }).eq("project_id", p.id).is("purged_at", null);
     report.purged.push({ projectId: p.id, files: files?.length ?? 0 });
+  }
+
+  // 4. RN-34: Académico entregue e com o prazo de ajustes terminado, sem pedidos abertos → entregue.
+  try {
+    const { data: done } = await sb
+      .from("academic_briefs")
+      .select("project_id, delivered_at, adjust_days, projects!inner (status)")
+      .not("delivered_at", "is", null)
+      .eq("projects.status", "ativo")
+      .returns<{ project_id: string; delivered_at: string; adjust_days: number }[]>();
+    for (const b of done ?? []) {
+      if (adjustWindow(b.delivered_at, b.adjust_days, now).open) continue;
+      const { count } = await sb.from("adjustment_requests").select("id", { count: "exact", head: true }).eq("project_id", b.project_id).eq("status", "aberto");
+      if (count) continue;
+      const { error: ue } = await sb.from("projects").update({ status: "entregue" }).eq("id", b.project_id).eq("status", "ativo");
+      if (ue) report.errors.push(`conclusão ${b.project_id}: ${ue.message}`);
+      else report.concluded.push(b.project_id);
+    }
+  } catch (e) {
+    report.errors.push(`conclusão: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   // 3. Órfãos: objetos com mais de 24 h que nenhuma linha de `files` conhece (original ou miniatura).

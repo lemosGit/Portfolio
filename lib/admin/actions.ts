@@ -9,7 +9,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { accessLinkEmail, approvalRequestEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { accessLinkEmail, adjustmentClosedEmail, approvalRequestEmail, deliveryEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
 import { LINKS_PER_HOUR, LINK_TTL_MS, entryUrl, looksLikeToken, type LinkChannel } from "@/lib/access/links";
 import { digest } from "@/lib/access/digest";
 import { SITE_URL } from "@/lib/email/send";
@@ -18,6 +18,7 @@ import { postponeTo } from "@/lib/files/retention";
 import { readBrief } from "@/lib/academic/brief";
 import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
 import { readQuote } from "@/lib/quotes/model";
+import { adjustWindow } from "@/lib/academic/adjustments";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -1195,4 +1196,46 @@ export async function requestIndexApproval(_p: AdminState, f: FormData): Promise
   const waiting = phase?.status === "em_curso" ? " A fase Estrutura fica a aguardar o cliente." : "";
   const mail = await notify(f, sb, projectId, (c) => approvalRequestEmail({ ...c, title: `Índice ${label}`, message }));
   return { ok: true, message: `Índice ${label} (${items.length} capítulos) enviado para aprovação.${waiting}${emailNote(mail)}` };
+}
+
+/* ───────────── Entrega final e ajustes (M6-06, RF-10.60…74) ───────────── */
+
+/** Disponibiliza a entrega final (admin_deliver_final, 0012): exige o ficheiro final e o restante pago (RN-14). */
+export async function deliverFinal(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const { data: at, error } = await sb.rpc("admin_deliver_final", { p_project: projectId });
+  if (error) return { error: error.message };
+  refresh();
+  const { data: b } = await sb.from("academic_briefs").select("adjust_days").eq("project_id", projectId).single<{ adjust_days: number }>();
+  const days = b?.adjust_days ?? 7;
+  const { lastDay } = adjustWindow(String(at), days, Date.now());
+  const mail = await notify(f, sb, projectId, (c) => deliveryEmail({ ...c, lastDay, adjustDays: days }));
+  return { ok: true, message: `Entrega disponibilizada. O cliente pode pedir ajustes até ${lastDay.split("-").reverse().join("/")}.${emailNote(mail)}` };
+}
+
+/** Resolve (com a versão nova da entrega, RF-10.73) ou recusa (com nota: trabalho novo, RN-32) um pedido de ajuste. */
+export async function closeAdjustment(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const id = str(f, "id");
+  const decision = str(f, "decisao");
+  const note = opt(f, "nota");
+  if (note && note.length > 1000) return { error: "A nota tem no máximo 1000 caracteres." };
+  let patch: Record<string, unknown>;
+  if (decision === "resolvido") {
+    const version = str(f, "versao");
+    if (!version) return { error: "Escolha a versão da entrega que resolve o pedido (carregue-a em Ficheiros, na fase Ajustes ou Entrega final)." };
+    patch = { status: "resolvido", resolved_by_deliverable_id: version, admin_note: note };
+  } else if (decision === "recusado") {
+    if (!note) return { error: "Explique ao cliente porque não está incluído (ex.: mudar o tema é trabalho novo, RN-32)." };
+    patch = { status: "recusado", admin_note: note };
+  } else {
+    return { error: "Escolha resolver ou recusar." };
+  }
+  const { data, error } = await sb.from("adjustment_requests").update(patch).eq("id", id).eq("status", "aberto").select("project_id").maybeSingle<{ project_id: string }>();
+  if (error) return { error: `Não foi possível fechar o pedido: ${error.message}` };
+  if (!data) return { error: "Este pedido já foi fechado." };
+  refresh();
+  const mail = await notify(f, sb, data.project_id, (c) => adjustmentClosedEmail({ ...c, resolved: decision === "resolvido", note }));
+  return { ok: true, message: `${decision === "resolvido" ? "Pedido resolvido" : "Pedido recusado"}.${emailNote(mail)}` };
 }

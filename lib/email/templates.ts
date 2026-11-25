@@ -223,3 +223,52 @@ export function retentionWarningEmail(o: { projects: { id: string; name: string;
     text: `Ficheiros a apagar em breve (fica o registo). Para adiar, abra o projeto e carregue em "Adiar 30 dias".\n\n${items.map((p) => `- ${p.name} (${p.clientName}): ${p.when}\n  ${p.href}`).join("\n")}`,
   };
 }
+
+/** Entrega final disponível (M6-06, RF-10.63). */
+export function deliveryEmail(o: { clientName: string; projectName: string; lastDay: string; adjustDays: number }) {
+  const href = `${SITE_URL}/cliente/entregas`;
+  return {
+    subject: `${o.projectName}: a entrega final está disponível`,
+    html: layout({
+      preheader: "Já pode descarregar o trabalho final em PDF e Word.",
+      title: "A entrega final está disponível",
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, o trabalho final de <strong>${esc(o.projectName)}</strong> já está na Área do Cliente, em PDF e Word.</p>
+<p style="margin:0">Tem <strong>${o.adjustDays} dias</strong> para pedir ajustes (até ${esc(longDate(o.lastDay))}).</p>`,
+      cta: { href, label: "Descarregar a entrega" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nO trabalho final de ${o.projectName} já está disponível em PDF e Word: ${href}\nTem ${o.adjustDays} dias para pedir ajustes (até ${longDate(o.lastDay)}).`,
+  };
+}
+
+/** Novo pedido de ajuste (para o João, M6-06). */
+export function adjustmentRequestEmail(o: { clientName: string; projectName: string; projectId: string; description: string }) {
+  const href = `${SITE_URL}/admin/projetos/${o.projectId}#ajustes`;
+  return {
+    subject: `Pedido de ajuste: ${o.projectName}`,
+    html: layout({
+      preheader: o.description.slice(0, 120),
+      title: "Novo pedido de ajuste",
+      body: `<p style="margin:0 0 12px"><strong>${esc(o.clientName)}</strong> pediu um ajuste em ${esc(o.projectName)}:</p>
+<blockquote style="margin:0;padding:12px 16px;border-left:3px solid #8b6cff;background:#f7f5ff;border-radius:8px;white-space:pre-wrap">${esc(o.description)}</blockquote>`,
+      cta: { href, label: "Ver o pedido" },
+    }),
+    text: `${o.clientName} pediu um ajuste em ${o.projectName}:\n\n${o.description}\n\n${href}`,
+  };
+}
+
+/** Resposta a um pedido de ajuste (para o cliente, M6-06). */
+export function adjustmentClosedEmail(o: { clientName: string; projectName: string; resolved: boolean; note?: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  const title = o.resolved ? "O seu ajuste está feito" : "Sobre o seu pedido de ajuste";
+  const line = o.resolved ? "Há uma versão nova da entrega final com o ajuste que pediu." : "Este pedido não está incluído nos ajustes.";
+  return {
+    subject: `${o.projectName}: ${title.toLowerCase()}`,
+    html: layout({
+      preheader: line,
+      title,
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, ${esc(line)}</p>${o.note ? `<p style="margin:0">${esc(o.note)}</p>` : ""}`,
+      cta: { href, label: "Ver o projeto" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\n${line}${o.note ? `\n${o.note}` : ""}\n\n${href}`,
+  };
+}
