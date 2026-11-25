@@ -95,3 +95,12 @@ export function proofsFrom(series: FileSeries[], approvals: Approval[] = []): Pr
 export function defaultPair(s: ProofSeries): [ProofVersion, ProofVersion] | null {
   return s.versions.length >= 2 ? [s.versions[1], s.versions[0]] : null;
 }
+
+const ORDINAL = ["primeira", "segunda", "terceira", "quarta", "quinta", "sexta"];
+
+/** Título do painel de decisão (wireframe TEL-30): "V2" → "A segunda versão está pronta". */
+export function proofReadyTitle(label: string | null | undefined): string {
+  const n = Number(/^V(\d+)$/i.exec(label ?? "")?.[1]);
+  if (!n) return "A nova versão está pronta";
+  return n <= ORDINAL.length ? `A ${ORDINAL[n - 1]} versão está pronta` : `A versão ${n} está pronta`;
+}

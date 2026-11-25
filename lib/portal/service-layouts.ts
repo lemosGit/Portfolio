@@ -26,6 +26,9 @@ export type BlockId =
   | "des-spec"
   | "des-proof"
   | "des-pickup"
+  | "des-versions"
+  | "des-decision"
+  | "des-approvals"
   // Pagamentos compactos (wireframe Académico, M6-07): o que falta + "Ver pagamentos"
   | "payments-compact";
 
@@ -85,10 +88,28 @@ export const SERVICE_LAYOUTS: Record<ServiceType, ServiceLayout> = {
   design: {
     label: "Design",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A prova é a protagonista (RF-20.05, M7-02); a ficha técnica fica no fim, atrás de "ver detalhes" (RF-20.12).
-    // A arrumação final (prova à esquerda, decisão à direita) é a M7-07.
-    // M7-05: a produção e o levantamento vêm logo a seguir às fases (depois da aprovação, o ecrã fala deles).
-    pages: { overview: ["phase-bar", "des-pickup", "des-proof", "next-step", "approvals", "payments", "des-spec"] },
+    // Wireframe aprovado (G2, D-109, M7-07, D-166). No telemóvel: fases, produção/levantamento (quando já é
+    // o assunto), a prova em grande, a decisão (estado, ronda, botões, levantamento previsto), as outras
+    // versões, as restantes aprovações, os pagamentos compactos e "Ver detalhes da peça".
+    pages: {
+      overview: ["phase-bar", "des-pickup", "des-proof", "des-decision", "des-versions", "des-approvals", "payments-compact", "des-spec"],
+    },
+    // No computador: fases e levantamento na largura toda; a prova à esquerda; à direita a decisão, as
+    // outras versões e os pagamentos; o resto por baixo, na largura toda.
+    overviewGrid: {
+      // Sem prova (ainda no Conceito), a coluna da esquerda ficava vazia: tudo passa à largura toda.
+      container:
+        "grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:grid-flow-row-dense xl:items-start xl:[&:has(>[data-block=des-proof]:empty)>*]:col-[1/-1]",
+      place: {
+        "phase-bar": "xl:col-span-2",
+        "des-pickup": "xl:col-span-2",
+        "des-proof": "xl:col-start-1 xl:row-span-3",
+        "des-decision": "xl:col-start-2",
+        "des-versions": "xl:col-start-2",
+        "payments-compact": "xl:col-start-2",
+      },
+      rest: "xl:col-span-2",
+    },
   },
 };
 

@@ -8,6 +8,8 @@ import { PhasesProject } from "@/app/cliente/_components/PhasesProject";
 import type { Section, SectionStatus } from "@/lib/academic/chapters";
 import { academicView } from "./fixture";
 
+vi.mock("@/lib/approvals/actions", () => ({ respondToApproval: vi.fn() }));
+vi.mock("@/lib/design/actions", () => ({ requestExtraRound: vi.fn() }));
 vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null })); // lê ficheiros no servidor
 vi.mock("@/app/cliente/_components/DesignFinalFiles", () => ({ DesignFinalFiles: () => null }));
 

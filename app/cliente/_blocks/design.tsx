@@ -2,12 +2,18 @@
  * Blocos do Design (M7). Acento Lilás Criativo (ADR-004) pelo data-service do layout.
  */
 import { MapPin } from "lucide-react";
+import type { Approval } from "@/lib/approvals/model";
+import { proofReadyTitle } from "@/lib/design/proofs";
+import { remainingNotice, roundsLabel } from "@/lib/design/rounds";
 import { PIECE_TYPES, eventSlack, mapsUrl, sizeLabel } from "@/lib/design/spec";
 import { longDate } from "@/lib/portal/format";
+import type { ProjectView } from "@/lib/portal/types";
+import { ApprovalCard } from "../_components/ApprovalCard";
 import { Details } from "../_components/Details";
 import { DesignFinalFiles } from "../_components/DesignFinalFiles";
 import { ProofGallery } from "../_components/ProofGallery";
-import { StateChip } from "./common";
+import { Approvals } from "./approvals";
+import { NextStep, StateChip } from "./common";
 import type { BlockProps } from "./types";
 
 /**
@@ -64,9 +70,56 @@ export function DesignSpecBlock({ project }: BlockProps) {
   );
 }
 
-/** Bloco "des-proof" (M7-02, RF-20.05, RF-20.80): a prova atual em grande e as outras versões (TEL-30). */
+/** Bloco "des-proof" (M7-02, RF-20.05; M7-07): a prova atual em grande, a protagonista (TEL-30). */
 export function DesignProof({ project }: BlockProps) {
-  return <ProofGallery project={project} view="overview" />;
+  return <ProofGallery project={project} view="current" />;
+}
+
+/** Bloco "des-versions" (M7-02, RF-20.80; M7-07): as outras versões, com "Comparar" e os comentários. */
+export function DesignVersions({ project }: BlockProps) {
+  return <ProofGallery project={project} view="versions" />;
+}
+
+/** A prova à espera do cliente (a mais recente), se houver. */
+const pendingProof = (project: ProjectView): Approval | undefined =>
+  (project.approvals ?? []).find((a) => a.subject === "prova" && a.status === "pendente");
+
+/**
+ * Bloco "des-decision" (M7-07, wireframe TEL-30 A e computador): com uma prova à espera, um só painel com o
+ * estado, a ronda, "A segunda versão está pronta", a mensagem, os dois botões, as revisões que ainda cabem no
+ * preço e o levantamento previsto. Sem prova à espera, o próximo passo de sempre (ex.: "Pagar o restante").
+ */
+export function DesignDecision(props: BlockProps) {
+  const { project } = props;
+  const a = pendingProof(project);
+  if (!a) {
+    return (
+      <div className="space-y-3">
+        <NextStep {...props} />
+        <PickupLine project={project} />
+      </div>
+    );
+  }
+  const r = project.rounds;
+  return (
+    <section aria-labelledby="decisao-title" className="panel p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <StateChip tone="action">Aguarda a sua resposta</StateChip>
+        {r && <span className="text-[13px] text-ink-dim">{roundsLabel(r)}</span>}
+      </div>
+      <h2 id="decisao-title" className="mt-3 font-display text-[22px] leading-tight text-ink">
+        {proofReadyTitle(a.versionLabel)}
+      </h2>
+      <ApprovalCard a={a} rounds={r} art bare />
+      {r && <p className="mt-3 text-[13px] text-ink-faint">{remainingNotice(r)}</p>}
+      <PickupLine project={project} boxed />
+    </section>
+  );
+}
+
+/** Bloco "des-approvals": as Aprovações sem a prova, que já está no painel de decisão. */
+export function DesignApprovals(props: BlockProps) {
+  return <Approvals {...props} shownAbove={pendingProof(props.project)?.id} />;
 }
 
 const pickupWhen = (iso: string) =>
@@ -152,12 +205,22 @@ export function DesignPickup({ project }: BlockProps) {
     );
   }
 
-  // TEL-30 A: antes da produção, só a linha do levantamento previsto (se já houver data).
-  if (!s.pickupAt) return null;
+  // TEL-30 A: antes da produção, a linha do levantamento previsto vai no painel de decisão (M7-07).
+  return null;
+}
+
+/** Antes da produção, a linha "Levantamento previsto" (TEL-30 A), se já houver data. */
+function PickupLine({ project, boxed = false }: { project: ProjectView; boxed?: boolean }) {
+  const s = project.designSpec;
+  const phase = (k: string) => project.phaseViews.find((p) => p.key === k)?.status;
+  if (!s?.pickupAt || s.deliveredAt || s.productionStatus || phase("producao") === "current" || phase("entrega-levantamento") === "current") return null;
   return (
-    <p className="px-1 text-[13px] text-ink-dim">
-      Levantamento previsto: <b className="font-semibold text-ink">{pickupWhen(s.pickupAt)}</b>
-      {where ? ` · ${where}` : ""}
+    <p className={boxed ? "mt-4 flex flex-wrap justify-between gap-x-3 gap-y-0.5 rounded-xl border border-line px-3 py-2.5 text-[13px] text-ink-dim" : "px-1 text-[13px] text-ink-dim"}>
+      <span>Levantamento previsto</span>
+      <b className="font-semibold text-ink">
+        {pickupWhen(s.pickupAt)}
+        {s.pickupPlace ? ` · ${s.pickupPlace}` : ""}
+      </b>
     </p>
   );
 }

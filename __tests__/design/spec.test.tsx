@@ -7,6 +7,9 @@ import { toView } from "@/lib/portal/data";
 import { projects } from "@/lib/portal/mock-data";
 import type { DesignSpec } from "@/lib/design/spec";
 
+vi.mock("@/lib/approvals/actions", () => ({ respondToApproval: vi.fn() }));
+vi.mock("@/lib/design/actions", () => ({ requestExtraRound: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null })); // lê ficheiros no servidor
 vi.mock("@/app/cliente/_components/DesignFinalFiles", () => ({ DesignFinalFiles: () => null }));
 

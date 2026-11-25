@@ -31,12 +31,15 @@ test.describe("Design (M5-14)", () => {
   test("Visão geral: revisões à espera da V2, aprovação da prova e restante que trava a produção", async ({ page }) => {
     await page.goto("/cliente");
     await expect(page.getByText("Fase 4 de 7")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Revisões" })).toBeVisible();
+    // M7-07: painel de decisão (estado + prova à espera) e pagamentos compactos
+    await expect(page.getByRole("heading", { name: "A segunda versão está pronta" })).toBeVisible();
     await expect(page.getByText("Aguarda a sua resposta").first()).toBeVisible();
     await expect(page.getByRole("article", { name: "Aprovar arte para produção Convite V2" })).toBeVisible();
     const pay = page.getByRole("region", { name: "Pagamentos" });
-    await expect(pay.getByText("120 000 Kz")).toBeVisible();
-    await expect(pay.getByText("Restante, antes da produção")).toBeVisible();
+    await expect(pay.getByText("Sinal pago")).toBeVisible();
+    await expect(pay).toContainText("Falta 60 000 Kz, restante, antes da produção.");
+    await pay.getByText("Ver pagamentos").click();
+    await expect(pay.getByText("Restante, antes da produção", { exact: true })).toBeVisible();
   });
 
   test("Ficheiros: provas V1/V2 e referências do briefing", async ({ page }) => {
@@ -86,7 +89,8 @@ test.describe("Design (M5-14)", () => {
     await zoom.getByRole("button", { name: "Fechar" }).click();
     await expect(zoom).toBeHidden();
     // comparar com a V1, com o pedido que levou à V2
-    await proof.getByRole("button", { name: "Comparar com a V2" }).click();
+    // M7-07: as outras versões são um bloco à parte (à direita da prova no computador)
+    await page.getByRole("region", { name: "Outras versões" }).getByRole("button", { name: "Comparar com a V2" }).click();
     const cmp = page.getByRole("dialog", { name: "Comparar V1 e V2" });
     await expect(cmp.getByText("O seu pedido:", { exact: false })).toContainText("Os nomes podem ser maiores?");
     await page.keyboard.press("Escape");
@@ -102,9 +106,9 @@ test.describe("Design (M5-14)", () => {
 
   test("Rondas: 'Ronda 1 de 2' no próximo passo, na prova e no Projeto; aviso da última ronda (M7-03)", async ({ page }) => {
     await page.goto("/cliente");
-    await expect(page.getByRole("region", { name: "Revisões" }).getByText("Ronda 1 de 2")).toBeVisible();
+    // M7-07: o próximo passo e a prova à espera são um só painel de decisão
+    await expect(page.getByRole("region", { name: "A segunda versão está pronta" }).getByText("Ronda 1 de 2")).toBeVisible();
     const card = page.getByRole("article", { name: "Aprovar arte para produção Convite V2" });
-    await expect(card.getByText("Ronda 1 de 2")).toBeVisible();
     await card.getByRole("button", { name: "Pedir alterações" }).click();
     await expect(card.getByText("Esta é a ronda 2 de 2 incluídas", { exact: false })).toBeVisible();
     // o comentário à V1 aparece ligado à V1 (Outras versões)
@@ -131,7 +135,38 @@ test.describe("Design (M5-14)", () => {
 
   test("Levantamento previsto na Visão geral antes da produção (M7-05, TEL-30 A)", async ({ page }) => {
     await page.goto("/cliente");
-    await expect(page.getByText("Levantamento previsto:", { exact: false })).toContainText("Loja GeniusFrela, Talatona");
+    // M7-07: no painel de decisão, por baixo dos botões
+    const decision = page.getByRole("region", { name: "A segunda versão está pronta" });
+    await expect(decision.getByText("Levantamento previsto").locator("..")).toContainText("Loja GeniusFrela, Talatona");
+  });
+
+  test("Layout do wireframe: prova à esquerda e decisão à direita no computador; num só painel (M7-07)", async ({ page }) => {
+    await page.goto("/cliente");
+    const decision = page.getByRole("region", { name: "A segunda versão está pronta" });
+    await expect(decision.getByText("Aguarda a sua resposta")).toBeVisible();
+    await expect(decision.getByRole("button", { name: "Aprovar arte para produção" })).toBeVisible();
+    await expect(decision.getByText("Ainda pode pedir 1 revisão incluída no preço.")).toBeVisible();
+    await expect(decision.getByText("Levantamento previsto")).toBeVisible();
+    // a prova não se repete em Aprovações, nem há um painel "Revisões" à parte
+    await expect(page.getByRole("article", { name: /Convite V2/ })).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: "Revisões" })).toHaveCount(0);
+    const proof = await page.getByRole("region", { name: "Convite V2, a versão atual" }).boundingBox();
+    const box = await decision.boundingBox();
+    if ((page.viewportSize()?.width ?? 0) >= 1280) {
+      expect(box!.x).toBeGreaterThan(proof!.x + proof!.width - 1); // à direita
+      expect(Math.abs(box!.y - proof!.y)).toBeLessThan(40); // à mesma altura
+    } else {
+      expect(box!.y).toBeGreaterThan(proof!.y + proof!.height - 1); // por baixo
+    }
+  });
+
+  test("360 px sem scroll horizontal (RNF-201, M7-07)", async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 740 });
+    for (const path of ["/cliente", "/cliente/projeto", "/cliente/entregas", "/cliente/mensagens"]) {
+      await page.goto(path);
+      const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(over, path).toBe(0);
+    }
   });
 
   test("Orçamento aceite no histórico com design + impressão (M7-06, RF-20.21)", async ({ page }) => {
