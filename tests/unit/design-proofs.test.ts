@@ -24,6 +24,9 @@ describe("proofsFrom", () => {
     const out = proofsFrom([series("convite", "prova", [ver(1, "20"), ver(2, "22")])], [approval("V1", "Os nomes podem ser maiores?")]);
     expect(out[0].versions[0].request).toBe("Os nomes podem ser maiores?");
     expect(out[0].versions[1].request).toBeNull();
+    // M7-03: o comentário fica ligado à versão comentada (V1)
+    expect(out[0].versions[1].comments).toEqual([{ by: "client", kind: "pedir_alteracoes", text: "Os nomes podem ser maiores?", at: "" }]);
+    expect(out[0].versions[0].comments).toEqual([]);
   });
 
   it("a série com a versão mais recente vem primeiro", () => {

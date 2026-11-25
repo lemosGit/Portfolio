@@ -5,6 +5,7 @@
  */
 import { Check } from "lucide-react";
 import { CHAPTERS_PHASE_KEY } from "@/lib/academic/chapters";
+import { roundsLabel } from "@/lib/design/rounds";
 import { shortDate } from "@/lib/portal/format";
 import type { PhaseView, ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
@@ -57,7 +58,10 @@ export function PhasesProject({ project }: { project: ProjectView }) {
                   <span className={cn("min-w-0 flex-1 text-[15px]", ph.status === "pending" || ph.status === "skipped" ? "text-ink-dim" : "font-medium text-ink")}>
                     {ph.title}
                   </span>
-                  {ph.status === "current" ? (
+                  {ph.status === "current" && ph.key === "revisoes" && project.rounds ? (
+                    // TEL-31 (M7-03): a fase Revisões mostra a ronda em que vai.
+                    <StateChip tone={waiting ? "action" : "now"}>{roundsLabel(project.rounds)}</StateChip>
+                  ) : ph.status === "current" ? (
                     <StateChip tone={waiting ? "action" : "now"}>{waiting ? "Aguarda a sua resposta" : ph.late ? "Atrasada" : "Em curso"}</StateChip>
                   ) : ph.status === "done" && ph.completedAt ? (
                     <span className="text-xs text-ink-faint">{shortDate(ph.completedAt)}</span>

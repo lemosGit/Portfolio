@@ -19,6 +19,8 @@ export type Quote = {
   sentAt: string | null;
   acceptedAt: string | null;
   createdAt: string;
+  /** Design: rondas de revisão incluídas (RN-35); null nos outros serviços. */
+  roundsIncluded: number | null;
 };
 
 export const QUOTE_LABEL: Record<QuoteStatus, string> = {
@@ -31,10 +33,13 @@ export const QUOTE_LABEL: Record<QuoteStatus, string> = {
 /** Sinal por omissão: 50% (RN-12). */
 export const DEFAULT_DEPOSIT_PCT = 50;
 
+/** Rondas de revisão incluídas no orçamento do Design, por omissão (RN-35, Q-016, Q-103). */
+export const DEFAULT_ROUNDS = 2;
+
 /** Sinal a partir da percentagem, arredondado ao cêntimo (como a BD, 0007 quotes_before). */
 export const depositFromPct = (total: number, pct: number) => Math.round(total * pct) / 100;
 
-export type QuoteFields = { total_kz: number; deposit_pct: number; deposit_kz: number; delivery_due_on: string | null };
+export type QuoteFields = { total_kz: number; deposit_pct: number; deposit_kz: number; delivery_due_on: string | null; rounds_included?: number };
 
 /** Formulário do admin → campos do orçamento. O sinal escrito em Kz ganha à percentagem. */
 export function readQuote(get: (k: string) => string): QuoteFields | { error: string } {
@@ -54,7 +59,14 @@ export function readQuote(get: (k: string) => string): QuoteFields | { error: st
   }
   const due = get("prazo");
   if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) return { error: "Data de entrega inválida." };
-  return { total_kz: total, deposit_pct: pct, deposit_kz: deposit, delivery_due_on: due || null };
+  const out: QuoteFields = { total_kz: total, deposit_pct: pct, deposit_kz: deposit, delivery_due_on: due || null };
+  // M7-03: só o Design tem rondas de revisão (RN-35); nos outros serviços a coluna fica como está.
+  if (get("servico") === "design") {
+    const rounds = Number(get("rondas") || String(DEFAULT_ROUNDS));
+    if (!Number.isInteger(rounds) || rounds < 0 || rounds > 10) return { error: "As rondas incluídas vão de 0 a 10." };
+    out.rounds_included = rounds;
+  }
+  return out;
 }
 
 /** Snapshot da aprovação "orcamento" (gravado pela BD ao enviar, 0007). */
@@ -63,6 +75,7 @@ export type QuoteSnapshot = {
   deposit_pct?: number;
   deposit_kz?: number;
   remaining_kz?: number;
+  rounds_included?: number | null;
   delivery_due_on?: string | null;
   deposit_rule?: string;
 };
@@ -78,6 +91,7 @@ type QuoteRow = {
   sent_at: string | null;
   accepted_at: string | null;
   created_at: string;
+  rounds_included: number | null;
 };
 
 export const mapQuote = (r: QuoteRow): Quote => ({
@@ -91,12 +105,13 @@ export const mapQuote = (r: QuoteRow): Quote => ({
   sentAt: r.sent_at,
   acceptedAt: r.accepted_at,
   createdAt: r.created_at,
+  roundsIncluded: r.rounds_included,
 });
 
 export async function loadQuotes(sb: SupabaseClient, projectId: string): Promise<Quote[]> {
   const { data, error } = await sb
     .from("quotes")
-    .select("id, version, total_kz, deposit_pct, deposit_kz, delivery_due_on, status, sent_at, accepted_at, created_at")
+    .select("id, version, total_kz, deposit_pct, deposit_kz, delivery_due_on, status, sent_at, accepted_at, created_at, rounds_included")
     .eq("project_id", projectId)
     .order("version", { ascending: false })
     .returns<QuoteRow[]>();

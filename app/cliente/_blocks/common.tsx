@@ -5,6 +5,7 @@
  */
 import { CHAPTERS_PHASE_KEY, chapterProgress } from "@/lib/academic/chapters";
 import { approvalTitle } from "@/lib/approvals/model";
+import { roundsLabel } from "@/lib/design/rounds";
 import { blockingPayment, kz, payLabel } from "@/lib/payments/model";
 import type { PhaseView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
@@ -112,7 +113,15 @@ export function NextStep({ project }: BlockProps) {
 
   return (
     <section aria-labelledby="proximo-title" className="panel p-6 sm:p-7">
-      <StateChip tone={tone}>{label}</StateChip>
+      {/* TEL-30 (M7-03): na fase Revisões do Design, "Ronda X de Y" ao lado do estado. */}
+      {ph.key === "revisoes" && project.rounds && !allDone ? (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <StateChip tone={tone}>{label}</StateChip>
+          <span className="text-[13px] text-ink-dim">{roundsLabel(project.rounds)}</span>
+        </div>
+      ) : (
+        <StateChip tone={tone}>{label}</StateChip>
+      )}
       <h2 id="proximo-title" className="mt-4 font-display text-[22px] leading-tight text-ink sm:text-[26px]">
         {allDone ? "Projeto concluído" : ph.title}
       </h2>

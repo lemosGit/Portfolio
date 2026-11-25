@@ -45,6 +45,9 @@ export function ProofViewer({ series, view }: { series: ProofSeries; view: "over
                       <button type="button" onClick={() => setPair([v, current])} className="mt-1 text-[13px] font-medium text-accent underline-offset-4 hover:underline">
                         Comparar com a {current.label}
                       </button>
+                      <div className="mt-1.5">
+                        <Comments v={v} />
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -125,8 +128,31 @@ function Current({ v, title, onZoom }: { v: ProofVersion; title: string; onZoom:
           ))}
         </div>
       )}
-      {v.notes && <figcaption className="border-t border-line px-4 py-3 text-[14px] text-ink-dim">{v.notes}</figcaption>}
+      {(v.notes || v.comments.length > 0) && (
+        <figcaption className="space-y-2 border-t border-line px-4 py-3 text-[14px] text-ink-dim">
+          {v.notes && <p>{v.notes}</p>}
+          <Comments v={v} />
+        </figcaption>
+      )}
     </figure>
+  );
+}
+
+/** Comentários desta versão (M7-03): quem, quando e o quê. */
+function Comments({ v }: { v: ProofVersion }) {
+  if (v.comments.length === 0) return null;
+  return (
+    <ul aria-label={`Comentários à ${v.label}`} className="space-y-1.5 text-[13px]">
+      {v.comments.map((c, i) => (
+        <li key={i} className="text-ink-dim">
+          <span className="text-ink-faint">
+            {shortDate(c.at)} · {c.by === "client" ? "Você" : "GeniusFrela"}
+            {c.kind === "pedir_alteracoes" ? " pediu alterações" : c.kind === "aprovar" ? " aprovou" : ""}:
+          </span>{" "}
+          &ldquo;{c.text}&rdquo;
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -175,6 +201,7 @@ function Zoom({ title, v, start }: { title: string; v: ProofVersion; start: numb
       <h2 className="pr-10 font-display text-lg text-ink">
         {title} {v.label} <span className="text-sm font-normal text-ink-faint">· {shortDate(v.createdAt)}</span>
       </h2>
+      <Comments v={v} />
       <ul className="space-y-5">
         {v.files.map((f, j) => (
           <li key={f.id} ref={j === start ? ref : undefined} className="space-y-2">
@@ -248,6 +275,7 @@ function Compare({ series, pair, onChange }: { series: ProofSeries; pair: Pair; 
                 <NoPreview v={v} className="h-[38vh] border-0 md:h-[60vh]" />
               )}
             </div>
+            {/* TEL-32: o pedido que levou a esta versão (os comentários completos estão em Ampliar). */}
             {v.request && <figcaption className="text-[13px] text-ink-dim">O seu pedido: &ldquo;{v.request}&rdquo;</figcaption>}
             {series.versions.length > 2 && (
               <select
