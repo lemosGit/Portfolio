@@ -50,3 +50,18 @@ describe("rótulos", () => {
     expect(specHeadline({ pieceType: "lona", eventDate: null })).toBe("Lona");
   });
 });
+
+describe("levantamento (M7-05)", () => {
+  it("folga até ao evento, em dias de Luanda; alerta a menos de 3 dias ou depois (RF-20.74)", async () => {
+    const { eventSlack, slackAlert, readPickupAt, pickupInput } = await import("@/lib/design/spec");
+    expect(eventSlack("2026-12-19", "2026-12-15T10:00:00+01:00")).toBe(4);
+    expect(eventSlack("2026-12-19", "2026-12-18T23:30:00Z")).toBe(0); // 00:30 de 19/12 em Luanda
+    expect(eventSlack(null, "2026-12-15T10:00:00+01:00")).toBeNull();
+    expect(slackAlert(4)).toBeNull();
+    expect(slackAlert(2)).toBe("O levantamento fica a 2 dias do evento.");
+    expect(slackAlert(-1)).toBe("O levantamento fica depois do evento.");
+    expect(readPickupAt("2026-12-15T10:30")).toBe("2026-12-15T10:30:00+01:00");
+    expect(readPickupAt("15/12")).toHaveProperty("error");
+    expect(pickupInput("2026-12-15T10:30:00+01:00")).toBe("2026-12-15T10:30");
+  });
+});

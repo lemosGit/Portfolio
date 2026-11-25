@@ -42,7 +42,15 @@ export type DesignSpec = {
   hasDigitalFiles: boolean;
   eventDate: string | null;
   keyTexts: KeyText[];
+  /** Produção e entrega (M7-05): estado (só com impressão), data/hora e local de levantamento, entregue. */
+  productionStatus?: ProductionStatus | null;
+  pickupAt?: string | null;
+  pickupPlace?: string | null;
+  deliveredAt?: string | null;
 };
+
+export type ProductionStatus = "a_imprimir" | "pronto";
+export const PRODUCTION_LABEL: Record<ProductionStatus, string> = { a_imprimir: "A imprimir", pronto: "Pronto" };
 
 export type SpecRow = {
   piece_type: PieceType;
@@ -57,10 +65,14 @@ export type SpecRow = {
   has_digital_files: boolean;
   event_date: string | null;
   key_texts: KeyText[];
+  production_status?: ProductionStatus | null;
+  pickup_at?: string | null;
+  pickup_place?: string | null;
+  delivered_at?: string | null;
 };
 
 export const SPEC_COLS =
-  "piece_type, piece_label, width_cm, height_cm, size_notes, material, quantity, finish, has_print, has_digital_files, event_date, key_texts";
+  "piece_type, piece_label, width_cm, height_cm, size_notes, material, quantity, finish, has_print, has_digital_files, event_date, key_texts, production_status, pickup_at, pickup_place, delivered_at";
 
 const num = (v: number | string | null) => (v === null || v === undefined ? null : Number(v));
 
@@ -77,6 +89,10 @@ export const mapSpec = (r: SpecRow): DesignSpec => ({
   hasDigitalFiles: r.has_digital_files,
   eventDate: r.event_date,
   keyTexts: Array.isArray(r.key_texts) ? r.key_texts : [],
+  productionStatus: r.production_status ?? null,
+  pickupAt: r.pickup_at ?? null,
+  pickupPlace: r.pickup_place ?? null,
+  deliveredAt: r.delivered_at ?? null,
 });
 
 /** "Noivos: Ana & Paulo" por linha → lista ordenada (Q-102). Sem ":", a linha inteira é o texto. */
@@ -162,6 +178,36 @@ export function specHeadline(s: Pick<DesignSpec, "pieceType" | "eventDate">): st
   const piece = PIECE_TYPES[s.pieceType];
   return s.eventDate ? `${piece} · evento a ${longDate(s.eventDate)}` : piece;
 }
+
+/** Dia (AAAA-MM-DD) em Luanda de um instante. */
+const luandaDay = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: "Africa/Luanda" });
+
+/**
+ * Folga entre o levantamento e o evento, em dias (RF-20.74, wireframe "tem 9 dias de folga").
+ * null sem evento ou sem levantamento; negativo se o levantamento for depois do evento.
+ */
+export function eventSlack(eventDate: string | null | undefined, pickupAt: string | null | undefined): number | null {
+  if (!eventDate || !pickupAt) return null;
+  return Math.round((Date.parse(`${eventDate}T00:00:00Z`) - Date.parse(`${luandaDay(pickupAt)}T00:00:00Z`)) / 86_400_000);
+}
+
+/** Alerta ao admin (RF-20.74): levantamento a menos de 3 dias do evento, ou depois dele. */
+export const slackAlert = (slack: number | null) =>
+  slack === null ? null : slack < 0 ? "O levantamento fica depois do evento." : slack < 3 ? `O levantamento fica a ${slack} dia${slack === 1 ? "" : "s"} do evento.` : null;
+
+/** "datetime-local" (Luanda) → ISO com +01:00. Vazio = null. */
+export function readPickupAt(raw: string): string | null | { error: string } {
+  if (!raw) return null;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw)) return { error: "Data e hora de levantamento inválidas." };
+  return `${raw}:00+01:00`;
+}
+
+/** ISO → valor de um campo "datetime-local" em hora de Luanda. */
+export const pickupInput = (iso: string | null | undefined) =>
+  iso ? new Date(new Date(iso).getTime() + 3_600_000).toISOString().slice(0, 16) : "";
+
+/** Link do mapa para o local de levantamento (abre a app de mapas no telemóvel). */
+export const mapsUrl = (place: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`;
 
 /** Ficha de um projeto (null se ainda não existe). Tolera a tabela em falta (migração por aplicar). */
 export async function loadSpec(sb: SupabaseClient, projectId: string): Promise<DesignSpec | null> {

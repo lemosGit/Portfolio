@@ -9,6 +9,7 @@ import type { Section, SectionStatus } from "@/lib/academic/chapters";
 import { academicView } from "./fixture";
 
 vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null })); // lê ficheiros no servidor
+vi.mock("@/app/cliente/_components/DesignFinalFiles", () => ({ DesignFinalFiles: () => null }));
 
 vi.mock("@/lib/academic/actions", () => ({ requestAdjustment: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));

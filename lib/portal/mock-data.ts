@@ -387,6 +387,11 @@ export const projects: Project[] = [
         { label: "Local", value: "Igreja da Sagrada Família, Luanda" },
         { label: "Copo-d'água", value: "Salão Girassol" },
       ],
+      // M7-05: levantamento previsto (TEL-30 A), 4 dias antes do casamento.
+      productionStatus: null,
+      pickupAt: at(20, 10),
+      pickupPlace: "Loja GeniusFrela, Talatona",
+      deliveredAt: null,
     },
     approvals: [
       {

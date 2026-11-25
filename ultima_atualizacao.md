@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M7-04 Implementar a aprovação final da arte para produção | #67 | `supabase/migrations/0015_art_approval.sql`, `app/cliente/_components/ApprovalCard.tsx` |
-| ⏭️ Próxima | M7-05 Mostrar o estado da produção e a entrega/levantamento | #68 | — |
+| ✅ Última feita | M7-05 Mostrar o estado da produção e a entrega/levantamento | #68 | `supabase/migrations/0016_design_production.sql`, `app/admin/_components/DesignProduction.tsx`, `app/cliente/_blocks/design.tsx` |
+| ⏭️ Próxima | M7-06 Ligar o orçamento design + impressão e o sinal | #69 | — |
 | ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -98,3 +98,4 @@
 | 2026-11-25 | M7-02 | #65 | Galeria de provas (D-161): prova atual em grande na Visão geral, versões lado a lado/carrossel no Projeto, ampliar e comparar em `<dialog>`, original a pedido; correção de um efeito do React que partia a página ao fechar o "Ampliar". 5 unitários, 1 E2E; capturas `design-visao-geral` atualizada e `design-projeto` nova | `lib/design/proofs.ts`, `app/cliente/_components/ProofViewer.tsx`, `public/demo/provas/` |
 | 2026-11-25 | M7-03 | #66 | Rondas de revisão (Q-103, D-162): rondas no orçamento do Design, "Ronda X de Y" no próximo passo, na prova e no Projeto, aviso da última ronda, "Pedir revisão extra" por Mensagens, comentários por versão na galeria, secção no admin. 14 unitários/componentes, 1 E2E; capturas do Design atualizadas | `lib/design/rounds.ts`, `app/cliente/_components/ApprovalCard.tsx`, `app/cliente/_components/ProofViewer.tsx` |
 | 2026-11-25 | M7-04 | #67 | Aprovação final da arte (D-163): migração 0015 (snapshot com os textos-chave RN-42, sem novas provas da peça aprovada RN-41, a fase seguinte começa sozinha sem pagamento a travar), "Aprovar arte para produção" com aviso, textos-chave e "Confirmo" (TEL-34, D-071), email "… para produção", versão aprovada marcada na galeria. Teste SQL 0015, 5 de componente/unitários, 1 E2E; captura `design-visao-geral` atualizada | `supabase/migrations/0015_art_approval.sql`, `app/cliente/_components/ApprovalCard.tsx` |
+| 2026-11-25 | M7-05 | #68 | Produção e entrega (Q-104, D-164): migração 0016 (estado da produção liga às fases, RN-15; `admin_design_delivered` conclui o projeto), secção no admin com email ao cliente e alerta do evento, bloco do cliente (previsto, em produção, pronto para levantar com mapa, ficheiros digitais e folga, entregue). Teste SQL 0016, 6 de componente/unitários, 1 E2E; captura `design-visao-geral` atualizada | `supabase/migrations/0016_design_production.sql`, `app/cliente/_blocks/design.tsx` |

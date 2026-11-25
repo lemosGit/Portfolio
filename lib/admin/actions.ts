@@ -9,13 +9,13 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { accessLinkEmail, adjustmentClosedEmail, approvalRequestEmail, deliveryEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { accessLinkEmail, adjustmentClosedEmail, approvalRequestEmail, deliveryEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, pickupEmail, replyEmail } from "@/lib/email/templates";
 import { LINKS_PER_HOUR, LINK_TTL_MS, entryUrl, looksLikeToken, type LinkChannel } from "@/lib/access/links";
 import { digest } from "@/lib/access/digest";
 import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { postponeTo } from "@/lib/files/retention";
-import { readSpec } from "@/lib/design/spec";
+import { PRODUCTION_LABEL, readPickupAt, readSpec, type ProductionStatus } from "@/lib/design/spec";
 import { readBrief } from "@/lib/academic/brief";
 import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
 import { readQuote } from "@/lib/quotes/model";
@@ -1029,6 +1029,68 @@ export async function saveDesignSpec(_p: AdminState, f: FormData): Promise<Admin
     ok: true,
     message: spec.has_print ? "Ficha técnica guardada." : "Ficha técnica guardada. Sem impressão, a fase Produção fica “não se aplica”.",
   };
+}
+
+/* ───────────── Produção e entrega do Design (M7-05, RF-20.61, RF-20.70…73) ───────────── */
+
+const whenLabel = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleString("pt-PT", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Africa/Luanda" }) : null;
+
+/** Estado da produção. A BD liga-o às fases (0016, Q-104) e recusa "a imprimir" sem o restante pago (RN-15). */
+export async function setProductionStatus(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const status = str(f, "estado") as ProductionStatus;
+  if (!(status in PRODUCTION_LABEL)) return { error: "Escolha o estado da produção." };
+  const { data, error } = await sb
+    .from("design_specs")
+    .update({ production_status: status })
+    .eq("project_id", projectId)
+    .select("pickup_at, pickup_place")
+    .maybeSingle<{ pickup_at: string | null; pickup_place: string | null }>();
+  if (error) return { error: error.message };
+  if (!data) return { error: "Preencha primeiro a ficha técnica da peça." };
+  refresh();
+  const mail =
+    status === "pronto"
+      ? await notify(f, sb, projectId, (c) => pickupEmail({ ...c, ready: true, when: whenLabel(data.pickup_at), place: data.pickup_place }))
+      : undefined;
+  return {
+    ok: true,
+    message: `${status === "pronto" ? "Produção pronta: a fase Entrega/levantamento está em curso." : "Produção em curso (a imprimir)."}${emailNote(mail)}`,
+  };
+}
+
+/** Data/hora e local de entrega ou levantamento (RF-20.70). */
+export async function savePickup(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const at = readPickupAt(str(f, "quando"));
+  if (at && typeof at === "object") return at;
+  const place = str(f, "local");
+  if (place.length > 200) return { error: "O local tem no máximo 200 caracteres." };
+  const { data, error } = await sb
+    .from("design_specs")
+    .update({ pickup_at: at, pickup_place: place || null })
+    .eq("project_id", projectId)
+    .select("production_status")
+    .maybeSingle<{ production_status: ProductionStatus | null }>();
+  if (error) return { error: error.message };
+  if (!data) return { error: "Preencha primeiro a ficha técnica da peça." };
+  refresh();
+  const mail = await notify(f, sb, projectId, (c) =>
+    pickupEmail({ ...c, ready: data.production_status === "pronto", when: whenLabel(at), place: place || null }),
+  );
+  return { ok: true, message: `Levantamento guardado.${emailNote(mail)}` };
+}
+
+/** Peça entregue (RF-20.73): conclui a Entrega e o projeto (0016). */
+export async function markDesignDelivered(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { error } = await sb.rpc("admin_design_delivered", { p_project: str(f, "projeto") });
+  if (error) return { error: error.message };
+  refresh();
+  return { ok: true, message: "Peça entregue. O projeto ficou concluído." };
 }
 
 /* ───────────── Capítulos do trabalho académico (M6-03, RF-10.30, RF-10.40) ───────────── */

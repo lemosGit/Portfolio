@@ -128,4 +128,9 @@ test.describe("Design (M5-14)", () => {
     await go.click();
     await expect(card.getByRole("alert")).toContainText("modo de demonstração");
   });
+
+  test("Levantamento previsto na Visão geral antes da produção (M7-05, TEL-30 A)", async ({ page }) => {
+    await page.goto("/cliente");
+    await expect(page.getByText("Levantamento previsto:", { exact: false })).toContainText("Loja GeniusFrela, Talatona");
+  });
 });

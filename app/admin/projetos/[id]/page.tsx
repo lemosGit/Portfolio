@@ -20,6 +20,7 @@ import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
 import { inputCls, textareaCls } from "../../_components/styles";
 import { AcademicBriefForm } from "../../_components/AcademicBriefForm";
 import { DesignSpecForm } from "../../_components/DesignSpecForm";
+import { DesignProduction } from "../../_components/DesignProduction";
 import { AdminAdjustments } from "../../_components/AdminAdjustments";
 import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
@@ -196,6 +197,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           }
         >
           <DesignSpecForm projectId={p.id} spec={spec} />
+        </Section>
+      )}
+
+      {p.serviceType === "design" && (
+        <Section
+          id="producao"
+          title="Produção e entrega"
+          description="RF-20.61, RF-20.70: o cliente vê o estado da produção e a data e o local de levantamento em destaque. Os ficheiros finais carregam-se em Ficheiros (Entregável, fase Entrega/levantamento)."
+        >
+          <DesignProduction projectId={p.id} spec={spec} />
         </Section>
       )}
 
