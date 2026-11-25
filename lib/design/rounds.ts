@@ -22,6 +22,12 @@ export function changesNotice(r: Rounds): string | null {
     : `Vai usar a ronda ${next} de ${r.included} incluídas.`;
 }
 
+/** Linha por baixo dos botões da prova (wireframe TEL-30 A): quantas revisões ainda cabem no preço. */
+export function remainingNotice(r: Rounds): string {
+  if (r.remaining <= 0) return r.included === 0 ? "Este orçamento não inclui revisões: uma revisão é um extra." : "Já usou as revisões incluídas: uma nova revisão é um extra.";
+  return r.remaining === 1 ? "Ainda pode pedir 1 revisão incluída no preço." : `Ainda pode pedir ${r.remaining} revisões incluídas no preço.`;
+}
+
 /** Texto da mensagem enviada ao João quando o cliente pede uma revisão extra (Q-103). */
 export const extraRequestMessage = (comment: string, version: string | null) =>
   `Pedido de revisão extra${version ? ` sobre a ${version}` : ""}: ${comment.trim()}`;

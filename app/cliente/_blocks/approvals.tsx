@@ -11,11 +11,17 @@ import { Details } from "../_components/Details";
 import { StateChip } from "./common";
 import type { BlockProps } from "./types";
 
-export function Approvals({ project }: BlockProps) {
-  const list = project.approvals ?? [];
+/**
+ * `shownAbove`: um pedido pendente já mostrado noutro bloco (M7-07: a prova do Design fica no painel de
+ * decisão). Sai da lista de pendentes; se não sobrar nada, também não se diz "Não há nada à espera".
+ */
+export function Approvals({ project, shownAbove }: BlockProps & { shownAbove?: string }) {
+  const all = project.approvals ?? [];
+  const list = all.filter((a) => a.id !== shownAbove);
   if (list.length === 0) return null;
   const pending = list.filter((a) => a.status === "pendente");
   const past = list.filter((a) => a.status !== "pendente");
+  if (pending.length === 0 && shownAbove && past.length === 0) return null;
 
   return (
     <section aria-labelledby="aprovacoes-title" className="panel p-6 sm:p-7">
@@ -31,7 +37,7 @@ export function Approvals({ project }: BlockProps) {
             <ApprovalCard key={a.id} a={a} rounds={project.rounds} art={project.serviceType === "design"} />
           ))}
         </div>
-      ) : (
+      ) : shownAbove ? null : (
         <p className="mt-2 text-[14px] text-ink-dim">Não há nada à espera da sua aprovação.</p>
       )}
       {past.length > 0 && (

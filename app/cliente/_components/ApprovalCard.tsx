@@ -24,7 +24,7 @@ type Mode = "idle" | "confirm" | "changes" | "extra";
  * `art`: prova do Design = aprovação final da arte para produção (M7-04, TEL-34): aviso de irreversibilidade,
  * os textos-chave do snapshot (RN-42) e a caixa "Confirmo" que ativa o botão (D-071).
  */
-export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?: Rounds; art?: boolean }) {
+export function ApprovalCard({ a, rounds, art = false, bare = false }: { a: Approval; rounds?: Rounds; art?: boolean; bare?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("idle");
   const [comment, setComment] = useState("");
@@ -66,11 +66,14 @@ export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?:
   const noRounds = r !== undefined && r.remaining <= 0;
 
   return (
-    <article className="rounded-2xl border border-action/30 bg-action/[0.05] p-5" aria-label={`${verb} ${title}`}>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-display text-lg text-ink">{title}</h3>
-        {r && <span className="text-xs font-semibold text-ink-dim">{roundsLabel(r)}</span>}
-      </div>
+    <article className={bare ? "" : "rounded-2xl border border-action/30 bg-action/[0.05] p-5"} aria-label={`${verb} ${title}`}>
+      {/* bare (M7-07): dentro do painel de decisão do Design, que já mostra o estado, a ronda e o título. */}
+      {!bare && (
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="font-display text-lg text-ink">{title}</h3>
+          {r && <span className="text-xs font-semibold text-ink-dim">{roundsLabel(r)}</span>}
+        </div>
+      )}
       {a.snapshot.message && <p className="mt-1.5 text-[14px] leading-relaxed text-ink-dim">{a.snapshot.message}</p>}
       {a.snapshot.items && a.snapshot.items.length > 0 && (
         <ol className="mt-3 space-y-1 rounded-xl border border-line bg-raised/40 p-3 text-[13px] text-ink">
@@ -79,7 +82,7 @@ export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?:
           ))}
         </ol>
       )}
-      {a.snapshot.files && a.snapshot.files.length > 0 && (
+      {!bare && a.snapshot.files && a.snapshot.files.length > 0 && (
         <p className="mt-3 text-[13px] text-ink-dim">
           Ficheiros: {a.snapshot.files.join(", ")} · veja-os em <a href="/cliente/entregas" className="underline">Ficheiros</a>
         </p>
@@ -108,7 +111,8 @@ export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?:
       {q?.deposit_rule && <p className="mt-3 text-[13px] leading-relaxed text-ink-dim">{q.deposit_rule}</p>}
 
       {mode === "idle" && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        // Wireframe TEL-30 A: no painel do Design, os dois botões ocupam a largura no telemóvel.
+        <div className={bare ? "mt-4 grid gap-2 sm:flex sm:flex-wrap [&>button]:justify-center" : "mt-4 flex flex-wrap gap-2"}>
           <button type="button" className="btn-violet h-11" onClick={() => setMode("confirm")}>
             {verb}
           </button>

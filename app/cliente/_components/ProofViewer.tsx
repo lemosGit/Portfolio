@@ -2,7 +2,8 @@
 
 /**
  * Galeria de provas do Design (M7-02, RF-20.80…84; wireframe TEL-30, TEL-31, TEL-32).
- * - "overview": a prova atual em grande, numa moldura neutra (D-109), e as outras versões com "Comparar".
+ * - "current": a prova atual em grande, numa moldura neutra (D-109); "versions": as outras versões com
+ *   "Comparar". São dois blocos da Visão geral do Design, em colunas no computador (M7-07).
  * - "gallery": as versões lado a lado (carrossel no telemóvel), a atual marcada, e "Comparar V1 e V2".
  * As imagens são as miniaturas WebP (URL assinada de 15 min); o original só se descarrega a pedido (Q-010).
  */
@@ -17,44 +18,53 @@ import { cn } from "@/lib/utils";
 
 type Pair = [ProofVersion, ProofVersion];
 
-export function ProofViewer({ series, view }: { series: ProofSeries; view: "overview" | "gallery" }) {
+export type ProofView = "current" | "versions" | "gallery";
+
+export function ProofViewer({ series, view }: { series: ProofSeries; view: ProofView }) {
   const [zoom, setZoom] = useState<{ v: ProofVersion; i: number } | null>(null);
   const [pair, setPair] = useState<Pair | null>(null);
   const current = series.versions[0];
   const others = series.versions.slice(1);
   const first = defaultPair(series);
 
+  if (view === "versions" && others.length === 0) return null;
+  const currentBlock = (
+    <>
+      <h2 id="prova-title" className="sr-only">
+        {`${series.title} ${current.label}, a versão atual`}
+      </h2>
+      <Current v={current} title={series.title} onZoom={(i) => setZoom({ v: current, i })} />
+    </>
+  );
+  const versionsBlock = others.length > 0 && (
+    <div className="panel p-5">
+      <p className="text-[13px] font-medium text-ink-dim">Outras versões</p>
+      <ul className="mt-3 space-y-3">
+        {others.map((v) => (
+          <li key={v.deliverableId} className="flex items-center gap-4">
+            <Thumb v={v} className="h-[88px] w-[66px] shrink-0" onClick={() => setZoom({ v, i: 0 })} />
+            <div className="min-w-0">
+              <p className="text-[14px] font-semibold text-ink">{v.label}</p>
+              <p className="text-xs text-ink-faint">{shortDate(v.createdAt)}</p>
+              <button type="button" onClick={() => setPair([v, current])} className="mt-1 text-[13px] font-medium text-accent underline-offset-4 hover:underline">
+                Comparar com a {current.label}
+              </button>
+              <div className="mt-1.5">
+                <Comments v={v} />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
     <>
-      {view === "overview" ? (
-        <section aria-labelledby="prova-title" className="space-y-4">
-          <h2 id="prova-title" className="sr-only">
-            {`${series.title} ${current.label}, a versão atual`}
-          </h2>
-          <Current v={current} title={series.title} onZoom={(i) => setZoom({ v: current, i })} />
-          {others.length > 0 && (
-            <div className="panel p-5">
-              <p className="text-[13px] font-medium text-ink-dim">Outras versões</p>
-              <ul className="mt-3 space-y-3">
-                {others.map((v) => (
-                  <li key={v.deliverableId} className="flex items-center gap-4">
-                    <Thumb v={v} className="h-[88px] w-[66px] shrink-0" onClick={() => setZoom({ v, i: 0 })} />
-                    <div className="min-w-0">
-                      <p className="text-[14px] font-semibold text-ink">{v.label}</p>
-                      <p className="text-xs text-ink-faint">{shortDate(v.createdAt)}</p>
-                      <button type="button" onClick={() => setPair([v, current])} className="mt-1 text-[13px] font-medium text-accent underline-offset-4 hover:underline">
-                        Comparar com a {current.label}
-                      </button>
-                      <div className="mt-1.5">
-                        <Comments v={v} />
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
+      {view === "current" ? (
+        <section aria-labelledby="prova-title">{currentBlock}</section>
+      ) : view === "versions" ? (
+        <section aria-label="Outras versões">{versionsBlock}</section>
       ) : (
         <section aria-labelledby="galeria-title" className="space-y-4">
           <h2 id="galeria-title" className="font-display text-[22px] text-ink">

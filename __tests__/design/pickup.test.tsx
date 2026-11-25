@@ -8,6 +8,9 @@ import { projects } from "@/lib/portal/mock-data";
 import type { DesignSpec } from "@/lib/design/spec";
 import type { Phase } from "@/lib/portal/types";
 
+vi.mock("@/lib/approvals/actions", () => ({ respondToApproval: vi.fn() }));
+vi.mock("@/lib/design/actions", () => ({ requestExtraRound: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null }));
 vi.mock("@/app/cliente/_components/DesignFinalFiles", () => ({ DesignFinalFiles: () => <p>ficheiros digitais</p> }));
 
@@ -22,14 +25,8 @@ const at = (key: string, spec: Partial<DesignSpec> = {}) => {
 afterEach(cleanup);
 
 describe("DesignPickup", () => {
-  it("antes da produção: só a linha do levantamento previsto (TEL-30 A)", () => {
-    at("revisoes");
-    expect(screen.getByText(/Levantamento previsto:/).textContent).toContain("Loja GeniusFrela, Talatona");
-    expect(screen.queryByText("Pronto para levantar")).toBeNull();
-  });
-
-  it("sem data de levantamento antes da produção, não aparece", () => {
-    const { container } = at("revisoes", { pickupAt: null });
+  it("antes da produção não aparece: o levantamento previsto vai no painel de decisão (M7-07)", () => {
+    const { container } = at("revisoes");
     expect(container.innerHTML).toBe("");
   });
 

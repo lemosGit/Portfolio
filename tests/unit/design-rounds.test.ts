@@ -1,6 +1,7 @@
 /** M7-03: rondas de revisão — rótulo, aviso antes de pedir alterações e orçamento do Design. */
 import { describe, expect, it } from "vitest";
-import { changesNotice, extraRequestMessage, roundsLabel } from "@/lib/design/rounds";
+import { changesNotice, extraRequestMessage, remainingNotice, roundsLabel } from "@/lib/design/rounds";
+import { proofReadyTitle } from "@/lib/design/proofs";
 import { readQuote } from "@/lib/quotes/model";
 
 describe("roundsLabel", () => {
@@ -39,5 +40,20 @@ describe("readQuote — rondas do Design (RN-35, Q-103)", () => {
   });
   it("nos outros serviços não mexe nas rondas", () => {
     expect(read({ total: "90000", servico: "academic" })).not.toHaveProperty("rounds_included");
+  });
+});
+
+describe("remainingNotice e proofReadyTitle (M7-07, wireframe TEL-30)", () => {
+  it("revisões que ainda cabem no preço", () => {
+    expect(remainingNotice({ included: 2, used: 1, remaining: 1 })).toBe("Ainda pode pedir 1 revisão incluída no preço.");
+    expect(remainingNotice({ included: 3, used: 0, remaining: 3 })).toBe("Ainda pode pedir 3 revisões incluídas no preço.");
+    expect(remainingNotice({ included: 2, used: 2, remaining: 0 })).toBe("Já usou as revisões incluídas: uma nova revisão é um extra.");
+    expect(remainingNotice({ included: 0, used: 0, remaining: 0 })).toBe("Este orçamento não inclui revisões: uma revisão é um extra.");
+  });
+  it("título da versão pronta", () => {
+    expect(proofReadyTitle("V1")).toBe("A primeira versão está pronta");
+    expect(proofReadyTitle("V2")).toBe("A segunda versão está pronta");
+    expect(proofReadyTitle("V7")).toBe("A versão 7 está pronta");
+    expect(proofReadyTitle(null)).toBe("A nova versão está pronta");
   });
 });
