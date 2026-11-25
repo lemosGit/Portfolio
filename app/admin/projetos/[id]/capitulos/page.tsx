@@ -68,8 +68,10 @@ export default async function ChaptersPage({ params }: { params: Promise<{ id: s
           </div>
         ) : (
           <ol className="space-y-2">
+            {/* M6-99: a chave muda com o estado e o título; senão o React 19 repõe o formulário no valor
+                antigo depois de guardar (o seletor voltava a "Por iniciar"). */}
             {sections.map((s) => (
-              <SectionItem key={s.id} s={s} />
+              <SectionItem key={`${s.id}:${s.status}:${s.title}`} s={s} />
             ))}
           </ol>
         )}
