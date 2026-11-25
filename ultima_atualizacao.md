@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M6-03 Implementar o progresso por capítulos e secções | #56 | `supabase/migrations/0010_academic_sections.sql`, `lib/academic/chapters.ts`, `app/admin/projetos/[id]/capitulos/page.tsx` |
-| ⏭️ Próxima | M6-04 Ligar o orçamento e o aceite ao bloco Aprovações | #57 | — |
+| ✅ Última feita | M6-04 Ligar o orçamento e o aceite ao bloco Aprovações | #57 | `supabase/migrations/0011_quote_gate.sql`, `lib/quotes/model.ts`, `app/admin/projetos/[id]/orcamento/page.tsx`, `app/cliente/_components/ApprovalCard.tsx` |
+| ⏭️ Próxima | M6-05 Permitir aprovar o índice proposto | #58 | — |
 | ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -87,3 +87,4 @@
 | 2026-11-25 | M6-01 | #54 | Ficha do trabalho académico: migração 0009 (aplicada em produção), formulário no projeto do admin, bloco "Ficha do trabalho" em "ver detalhes" no cliente; 5 unitários, 1 E2E, SQL 0009 + RLS; captura do Académico aprovada; R-06 confirmado feito (Q-094, D-149) | `supabase/migrations/0009_academic_briefs.sql`, `lib/academic/brief.ts`, `app/admin/_components/AcademicBriefForm.tsx`, `app/cliente/_blocks/academic.tsx` |
 | 2026-11-25 | M6-02 | #55 | Contagem do prazo em destaque: dias / horas / atraso em hora de Luanda, "Prazo próximo" e "Atrasada" na cor do módulo, prazo ajustado (RN-21/23), "Prazo por definir"; 6 unitários, 1 E2E; captura aprovada (Q-095, D-150) | `lib/academic/countdown.ts`, `app/cliente/_blocks/academic.tsx` |
 | 2026-11-25 | M6-03 | #56 | Capítulos: migração 0010 (aplicada em produção), página do admin (acrescentar, copiar do índice aprovado, editar, reordenar, apagar), % da fase Desenvolvimento pelos capítulos, bloco "Capítulos" no cliente; 6 unitários, 1 E2E, SQL 0010 + RLS; captura aprovada (Q-096, D-151) | `supabase/migrations/0010_academic_sections.sql`, `lib/academic/chapters.ts`, `app/admin/projetos/[id]/capitulos/page.tsx`, `app/cliente/_blocks/academic.tsx` |
+| 2026-11-25 | M6-04 | #57 | Orçamento e aceite: migração 0011 (travão do aceite, aplicada), página Orçamento no admin, cartão "Aceitar" com a regra do sinal no cliente, histórico "aceitou"; 6 unitários, 1 E2E, SQL 0011 (Q-097, D-152) | `supabase/migrations/0011_quote_gate.sql`, `lib/quotes/model.ts`, `app/admin/projetos/[id]/orcamento/page.tsx`, `app/cliente/_components/ApprovalCard.tsx` |

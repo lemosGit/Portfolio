@@ -104,6 +104,7 @@ Consulta: Supabase MCP `get_advisors(security)` na M5-13 (2026-11-24) para o T15
 Issue criada com confirmação (2026-11-25): #132 [M9-07] Reduzir o tempo de resposta das páginas e ações do admin (limitação L3 da v0.1.0), também em `scripts/tarefas.py` e no quadro #9.
 | Q-095 | 2026-11-25 | M6 | M6-02: aprovar a captura do Académico com a contagem do prazo (12 dias em destaque, âmbar, depois da barra de fases)? | Sim (vista e aprovada) | D-150, `tests/e2e/__screenshots__/…/academico-visao-geral-*.png` |
 | Q-096 | 2026-11-25 | M6 | M6-03: aprovar a captura do Académico com o bloco "Capítulos" e aplicar a migração 0010 em produção? | Sim aos dois; 0010 aplicada (tabela vazia, RLS, 4 políticas, anon sem EXECUTE), Security Advisor sem avisos novos | D-151, `supabase/migrations/0010_academic_sections.sql` |
+| Q-097 | 2026-11-25 | M6 | M6-04: travar na BD o início do trabalho sem orçamento aceite (RN-11)? Incluir já "substituir orçamento aceite com motivo"? Aplicar a 0011? | Travar na BD (migração 0011, aplicada); substituir um aceite fica para quando for preciso; retirar um enviado entra | D-152, `supabase/migrations/0011_quote_gate.sql` |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
