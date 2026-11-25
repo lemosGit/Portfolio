@@ -4,7 +4,8 @@ import { useState } from "react";
 import { SERVICE_TYPES } from "@/lib/admin/project-form";
 import type { ServiceType } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
-import { Field, inputCls } from "./forms";
+import { Field } from "./forms";
+import { inputCls } from "./styles";
 
 /**
  * Tipo de serviço ao criar um projeto (RF-30.01, obrigatório) e o repositório GitHub,

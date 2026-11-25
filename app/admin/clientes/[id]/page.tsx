@@ -5,7 +5,8 @@ import { createProject, deleteClient, resetClientPassword, setClientSuspended, u
 import { getClientById } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate } from "@/lib/portal/format";
-import { ActionForm, ConfirmDelete, Field, inputCls } from "../../_components/forms";
+import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
+import { inputCls } from "../../_components/styles";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AccessBadge, AdminHeader, Empty, ProjectStatusBadge, Section } from "../../_components/ui";
 

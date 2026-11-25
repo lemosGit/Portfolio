@@ -86,7 +86,7 @@ export function ApprovalCard({ a }: { a: Approval }) {
               onChange={(e) => setComment(e.target.value)}
               rows={3}
               maxLength={2000}
-              className="field h-auto w-full py-2.5"
+              className="field"
               placeholder="Ex.: falta o capítulo da metodologia"
             />
           </label>

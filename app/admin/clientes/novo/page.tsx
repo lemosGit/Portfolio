@@ -1,6 +1,7 @@
 import { createClientAccount } from "@/lib/admin/actions";
 import { requireAdmin } from "@/lib/admin/session";
-import { ActionForm, Field, inputCls } from "../../_components/forms";
+import { ActionForm, Field } from "../../_components/forms";
+import { inputCls } from "../../_components/styles";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Section } from "../../_components/ui";
 

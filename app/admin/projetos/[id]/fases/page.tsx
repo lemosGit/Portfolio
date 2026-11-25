@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { advancePhase, reopenPreviousPhase, setPhaseStatus, updatePhaseDetails } from "@/lib/admin/actions";
+import { setPhaseStatus, updatePhaseDetails } from "@/lib/admin/actions";
 import { getProjectById } from "@/lib/admin/data";
 import {
   ACTION_LABEL,
@@ -17,7 +17,9 @@ import {
 import { requireAdmin } from "@/lib/admin/session";
 import { relative, shortDate } from "@/lib/portal/format";
 import type { DbPhaseState } from "@/lib/portal/types";
-import { ActionForm, Field, inputCls } from "../../../_components/forms";
+import { ActionForm, Field } from "../../../_components/forms";
+import { PhaseNav } from "../../../_components/PhaseNav";
+import { inputCls } from "../../../_components/styles";
 import { AdminHeader, Badge, Empty, NotifyClient, Section } from "../../../_components/ui";
 
 export const metadata = { title: "Fases do projeto" };
@@ -90,31 +92,13 @@ export default async function PhasesPage({ params }: { params: Promise<{ id: str
         title={cur ? `Fase atual · ${cur.position}. ${cur.name}` : "Todas as fases fechadas"}
         description="Avançar conclui a fase atual e inicia a seguinte que está por iniciar. Recuar reabre a última fase concluída."
       >
-        <div className="grid gap-4 lg:grid-cols-2">
-          {cur ? (
-            <ActionForm action={advancePhase} submit={`Concluir “${cur.name}” e avançar`} pendingLabel="A avançar…">
-              <input type="hidden" name="projeto" value={p.id} />
-              <input type="hidden" name="fase" value={cur.id} />
-              <p className="text-sm text-ink-dim">
-                Estado: <Badge tone={PHASE_TONE[cur.status]}>{PHASE_LABEL[cur.status]}</Badge>
-              </p>
-              <NotifyClient />
-            </ActionForm>
-          ) : (
-            <Empty>Não há fases por concluir.</Empty>
-          )}
-          {"error" in back ? (
-            <p className="text-sm text-ink-faint">{back.error}</p>
-          ) : (
-            <ActionForm action={reopenPreviousPhase} variant="quiet" submit={`Reabrir “${back.name}”`} pendingLabel="A reabrir…">
-              <input type="hidden" name="projeto" value={p.id} />
-              <Field label="Motivo (obrigatório)" hint="Fica no histórico da fase.">
-                <input name="motivo" required maxLength={500} className={inputCls} placeholder="Ex.: o cliente pediu para rever o índice" />
-              </Field>
-              <NotifyClient />
-            </ActionForm>
-          )}
-        </div>
+        <PhaseNav
+          projectId={p.id}
+          current={cur ? { id: cur.id, name: cur.name, state: <Badge tone={PHASE_TONE[cur.status]}>{PHASE_LABEL[cur.status]}</Badge> } : null}
+          back={"error" in back ? { error: back.error } : { name: back.name }}
+          notify={<NotifyClient />}
+          empty={<Empty>Não há fases por concluir.</Empty>}
+        />
       </Section>
 
       <Section title="Todas as fases">

@@ -4,7 +4,8 @@ import { getProjectById } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { KIND_LABEL, VIEW_LABEL, kz, loadPayments, paymentView, todayLuanda, totals, type Payment, type PaymentView } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
-import { ActionForm, Field, inputCls } from "../../../_components/forms";
+import { ActionForm, Field } from "../../../_components/forms";
+import { inputCls } from "../../../_components/styles";
 import { AdminHeader, Badge, Empty, NotifyClient, Section } from "../../../_components/ui";
 
 export const metadata = { title: "Pagamentos do projeto" };
