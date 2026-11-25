@@ -155,8 +155,8 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 ## 6. Lacunas encontradas ao escrever o plano
 | # | Lacuna | US / RF | Prioridade | Proposta |
 |---|---|---|---|---|
-| G1 | **Aviso fora do horário de atendimento** na página de mensagens não existe | US-019 / RF-30.63 (Should) | Should | Implementar antes do G3 (texto e horário já decididos: D-036, RN-51/52) |
-| G2 | **Lembrete por email** de uma ação do cliente pendente há 2 dias não existe | US-020 / RF-30.64 (Should) | Should | Implementar na limpeza diária (cron) ou deixar para a v1.2; decisão do João |
+| G1 | **Aviso fora do horário de atendimento** na página de mensagens não existe | US-019 / RF-30.63 (Should) | Should | **Decidido (Q-108): implementar já, antes da M9-02** (texto e horário já decididos: D-036, RN-51/52) |
+| G2 | **Lembrete por email** de uma ação do cliente pendente há 2 dias não existe | US-020 / RF-30.64 (Should) | Should | **Decidido (Q-108): v1.2**, depois de o envio real dos emails funcionar (L1, G3) |
 | G3 | **Envio real dos emails** (Resend) nunca foi testado de ponta a ponta; nos testes M os avisos vão desligados | US-013, US-018, US-020 / RF-30.35, RF-30.61, RF-30.62 | Should | Um ciclo com os avisos ligados para um email de teste, depois de definir `EMAIL_FROM` (L1) |
 | G4 | **Seletor de projetos** (US-006) sem teste automático | US-006 | Must | E2E com um cliente de demonstração com 2 projetos, ou ciclo M na M9-03 |
 | G5 | **"Concluir e avançar" não é atómico** (L4 da v0.3) | US-005 | Must | Avaliar na M9-02: verificar o travão antes de concluir a fase atual |

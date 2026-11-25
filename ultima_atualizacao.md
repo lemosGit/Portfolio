@@ -7,7 +7,7 @@
 |---|---|---|---|
 | ✅ Última feita | M9-01 Escrever o plano de testes a partir dos critérios | #74 | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
 | ⏭️ Próxima | M9-02 Testar de ponta a ponta o fluxo Académico | #75 | — |
-| ❓ Perguntas em aberto | **Aprovar as capturas do Design (M7-07, Q-106) e a `publico-design` (M7-08, Q-107)** · **Q-108: aviso fora do horário e lembrete de 2 dias (G1, G2) — implementar antes do G3 ou v1.2?** · **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ❓ Perguntas em aberto | **Aprovar as capturas do Design (M7-07, Q-106) e a `publico-design` (M7-08, Q-107)** · **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -108,4 +108,4 @@
 ## 🗒️ Registo — M9 Integração & QA
 | Data | Código | Issue | Tarefa | Entregáveis |
 |------|--------|-------|--------|-------------|
-| 2026-11-25 | M9-01 | #74 | Plano de testes (D-170): 36 casos (CT-001…036) a partir dos critérios das US, mais concorrência e RNF; nível, ficheiro automatizado, estado e o que falta por tarefa; dados de teste por serviço (demonstração, BD, produção, ficheiros gerados); 30 de 36 US automatizadas, lacunas G1…G6 (Q-108 em aberto). Pós-v0.3: 0018 aplicada em produção, V3 de teste apagada (L6) | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
+| 2026-11-25 | M9-01 | #74 | Plano de testes (D-170): 36 casos (CT-001…036) a partir dos critérios das US, mais concorrência e RNF; nível, ficheiro automatizado, estado e o que falta por tarefa; dados de teste por serviço (demonstração, BD, produção, ficheiros gerados); 30 de 36 US automatizadas, lacunas G1…G6 (Q-108: G1 já, G2 na v1.2). Pós-v0.3: 0018 aplicada em produção, V3 de teste apagada (L6) | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
