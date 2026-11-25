@@ -6,7 +6,7 @@
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
 | ✅ Última feita | M5-09b Gerar miniaturas WebP e limpar ficheiros diariamente | #122 | `lib/files/browser-images.ts`, `lib/files/cleanup.ts`, `app/api/cron/limpeza/route.ts`, `supabase/migrations/0008_files_retention.sql` |
-| ⏭️ Próxima | Fechar o teste em produção (marcar o extra como pago, apagar os dados de teste) → M5-99 Demo e entrega parcial v0.1 | #53 | — |
+| ⏭️ Próxima | M6-01 Implementar a ficha do trabalho académico (v0.2.0) | #54 | — |
 | ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -83,3 +83,4 @@
 | 2026-11-24 | M5-09b | #122 | Miniaturas WebP no browser validadas no servidor, "Original" só a pedido, fotos do cliente reduzidas; limpeza diária (aviso por email, purga aos 90 dias, órfãos), "Adiar 30 dias" e nota ao cliente; migração 0008 aplicada em produção; 7 unitários, T13 em E2E, SQL da retenção (Q-091, Q-092, D-146, D-147) | `lib/files/`, `app/api/cron/limpeza/route.ts`, `vercel.json`, `supabase/migrations/0008_files_retention.sql`, `supabase/tests/0008_retencao.sql` |
 | 2026-11-25 | M5 | #129 | Integração da M5 na `main` (merge do #129) e teste em produção pelo Chrome: admin (cliente Académico, fases, ficheiros com miniatura, aprovação, extra, link mágico) e cliente (entrada pelo link, aprovar em 2 passos, aceitar o extra, enviar referência) | PR #129 |
 | 2026-11-25 | M5 | — | Correções do teste em produção: mensagem do Avançar/Reabrir e estilo dos textareas e campos do admin (D-148) | `app/admin/_components/PhaseNav.tsx`, `app/admin/_components/styles.ts`, `app/globals.css` |
+| 2026-11-25 | M5-99 | #53 | Demo v0.1 em produção (Académico e Design de teste, Tech real), notas de versão com 9 limitações conhecidas (Q-093) | `docs/06-entrega/releases/v0.1.0.md` |
