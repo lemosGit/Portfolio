@@ -1,6 +1,7 @@
 import type { AdjustmentRequest } from "@/lib/academic/adjustments";
 import type { Section } from "@/lib/academic/chapters";
 import type { AcademicBrief } from "@/lib/academic/brief";
+import type { DesignSpec } from "@/lib/design/spec";
 import type { Payment } from "@/lib/payments/model";
 import type { Approval } from "@/lib/approvals/model";
 /**
@@ -129,6 +130,8 @@ export type Project = {
   sections?: Section[];
   /** Ficha do trabalho académico (M6-01); só no Académico. */
   academicBrief?: AcademicBrief;
+  /** Ficha técnica da peça (M7-01); só no Design. */
+  designSpec?: DesignSpec;
   /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
   filesPurgeOn?: string;
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */

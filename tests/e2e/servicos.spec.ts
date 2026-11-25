@@ -55,4 +55,16 @@ test.describe("Design (M5-14)", () => {
     }
     expect(errors).toEqual([]);
   });
+
+  test("Ficha técnica: tipo e evento no topo, detalhes atrás de 'Ver detalhes da peça' (M7-01)", async ({ page }) => {
+    await page.goto("/cliente");
+    await expect(page.locator("header").getByText("Convite impresso · evento a 19 de dezembro de 2026")).toBeVisible();
+    const block = page.getByRole("region", { name: "Ficha técnica" });
+    await expect(block.getByText("Papel couché 300 g")).toBeHidden();
+    await block.getByText("Ver detalhes da peça").click();
+    await expect(block.getByText("Papel couché 300 g")).toBeVisible();
+    await expect(block.getByText("Ana & Paulo")).toBeVisible();
+    await page.goto("/cliente/projeto");
+    await expect(page.getByText("Ver detalhes da peça")).toBeVisible();
+  });
 });

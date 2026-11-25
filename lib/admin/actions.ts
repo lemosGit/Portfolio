@@ -15,6 +15,7 @@ import { digest } from "@/lib/access/digest";
 import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { postponeTo } from "@/lib/files/retention";
+import { readSpec } from "@/lib/design/spec";
 import { readBrief } from "@/lib/academic/brief";
 import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
 import { readQuote } from "@/lib/quotes/model";
@@ -1011,6 +1012,23 @@ export async function saveAcademicBrief(_p: AdminState, f: FormData): Promise<Ad
   if (error) return { error: `Não foi possível guardar a ficha: ${error.message}` };
   refresh();
   return { ok: true, message: "Ficha do trabalho guardada." };
+}
+
+/* ───────────── Ficha técnica da peça de Design (M7-01, RF-20.10, RF-20.11) ───────────── */
+
+export async function saveDesignSpec(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const spec = readSpec((k) => str(f, k));
+  if ("error" in spec) return spec;
+  // A BD recusa fichas fora de projetos Design (F1), valida os domínios e trata a fase Produção (F2).
+  const { error } = await sb.from("design_specs").upsert({ project_id: projectId, ...spec }, { onConflict: "project_id" });
+  if (error) return { error: `Não foi possível guardar a ficha técnica: ${error.message}` };
+  refresh();
+  return {
+    ok: true,
+    message: spec.has_print ? "Ficha técnica guardada." : "Ficha técnica guardada. Sem impressão, a fase Produção fica “não se aplica”.",
+  };
 }
 
 /* ───────────── Capítulos do trabalho académico (M6-03, RF-10.30, RF-10.40) ───────────── */

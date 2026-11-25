@@ -22,6 +22,8 @@ export type BlockId =
   | "aca-countdown"
   | "aca-chapters"
   | "aca-adjustments"
+  // Design (M7)
+  | "des-spec"
   // Pagamentos compactos (wireframe Académico, M6-07): o que falta + "Ver pagamentos"
   | "payments-compact";
 
@@ -81,8 +83,8 @@ export const SERVICE_LAYOUTS: Record<ServiceType, ServiceLayout> = {
   design: {
     label: "Design",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A última prova e as rondas entram com a M7.
-    pages: { overview: ["phase-bar", "next-step", "approvals", "payments"] },
+    // A última prova e as rondas entram com a M7; a ficha técnica fica no fim, atrás de "ver detalhes" (RF-20.12).
+    pages: { overview: ["phase-bar", "next-step", "approvals", "payments", "des-spec"] },
   },
 };
 
