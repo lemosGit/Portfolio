@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M6-08 Criar a página pública do serviço Académico | #61 | `app/servicos/academico/page.tsx`, `components/Services.tsx`, `components/Projects.tsx` |
-| ⏭️ Próxima | M6-09 Testar os componentes do Académico | #62 | — |
+| ✅ Última feita | M6-09 Testar os componentes do Académico | #62 | `__tests__/academico/` |
+| ⏭️ Próxima | M6-99 Demo e entrega parcial v0.2 — módulo Académico | #63 | — |
 | ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -92,3 +92,4 @@
 | 2026-11-25 | M6-06 | #59 | Entrega final e ajustes: migração 0012 (aplicada), disponibilizar a entrega no admin, resolver/recusar pedidos, contagem dos dias de ajustes e bloco "Ajustes" no cliente, emails, conclusão automática na limpeza diária; 5 unitários, SQL 0012 + RLS (Q-098, D-154) | `supabase/migrations/0012_adjustments.sql`, `lib/academic/adjustments.ts`, `lib/academic/actions.ts`, `app/admin/_components/AdminAdjustments.tsx`, `app/cliente/_blocks/academic.tsx`, `lib/files/cleanup.ts` |
 | 2026-11-25 | M6-07 | #60 | Layout Académico fiel ao wireframe: grelha da Visão geral (telemóvel e computador), capítulos no próximo passo, pagamentos compactos, "Ver detalhes do trabalho", página Projeto TEL-11; 360 px sem scroll horizontal (E2E); captura nova da página Projeto e da Visão geral aprovadas (Q-099, D-155) | `lib/portal/service-layouts.ts`, `app/cliente/_blocks/`, `app/cliente/_components/PhasesProject.tsx` |
 | 2026-11-25 | M6-08 | #61 | Página pública do Académico (7 fases, tipos de trabalho, normas, o que o cliente vê no portal, WhatsApp, sem preços), secção Serviços com 3 cartões, filtro do Portfólio por serviço com estado vazio; correção da hidratação do `ProfilePhoto` (Q-100, D-156). 6 testes E2E novos e a captura `publico-academico` | `app/servicos/academico/page.tsx`, `components/Services.tsx`, `components/Projects.tsx`, `tests/e2e/publico.spec.ts` |
+| 2026-11-25 | M6-09 | #62 | 26 testes de componentes (Testing Library + jsdom, D-157): contagem do prazo nos limites (4/3 dias, horas, 23:30, meia-noite, prazo ajustado, por definir, janela de ajustes), progresso por capítulos (próximo passo, bloco, TEL-11, sem capítulos), ajustes (último minuto, 00:00 do dia seguinte bloqueado, dia de Luanda, histórico, formulário com 10 caracteres, sucesso e erro). Vitest: 124 testes | `__tests__/academico/`, `vitest.config.ts` |
