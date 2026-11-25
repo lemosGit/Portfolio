@@ -1,11 +1,13 @@
 // @vitest-environment jsdom
 /** M7-01: bloco "Ficha técnica" do Design — atrás de "Ver detalhes da peça" (RF-20.12). */
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DesignSpecBlock } from "@/app/cliente/_blocks/design";
 import { toView } from "@/lib/portal/data";
 import { projects } from "@/lib/portal/mock-data";
 import type { DesignSpec } from "@/lib/design/spec";
+
+vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null })); // lê ficheiros no servidor
 
 const base = projects.find((p) => p.id === "p_convite")!;
 const show = (over: Partial<DesignSpec> | null) =>

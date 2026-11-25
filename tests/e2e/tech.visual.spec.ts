@@ -51,6 +51,11 @@ test.describe("@visual Design — referência", () => {
     await page.evaluate(() => document.fonts.ready);
     await expect(page).toHaveScreenshot("design-visao-geral.png", { fullPage: true });
   });
+  test("Design Projeto @visual", async ({ page }) => {
+    await page.goto("/cliente/projeto");
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page).toHaveScreenshot("design-projeto.png", { fullPage: true });
+  });
 });
 
 test.describe("@visual Portal público — referência", () => {
