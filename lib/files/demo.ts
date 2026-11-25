@@ -35,12 +35,12 @@ const DEMO: Record<string, FileSeries[]> = {
       phase: { key: "revisoes", name: "Revisões", position: 4 },
       versions: [
         { deliverableId: "d_conv2", versionNo: 2, label: "V2", notes: "Nomes maiores e a data corrigida para sábado.", uploadedBy: "admin", createdAt: at(-1, 15), locked: false, purged: false, files: [
-          { id: "fx_c2f", name: "convite-v2-frente.jpg", mime: "image/jpeg", size: 2_400_000, purged: false },
-          { id: "fx_c2v", name: "convite-v2-verso.jpg", mime: "image/jpeg", size: 2_100_000, purged: false },
+          { id: "fx_c2f", name: "convite-v2-frente.jpg", mime: "image/jpeg", size: 2_400_000, purged: false, thumbUrl: "/demo/provas/convite-v2-frente.svg" },
+          { id: "fx_c2v", name: "convite-v2-verso.jpg", mime: "image/jpeg", size: 2_100_000, purged: false, thumbUrl: "/demo/provas/convite-v2-verso.svg" },
         ] },
         { deliverableId: "d_conv1", versionNo: 1, label: "V1", notes: null, uploadedBy: "admin", createdAt: at(-5, 11), locked: false, purged: false, files: [
-          { id: "fx_c1f", name: "convite-v1-frente.jpg", mime: "image/jpeg", size: 2_300_000, purged: false },
-          { id: "fx_c1v", name: "convite-v1-verso.jpg", mime: "image/jpeg", size: 2_000_000, purged: false },
+          { id: "fx_c1f", name: "convite-v1-frente.jpg", mime: "image/jpeg", size: 2_300_000, purged: false, thumbUrl: "/demo/provas/convite-v1-frente.svg" },
+          { id: "fx_c1v", name: "convite-v1-verso.jpg", mime: "image/jpeg", size: 2_000_000, purged: false, thumbUrl: "/demo/provas/convite-v1-verso.svg" },
         ] },
       ],
     },

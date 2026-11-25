@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M7-01 Implementar a ficha técnica da peça | #64 | `supabase/migrations/0014_design_specs.sql`, `lib/design/spec.ts`, `app/admin/_components/DesignSpecForm.tsx`, `app/cliente/_blocks/design.tsx` |
-| ⏭️ Próxima | M7-02 Implementar a galeria de provas | #65 | — |
+| ✅ Última feita | M7-02 Implementar a galeria de provas | #65 | `lib/design/proofs.ts`, `app/cliente/_components/ProofViewer.tsx`, `app/cliente/_components/ProofGallery.tsx` |
+| ⏭️ Próxima | M7-03 Implementar as rondas de revisão com comentários | #66 | — |
 | ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -95,3 +95,4 @@
 | 2026-11-25 | M6-09 | #62 | 26 testes de componentes (Testing Library + jsdom, D-157): contagem do prazo nos limites (4/3 dias, horas, 23:30, meia-noite, prazo ajustado, por definir, janela de ajustes), progresso por capítulos (próximo passo, bloco, TEL-11, sem capítulos), ajustes (último minuto, 00:00 do dia seguinte bloqueado, dia de Luanda, histórico, formulário com 10 caracteres, sucesso e erro). Vitest: 124 testes | `__tests__/academico/`, `vitest.config.ts` |
 | 2026-11-25 | M6-99 | #63 | Teste em produção: "Monografia de teste v0.2" percorre as 7 fases (admin e cliente pelo link mágico, RN-14 recusa a entrega sem o restante). 3 defeitos corrigidos: prazo ajustado só depois do aceite e por 24 h completas (migração 0013, Q-101, D-158), texto dos pagamentos compactos e formulário dos capítulos (D-159). Notas da v0.2.0 | `docs/06-entrega/releases/v0.2.0.md`, `supabase/migrations/0013_adjusted_due_rule.sql` |
 | 2026-11-25 | M7-01 | #64 | Ficha técnica da peça: migração 0014 (`design_specs`, F1, F2 salta a Produção sem impressão, F5, auditoria, RLS), formulário no admin (textos "Rótulo: texto", sugestão da impressão pelo tipo), bloco "Ver detalhes da peça" e tipo + evento no topo (Q-102, D-160). Teste SQL 0014, 13 unitários/componentes, 1 E2E; captura `design-visao-geral` atualizada | `supabase/migrations/0014_design_specs.sql`, `lib/design/spec.ts`, `app/cliente/_blocks/design.tsx` |
+| 2026-11-25 | M7-02 | #65 | Galeria de provas (D-161): prova atual em grande na Visão geral, versões lado a lado/carrossel no Projeto, ampliar e comparar em `<dialog>`, original a pedido; correção de um efeito do React que partia a página ao fechar o "Ampliar". 5 unitários, 1 E2E; capturas `design-visao-geral` atualizada e `design-projeto` nova | `lib/design/proofs.ts`, `app/cliente/_components/ProofViewer.tsx`, `public/demo/provas/` |

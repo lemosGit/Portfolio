@@ -4,6 +4,7 @@
 import { PIECE_TYPES, sizeLabel } from "@/lib/design/spec";
 import { longDate } from "@/lib/portal/format";
 import { Details } from "../_components/Details";
+import { ProofGallery } from "../_components/ProofGallery";
 import type { BlockProps } from "./types";
 
 /**
@@ -58,4 +59,9 @@ export function DesignSpecBlock({ project }: BlockProps) {
       </Details>
     </section>
   );
+}
+
+/** Bloco "des-proof" (M7-02, RF-20.05, RF-20.80): a prova atual em grande e as outras versões (TEL-30). */
+export function DesignProof({ project }: BlockProps) {
+  return <ProofGallery project={project} view="overview" />;
 }

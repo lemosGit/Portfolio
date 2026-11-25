@@ -67,4 +67,36 @@ test.describe("Design (M5-14)", () => {
     await page.goto("/cliente/projeto");
     await expect(page.getByText("Ver detalhes da peça")).toBeVisible();
   });
+
+  test("Galeria de provas: V2 atual em grande, ampliar, comparar e carrossel no Projeto (M7-02)", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto("/cliente");
+    const proof = page.getByRole("region", { name: "Convite V2, a versão atual" });
+    await expect(proof.getByText("V2, atual", { exact: false })).toBeVisible();
+    await expect(proof.getByRole("img", { name: "Convite V2: convite-v2-frente.jpg" })).toBeVisible();
+    // frente / verso
+    await proof.getByRole("button", { name: "Verso" }).click();
+    await expect(proof.getByRole("img", { name: "Convite V2: convite-v2-verso.jpg" })).toBeVisible();
+    // ampliar: miniatura em grande e o original só a pedido, com o tamanho
+    await proof.getByRole("button", { name: "Ampliar Convite V2" }).click();
+    const zoom = page.getByRole("dialog", { name: "Convite V2" });
+    // frente e verso, cada uma com o original a pedido e o tamanho à vista
+    await expect(zoom.getByRole("button", { name: /^Descarregar original \(\d/ })).toHaveCount(2);
+    await zoom.getByRole("button", { name: "Fechar" }).click();
+    await expect(zoom).toBeHidden();
+    // comparar com a V1, com o pedido que levou à V2
+    await proof.getByRole("button", { name: "Comparar com a V2" }).click();
+    const cmp = page.getByRole("dialog", { name: "Comparar V1 e V2" });
+    await expect(cmp.getByText("O seu pedido:", { exact: false })).toContainText("Os nomes podem ser maiores?");
+    await page.keyboard.press("Escape");
+    await expect(cmp).toBeHidden();
+    // Projeto (TEL-31): as versões lado a lado, a atual marcada
+    await page.goto("/cliente/projeto");
+    const list = page.getByRole("list", { name: "Versões" });
+    await expect(list.getByRole("listitem")).toHaveCount(2);
+    await expect(list.getByText("V2, atual")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Comparar V1 e V2" })).toBeVisible();
+    expect(errors).toEqual([]);
+  });
 });

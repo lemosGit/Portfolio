@@ -10,6 +10,7 @@ import type { PhaseView, ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import { AcademicBrief } from "../_blocks/academic";
 import { DesignSpecBlock } from "../_blocks/design";
+import { ProofGallery } from "./ProofGallery";
 import { StateChip } from "../_blocks/common";
 
 const CHAPTER_TEXT = { concluido: "Pronto", em_curso: "A escrever", por_iniciar: "Por começar" } as const;
@@ -40,6 +41,8 @@ export function PhasesProject({ project }: { project: ProjectView }) {
   const sections = academic && project.academicBrief?.usesChapters !== false ? (project.sections ?? []) : [];
   return (
     <div className="space-y-6">
+      {/* TEL-31 (M7-02): no Design, a galeria de provas vem antes das fases. */}
+      {project.serviceType === "design" && <ProofGallery project={project} view="gallery" />}
       <section aria-labelledby="fases-lista" className="panel p-5 sm:p-7">
         <h2 id="fases-lista" className="font-display text-[22px] text-ink">
           {academic ? "O seu trabalho" : "O seu projeto"}
