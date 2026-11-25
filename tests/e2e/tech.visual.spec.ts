@@ -52,3 +52,15 @@ test.describe("@visual Design — referência", () => {
     await expect(page).toHaveScreenshot("design-visao-geral.png", { fullPage: true });
   });
 });
+
+test.describe("@visual Portal público — referência", () => {
+  test("Página do Académico @visual", async ({ page }) => {
+    await page.goto("/servicos/academico");
+    await page.evaluate(() => document.fonts.ready);
+    // percorre a página para as entradas progressivas (whileInView) aparecerem antes da captura
+    for (let y = 0; y < 8000; y += 500) await page.mouse.wheel(0, 500);
+    await page.waitForTimeout(1200);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page).toHaveScreenshot("publico-academico.png", { fullPage: true });
+  });
+});

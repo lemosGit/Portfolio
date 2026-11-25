@@ -14,6 +14,8 @@ const config: Config = {
           dim: "rgb(var(--c-ink-dim) / <alpha-value>)",
           faint: "rgb(var(--c-ink-faint) / <alpha-value>)",
         },
+        // Cores dos 3 serviços (DS V1, ADR-004), usadas no site público.
+        svc: { dev: "#4C8DFF", aca: "#E8B65A", design: "#A78BFA" },
         accent: {
           DEFAULT: "rgb(var(--c-accent) / <alpha-value>)",
           deep: "rgb(var(--c-accent-deep) / <alpha-value>)",

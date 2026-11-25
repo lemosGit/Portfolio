@@ -28,7 +28,7 @@ export function Contact() {
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <Reveal>
           <p className="eyebrow mb-6">
-            <span className="mr-3 text-ink-faint">05</span>Contacto
+            <span className="mr-3 text-ink-faint">06</span>Contacto
           </p>
           <h2 className="text-[clamp(2.2rem,5.4vw,4rem)] font-light leading-[1.08] tracking-tight">
             Vamos construir algo <span className="text-accent">extraordinário.</span>

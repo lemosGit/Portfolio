@@ -68,13 +68,13 @@ export function ProfilePhoto() {
       </div>
       <div aria-hidden className="absolute -inset-20 animate-spin-slower rounded-full border border-dashed border-accent/[0.07]" />
 
-      {/* partículas em órbita */}
-      {!reduce &&
-        PARTICLES.map((p, i) => (
+      {/* partículas em órbita: escondidas por CSS com movimento reduzido. Não usar `!reduce &&` aqui:
+          no servidor `useReducedMotion()` é null e a diferença partia a hidratação (React #418). */}
+      {PARTICLES.map((p, i) => (
           <motion.div
             key={i}
             aria-hidden
-            className="pointer-events-none absolute"
+            className="pointer-events-none absolute motion-reduce:hidden"
             style={{ inset: -p.r }}
             initial={{ rotate: p.a }}
             animate={{ rotate: p.a + (i % 2 ? -360 : 360) }}

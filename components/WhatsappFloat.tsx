@@ -10,7 +10,7 @@ import { EASE } from "@/lib/utils";
  * Botão flutuante do WhatsApp (canto inferior direito).
  * Aparece depois de passar o hero — lá já existe o botão "Pedir um projeto".
  */
-export function WhatsappFloat() {
+export function WhatsappFloat({ href = whatsappLink }: { href?: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function WhatsappFloat() {
     <AnimatePresence>
       {visible && (
         <motion.a
-          href={whatsappLink}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Pedir um projeto pelo WhatsApp (abre numa nova janela)"

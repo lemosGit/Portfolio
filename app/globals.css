@@ -289,6 +289,16 @@ section[id] {
     transform: translateY(-2px);
   }
 
+  /* Botão principal da página do Académico (âmbar #E8B65A, ADR-004; texto escuro ≥ 9:1). */
+  .btn-aca {
+    @apply relative inline-flex items-center gap-2.5 bg-svc-aca px-6 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-[#221a08] transition duration-300;
+    box-shadow: 0 0 36px -8px rgba(232, 182, 90, 0.55);
+  }
+  .btn-aca:hover {
+    box-shadow: 0 0 52px -6px rgba(232, 182, 90, 0.8);
+    transform: translateY(-2px);
+  }
+
   .btn-ghost {
     @apply inline-flex items-center gap-2.5 border border-accent/30 bg-accent/[0.04] px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] text-ink transition duration-300;
   }
