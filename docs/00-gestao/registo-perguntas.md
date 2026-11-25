@@ -99,6 +99,7 @@ Consulta: Supabase MCP `get_advisors(security)` na M5-13 (2026-11-24) para o T15
 | Q-090 | 2026-11-24 | M5 | M5-14: aprova a captura nova "Design Visão geral" e a do Login com as 3 contas de demonstração? | Sim (aprovadas depois de vistas) | D-145, `tests/e2e/__screenshots__/…/design-visao-geral-*.png`, `login-*.png` |
 | Q-091 | 2026-11-24 | M5 | #122: a RN-08 diz "pode adiar" e o ADR-003 diz "sem adiamento"; como fica? A quem vai o aviso dos 83 dias? | Botão "Adiar 30 dias" (repetível, migração 0008 com `files_keep_until`); email diário ao João com a lista + faixa no projeto do admin | D-146, D-147, `supabase/migrations/0008_files_retention.sql` |
 | Q-092 | 2026-11-24 | M5 | #122: aplicar a migração 0008 em produção pelo MCP? | Sim; aplicada (só acrescenta), 2 projetos intactos, consultas da limpeza verificadas só com leituras, Security Advisor sem avisos novos | D-147 |
+| Q-093 | 2026-11-25 | M5 | M5-99: como fazer a demo "um projeto de cada serviço" (os previews da Vercel pedem login e não há Design em produção)? Marcar a v0.1.0 no GitHub? | Demo em produção com dados de teste (Cliente de teste M5 — Académico; Cliente de teste Design — Design, criado pelo painel; Tech dos clientes reais); tag `v0.1.0` + GitHub Release depois do merge das notas | `docs/06-entrega/releases/v0.1.0.md` |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.
