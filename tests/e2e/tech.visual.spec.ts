@@ -68,4 +68,13 @@ test.describe("@visual Portal público — referência", () => {
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page).toHaveScreenshot("publico-academico.png", { fullPage: true });
   });
+
+  test("Página do Design @visual", async ({ page }) => {
+    await page.goto("/servicos/design");
+    await page.evaluate(() => document.fonts.ready);
+    for (let y = 0; y < 8000; y += 500) await page.mouse.wheel(0, 500);
+    await page.waitForTimeout(1200);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page).toHaveScreenshot("publico-design.png", { fullPage: true });
+  });
 });
