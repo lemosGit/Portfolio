@@ -3,6 +3,7 @@
  * para a primeira vista ter pouco texto (RF-30.12). Sem ficha, não aparece.
  */
 import { CITATION_STYLES, EDUCATION_LEVELS, WORK_TYPES } from "@/lib/academic/brief";
+import { SECTION_LABEL, chapterProgress } from "@/lib/academic/chapters";
 import { countdown } from "@/lib/academic/countdown";
 import { nowMs } from "@/lib/clock";
 import { longDate } from "@/lib/portal/format";
@@ -84,6 +85,42 @@ export function AcademicCountdown({ project }: BlockProps) {
         </p>
       )}
       {c.mode === "late" && <p className="mt-2 text-[13px] text-ink-faint">O João indica a nova data no próximo passo.</p>}
+    </section>
+  );
+}
+
+/**
+ * Bloco "aca-chapters" (M6-03, RF-10.41, RF-10.42): "X de Y capítulos" e o estado de cada um.
+ * Só o título e o estado, nunca o texto (D-015). Sem capítulos (trabalho curto) ou sem índice, não aparece:
+ * o progresso é o da fase (RF-10.43).
+ */
+export function AcademicChapters({ project }: BlockProps) {
+  const list = project.sections ?? [];
+  if (list.length === 0 || project.academicBrief?.usesChapters === false) return null;
+  const { done, total, ratio } = chapterProgress(list);
+  return (
+    <section aria-labelledby="capitulos-title" className="panel p-6 sm:p-7">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="capitulos-title" className="text-base font-medium text-ink">
+          Capítulos
+        </h2>
+        <p className="text-[14px] text-ink-dim">
+          <b className="font-semibold text-ink">{done} de {total}</b> concluídos
+        </p>
+      </div>
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden>
+        <i className="block h-full rounded-full bg-accent" style={{ width: `${Math.round(ratio * 100)}%` }} />
+      </div>
+      <Details label="Ver capítulos" className="mt-3">
+        <ol className="divide-y divide-line border-t border-line">
+          {list.map((s) => (
+            <li key={s.id} className="flex items-center justify-between gap-3 py-2.5 text-[14px]">
+              <span className={s.status === "concluido" ? "text-ink-dim" : "text-ink"}>{s.title}</span>
+              <StateChip tone={s.status === "concluido" ? "done" : s.status === "em_curso" ? "now" : "planned"}>{SECTION_LABEL[s.status]}</StateChip>
+            </li>
+          ))}
+        </ol>
+      </Details>
     </section>
   );
 }

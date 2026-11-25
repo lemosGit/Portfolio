@@ -116,3 +116,14 @@ test("Contagem do prazo em destaque: 12 dias até 7 de dezembro (M6-02)", async 
   });
   expect(order).toBe(true);
 });
+
+test("Capítulos: '2 de 5' concluídos e o estado de cada um, só o título (M6-03)", async ({ page }) => {
+  await page.goto("/cliente");
+  const block = page.getByRole("region", { name: "Capítulos" });
+  await expect(block.getByText("2 de 5")).toBeVisible();
+  await expect(block.getByText("3. Metodologia")).toBeHidden();
+  await block.getByText("Ver capítulos").click();
+  await expect(block.getByText("3. Metodologia")).toBeVisible();
+  await expect(block.getByText("Em curso", { exact: true })).toBeVisible();
+  await expect(block.getByText("Concluído", { exact: true })).toHaveCount(2);
+});

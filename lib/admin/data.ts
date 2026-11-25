@@ -3,6 +3,8 @@
  * e a chave secreta apenas para o estado das contas (último acesso, suspensão).
  */
 import { cache } from "react";
+import { loadBrief } from "@/lib/academic/brief";
+import { applyChapterProgress, loadSections } from "@/lib/academic/chapters";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { accountsEnabled, createSupabaseAdmin } from "@/lib/supabase/admin";
 import { toView } from "@/lib/portal/data";
@@ -218,10 +220,18 @@ export async function getProjectById(sb: SupabaseClient, id: string): Promise<Ad
 /** Progresso igual ao que o cliente vê: GitHub no Desenvolvimento, BD no Académico e no Design (ADR-001). */
 export async function withProgress(p: AdminProject, sb?: SupabaseClient): Promise<ProjectView> {
   const now = new Date().toISOString();
-  const sync = await loadPhases(
+  const loaded = await loadPhases(
     { id: p.id, serviceType: p.serviceType, githubOwner: p.githubOwner, githubRepo: p.githubRepo, phaseMap: p.phaseMap },
     sb,
   );
+  // M6-03: no Académico com capítulos, a % da fase Desenvolvimento vem dos capítulos (RF-10.41).
+  const sync =
+    p.serviceType === "academic" && sb
+      ? await Promise.all([loadSections(sb, p.id), loadBrief(sb, p.id)]).then(([sections, brief]) => ({
+          ...loaded,
+          phases: applyChapterProgress(loaded.phases, sections, brief?.usesChapters ?? true),
+        }))
+      : loaded;
   return toView({
     id: p.id,
     slug: p.slug,
