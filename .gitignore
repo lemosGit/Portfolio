@@ -37,3 +37,6 @@ env.local
 /test-results/
 /playwright-report/
 /blob-report/
+
+# ficheiros de teste gerados (scripts/gerar_ficheiros_teste.py)
+/tests/fixtures/gerados/

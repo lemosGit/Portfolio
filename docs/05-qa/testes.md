@@ -1,6 +1,7 @@
 # Testes automáticos
 > Projeto: GeniusFrela — Área do Cliente multi-serviço · Tarefa: [M5-01] · Issue: #39 · Versão: 1.0 · Data: 2026-11-24
 > Decisões: D-097, D-113, D-114, D-115 · RNF-701, RNF-702
+> **Plano de testes** (casos por user story, dados de teste por serviço, lacunas): [`plano-testes.md`](plano-testes.md)
 
 | Comando | O quê | Onde corre |
 |---|---|---|

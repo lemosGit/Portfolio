@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M7-99 Demo e entrega parcial v0.3 — módulo Design | #73 | `docs/06-entrega/releases/v0.3.0.md`, `supabase/migrations/0018_v03_fixes.sql` |
-| ⏭️ Próxima | M9-01 Escrever o plano de testes a partir dos critérios | #74 | — |
-| ❓ Perguntas em aberto | **Aprovar as capturas do Design (M7-07, Q-106) e a `publico-design` (M7-08, Q-107)** · **Aplicar a 0018 em produção e apagar a V3 de teste (v0.3, L6)** · **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M9-01 Escrever o plano de testes a partir dos critérios | #74 | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
+| ⏭️ Próxima | M9-02 Testar de ponta a ponta o fluxo Académico | #75 | — |
+| ❓ Perguntas em aberto | **Aprovar as capturas do Design (M7-07, Q-106) e a `publico-design` (M7-08, Q-107)** · **Q-108: aviso fora do horário e lembrete de 2 dias (G1, G2) — implementar antes do G3 ou v1.2?** · **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -104,3 +104,8 @@
 | 2026-11-25 | M7-08 | #71 | Página pública do Design (Q-107, D-167): `/servicos/design` (tipos de peça, 7 fases, o que vê no portal, sem preços, WhatsApp com mensagem própria, botão lilás), cartão Design dos Serviços com link, estado vazio do Portfólio com a mensagem do serviço. 2 E2E novos e 2 atualizados, 360 px; captura `publico-design` nova, por aprovar | `app/servicos/design/page.tsx`, `lib/data.ts`, `components/Projects.tsx`, `app/globals.css` |
 | 2026-11-25 | M7-09 | #72 | Testes de componentes do Design (D-168): galeria com 1 e N versões (9), bloqueio após a aprovação da arte (4), contador de rondas e ronda extra no painel de decisão (4). Correção: o cartão de aprovação já não volta a mostrar os botões depois de responder (2.º clique dava erro). Vitest: 199 testes; Playwright: 112 | `__tests__/design/gallery.test.tsx`, `__tests__/design/art-lock.test.tsx`, `__tests__/design/decision.test.tsx`, `app/cliente/_components/ApprovalCard.tsx` |
 | 2026-11-25 | M7-99 | #73 | Merge da cadeia #147…#151, migrações 0016 e 0017 aplicadas em produção. Teste em produção: "Convite de teste v0.3" percorre as 7 fases (admin pelo Chrome, cliente pelo link mágico numa janela anónima; RN-11 ×2, RN-15, RN-41, RN-42 e "entregue" verificados). 4 defeitos corrigidos (migração 0018, D-169): RN-41 no carregamento de provas, valor formatado no travão do pagamento, seletor da produção, miniatura sem pré-visualização. Notas da v0.3.0 | `docs/06-entrega/releases/v0.3.0.md`, `supabase/migrations/0018_v03_fixes.sql` |
+
+## 🗒️ Registo — M9 Integração & QA
+| Data | Código | Issue | Tarefa | Entregáveis |
+|------|--------|-------|--------|-------------|
+| 2026-11-25 | M9-01 | #74 | Plano de testes (D-170): 36 casos (CT-001…036) a partir dos critérios das US, mais concorrência e RNF; nível, ficheiro automatizado, estado e o que falta por tarefa; dados de teste por serviço (demonstração, BD, produção, ficheiros gerados); 30 de 36 US automatizadas, lacunas G1…G6 (Q-108 em aberto). Pós-v0.3: 0018 aplicada em produção, V3 de teste apagada (L6) | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
