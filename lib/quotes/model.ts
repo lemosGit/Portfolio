@@ -21,6 +21,9 @@ export type Quote = {
   createdAt: string;
   /** Design: rondas de revisão incluídas (RN-35); null nos outros serviços. */
   roundsIncluded: number | null;
+  /** Design: partes do design e da impressão (RF-20.20); design + impressão = total. null nos outros serviços. */
+  designKz: number | null;
+  printKz: number | null;
 };
 
 export const QUOTE_LABEL: Record<QuoteStatus, string> = {
@@ -39,12 +42,39 @@ export const DEFAULT_ROUNDS = 2;
 /** Sinal a partir da percentagem, arredondado ao cêntimo (como a BD, 0007 quotes_before). */
 export const depositFromPct = (total: number, pct: number) => Math.round(total * pct) / 100;
 
-export type QuoteFields = { total_kz: number; deposit_pct: number; deposit_kz: number; delivery_due_on: string | null; rounds_included?: number };
+export type QuoteFields = {
+  total_kz: number;
+  deposit_pct: number;
+  deposit_kz: number;
+  delivery_due_on: string | null;
+  rounds_included?: number;
+  design_kz?: number;
+  print_kz?: number;
+};
+
+/**
+ * Design (RF-20.20, M7-06): o valor do design e o da impressão, em separado; o total é a soma.
+ * Impressão vazia = 0 (peça sem impressão, RN-44). Nos outros serviços lê-se o total.
+ */
+function readTotal(get: (k: string) => string): { total: number; design?: number; print?: number } | { error: string } {
+  if (get("servico") !== "design") {
+    const total = parseKz(get("total"));
+    return total ? { total } : { error: "Indique o valor total em Kz (ex.: 90 000)." };
+  }
+  const design = parseKz(get("design"));
+  if (!design) return { error: "Indique o valor do design em Kz (ex.: 45 000)." };
+  const rawPrint = get("impressao").trim();
+  const print = rawPrint && !/^0+([.,]0+)?$/.test(rawPrint) ? parseKz(rawPrint) : 0;
+  if (print === undefined) return { error: "Valor da impressão inválido (deixe vazio se não houver impressão)." };
+  // Ao cêntimo, como numeric(12,2): evita 0,1 + 0,2 ≠ 0,3 contra o check design + impressão = total.
+  return { total: Math.round((design + print) * 100) / 100, design, print };
+}
 
 /** Formulário do admin → campos do orçamento. O sinal escrito em Kz ganha à percentagem. */
 export function readQuote(get: (k: string) => string): QuoteFields | { error: string } {
-  const total = parseKz(get("total"));
-  if (!total) return { error: "Indique o valor total em Kz (ex.: 90 000)." };
+  const t = readTotal(get);
+  if ("error" in t) return t;
+  const { total } = t;
   if (total >= 1e10) return { error: "Valor demasiado alto." };
   const pctRaw = get("sinal_pct") || String(DEFAULT_DEPOSIT_PCT);
   const pct = Number(pctRaw);
@@ -65,6 +95,8 @@ export function readQuote(get: (k: string) => string): QuoteFields | { error: st
     const rounds = Number(get("rondas") || String(DEFAULT_ROUNDS));
     if (!Number.isInteger(rounds) || rounds < 0 || rounds > 10) return { error: "As rondas incluídas vão de 0 a 10." };
     out.rounds_included = rounds;
+    out.design_kz = t.design;
+    out.print_kz = t.print;
   }
   return out;
 }
@@ -75,6 +107,8 @@ export type QuoteSnapshot = {
   deposit_pct?: number;
   deposit_kz?: number;
   remaining_kz?: number;
+  design_kz?: number | null;
+  print_kz?: number | null;
   rounds_included?: number | null;
   delivery_due_on?: string | null;
   deposit_rule?: string;
@@ -92,7 +126,11 @@ type QuoteRow = {
   accepted_at: string | null;
   created_at: string;
   rounds_included: number | null;
+  design_kz: number | string | null;
+  print_kz: number | string | null;
 };
+
+const numOrNull = (v: number | string | null) => (v == null ? null : Number(v));
 
 export const mapQuote = (r: QuoteRow): Quote => ({
   id: r.id,
@@ -106,12 +144,26 @@ export const mapQuote = (r: QuoteRow): Quote => ({
   acceptedAt: r.accepted_at,
   createdAt: r.created_at,
   roundsIncluded: r.rounds_included,
+  designKz: numOrNull(r.design_kz),
+  printKz: numOrNull(r.print_kz),
 });
+
+/**
+ * Linhas "Design" e "Impressão" do orçamento (RF-20.21), para o admin e para o cliente.
+ * Sem a divisão (Académico, orçamentos antigos) não há linhas. Impressão a 0 → "Sem impressão".
+ */
+export function splitRows(designKz: number | null | undefined, printKz: number | null | undefined, fmt: (n: number) => string): [string, string][] {
+  if (designKz == null || printKz == null) return [];
+  return [
+    ["Design", fmt(Number(designKz))],
+    ["Impressão", Number(printKz) > 0 ? fmt(Number(printKz)) : "Sem impressão"],
+  ];
+}
 
 export async function loadQuotes(sb: SupabaseClient, projectId: string): Promise<Quote[]> {
   const { data, error } = await sb
     .from("quotes")
-    .select("id, version, total_kz, deposit_pct, deposit_kz, delivery_due_on, status, sent_at, accepted_at, created_at, rounds_included")
+    .select("id, version, total_kz, deposit_pct, deposit_kz, delivery_due_on, status, sent_at, accepted_at, created_at, rounds_included, design_kz, print_kz")
     .eq("project_id", projectId)
     .order("version", { ascending: false })
     .returns<QuoteRow[]>();
@@ -120,4 +172,17 @@ export async function loadQuotes(sb: SupabaseClient, projectId: string): Promise
     return [];
   }
   return (data ?? []).map(mapQuote);
+}
+
+/** Linha do valor do orçamento (email ao enviar e histórico do cliente): "Valor total: 120 000 Kz (design 45 000 Kz + impressão 75 000 Kz)." */
+export function quoteTotalLine(
+  total: number | string,
+  designKz: number | string | null,
+  printKz: number | string | null,
+  fmt: (n: number) => string,
+): string {
+  const base = `Valor total: ${fmt(Number(total))}`;
+  if (designKz == null || printKz == null) return `${base}.`;
+  const detail = Number(printKz) > 0 ? `design ${fmt(Number(designKz))} + impressão ${fmt(Number(printKz))}` : "só design, sem impressão";
+  return `${base} (${detail}).`;
 }

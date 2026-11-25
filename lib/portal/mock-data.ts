@@ -431,6 +431,22 @@ export const projects: Project[] = [
         phase: { position: 4, name: "Revisões" },
         responses: [{ kind: "pedir_alteracoes", comment: "Os nomes podem ser maiores? E a data é sábado, não domingo.", actorRole: "client", createdAt: at(-4, 20) }],
       },
+      {
+        id: "ap_conv_orc",
+        subject: "orcamento",
+        versionLabel: "v1",
+        // M7-06: o detalhe design + impressão (RF-20.21)
+        snapshot: {
+          total_kz: 120000, design_kz: 45000, print_kz: 75000, deposit_pct: 50, deposit_kz: 60000, remaining_kz: 60000,
+          rounds_included: 2, delivery_due_on: at(20).slice(0, 10),
+          deposit_rule: "O sinal não é devolvido se desistir depois de pagar, porque cobre o trabalho já começado.",
+        },
+        status: "aprovada",
+        requestedAt: at(-9, 9),
+        decidedAt: at(-9, 10),
+        phase: { position: 2, name: "Orçamento e sinal" },
+        responses: [{ kind: "aprovar", comment: null, actorRole: "client", createdAt: at(-9, 10) }],
+      },
     ],
     payments: [
       { id: "pg_c_sinal", kind: "sinal", description: "Sinal (50%)", amountKz: 60000, dueOn: null, status: "pago", paidOn: at(-8).slice(0, 10), extraRounds: 0, gatesPhase: { key: "conceito", name: "Conceito / esboço", position: 3 }, createdAt: at(-9, 10) },

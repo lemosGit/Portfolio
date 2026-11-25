@@ -18,7 +18,7 @@ import { postponeTo } from "@/lib/files/retention";
 import { PRODUCTION_LABEL, readPickupAt, readSpec, type ProductionStatus } from "@/lib/design/spec";
 import { readBrief } from "@/lib/academic/brief";
 import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
-import { readQuote } from "@/lib/quotes/model";
+import { quoteTotalLine, readQuote } from "@/lib/quotes/model";
 import { adjustWindow } from "@/lib/academic/adjustments";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
@@ -1219,15 +1219,15 @@ export async function sendQuote(_p: AdminState, f: FormData): Promise<AdminState
     .update({ status: "enviado" })
     .eq("id", str(f, "id"))
     .eq("status", "rascunho")
-    .select("project_id, version, total_kz")
-    .maybeSingle<{ project_id: string; version: number; total_kz: number | string }>();
+    .select("project_id, version, total_kz, design_kz, print_kz")
+    .maybeSingle<{ project_id: string; version: number; total_kz: number | string; design_kz: number | string | null; print_kz: number | string | null }>();
   if (error) {
     return { error: error.code === "23505" ? "Já há um orçamento enviado ou aceite: substitua-o antes de enviar outro." : `Não foi possível enviar: ${error.message}` };
   }
   if (!data) return { error: "Só se envia um rascunho." };
   refresh();
   const mail = await notify(f, sb, data.project_id, (c) =>
-    approvalRequestEmail({ ...c, title: `Orçamento v${data.version}`, message: `Valor total: ${kz(Number(data.total_kz))}.` }),
+    approvalRequestEmail({ ...c, title: `Orçamento v${data.version}`, message: quoteTotalLine(data.total_kz, data.design_kz, data.print_kz, kz) }),
   );
   return { ok: true, message: `Orçamento v${data.version} enviado ao cliente.${emailNote(mail)}` };
 }
