@@ -366,6 +366,8 @@ export const projects: Project[] = [
       { position: 6, key: "producao", name: "Produção / impressão", description: "A peça está a ser produzida.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
       { position: 7, key: "entrega-levantamento", name: "Entrega / levantamento", description: "Data e local de levantamento, ficheiros finais.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
     ]),
+    // M7-03: 2 rondas incluídas; a V1 → V2 gastou a primeira.
+    rounds: { included: 2, used: 1, remaining: 1 },
     // M7-01: ficha técnica da peça (atrás de "ver detalhes"; tipo e evento no topo).
     designSpec: {
       pieceType: "convite_impresso",

@@ -6,6 +6,7 @@ import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
 import { loadBrief } from "@/lib/academic/brief";
 import { loadSpec } from "@/lib/design/spec";
+import { loadRounds } from "@/lib/design/rounds";
 import { loadAdjustments } from "@/lib/academic/adjustments";
 import { loadSeries } from "@/lib/files/data";
 import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
@@ -53,6 +54,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   // M6-01: ficha do trabalho académico (null até ser criada).
   const brief = p.serviceType === "academic" ? await loadBrief(sb, p.id) : null;
   const spec = p.serviceType === "design" ? await loadSpec(sb, p.id) : null;
+  const rounds = p.serviceType === "design" ? await loadRounds(sb, p.id) : undefined;
   // M6-06: pedidos de ajuste e versões de entregáveis que os podem resolver.
   const [adjustments, deliverableVersions] =
     p.serviceType === "academic"
@@ -194,6 +196,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           }
         >
           <DesignSpecForm projectId={p.id} spec={spec} />
+        </Section>
+      )}
+
+      {p.serviceType === "design" && rounds && (
+        <Section
+          id="rondas"
+          title="Rondas de revisão"
+          description="RN-35/36: incluídas no orçamento aceite + extras aceites. Cada “pedir alterações” numa prova gasta uma ronda."
+        >
+          <p className="text-sm text-ink">
+            <b className="font-semibold">{rounds.used}</b> de <b className="font-semibold">{rounds.included}</b> usadas · faltam{" "}
+            <b className="font-semibold">{rounds.remaining}</b>.
+          </p>
+          <p className="mt-2 text-[13px] text-ink-dim">
+            {rounds.remaining === 0
+              ? "Sem rondas: o cliente só pode aprovar ou pedir uma revisão extra (chega-lhe em Mensagens). Para a abrir, registe um extra com rondas em "
+              : "Para dar mais rondas, registe um extra com rondas em "}
+            <a href={`/admin/projetos/${p.id}/pagamentos`} className="underline">
+              Pagamentos
+            </a>
+            ; conta depois de o cliente o aceitar.
+          </p>
         </Section>
       )}
 

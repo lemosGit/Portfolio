@@ -9,20 +9,35 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, TriangleAlert } from "lucide-react";
 import { respondToApproval } from "@/lib/approvals/actions";
+import { requestExtraRound } from "@/lib/design/actions";
+import { changesNotice, roundsLabel, type Rounds } from "@/lib/design/rounds";
 import { approvalTitle, type Approval } from "@/lib/approvals/model";
 import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
 import type { QuoteSnapshot } from "@/lib/quotes/model";
 
-type Mode = "idle" | "confirm" | "changes";
+type Mode = "idle" | "confirm" | "changes" | "extra";
 
-export function ApprovalCard({ a }: { a: Approval }) {
+/** `rounds`: só nas provas do Design (M7-03): "Ronda X de Y", aviso da última ronda e revisão extra. */
+export function ApprovalCard({ a, rounds }: { a: Approval; rounds?: Rounds }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("idle");
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const title = approvalTitle(a);
+
+  async function sendExtra() {
+    setBusy(true);
+    setMsg(null);
+    const r = await requestExtraRound(a.versionLabel ?? "", comment);
+    setBusy(false);
+    if (!r.ok) return setMsg({ ok: false, text: r.error });
+    setMsg({ ok: true, text: r.message });
+    setComment("");
+    setMode("idle");
+    router.refresh();
+  }
 
   async function send(kind: "aprovar" | "pedir_alteracoes") {
     setBusy(true);
@@ -39,10 +54,16 @@ export function ApprovalCard({ a }: { a: Approval }) {
   const accept = a.subject === "orcamento" || a.subject === "extra";
   const verb = accept ? "Aceitar" : "Aprovar";
   const q = a.subject === "orcamento" ? (a.snapshot as QuoteSnapshot) : null;
+  // Rondas só nas provas do Design (RN-35, RN-36).
+  const r = a.subject === "prova" ? rounds : undefined;
+  const noRounds = r !== undefined && r.remaining <= 0;
 
   return (
     <article className="rounded-2xl border border-action/30 bg-action/[0.05] p-5" aria-label={`${verb} ${title}`}>
-      <h3 className="font-display text-lg text-ink">{title}</h3>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-display text-lg text-ink">{title}</h3>
+        {r && <span className="text-xs font-semibold text-ink-dim">{roundsLabel(r)}</span>}
+      </div>
       {a.snapshot.message && <p className="mt-1.5 text-[14px] leading-relaxed text-ink-dim">{a.snapshot.message}</p>}
       {a.snapshot.items && a.snapshot.items.length > 0 && (
         <ol className="mt-3 space-y-1 rounded-xl border border-line bg-raised/40 p-3 text-[13px] text-ink">
@@ -64,6 +85,8 @@ export function ApprovalCard({ a }: { a: Approval }) {
             [`Sinal${q.deposit_pct ? ` (${q.deposit_pct}%)` : ""}`, q.deposit_kz != null ? kz(Number(q.deposit_kz)) : "—"],
             ["Restante", q.remaining_kz != null ? kz(Number(q.remaining_kz)) : "—"],
             ["Entrega", q.delivery_due_on ? longDate(q.delivery_due_on) : "A combinar"],
+            // M7-03: no Design, as rondas de revisão incluídas (RF-20.21)
+            ...(q.rounds_included != null ? [["Rondas incluídas", String(q.rounds_included)]] : []),
           ].map(([k, v]) => (
             <div key={k} className="rounded-xl border border-line bg-raised/40 p-2.5">
               <dt className="text-xs text-ink-faint">{k}</dt>
@@ -80,9 +103,15 @@ export function ApprovalCard({ a }: { a: Approval }) {
           <button type="button" className="btn-violet h-11" onClick={() => setMode("confirm")}>
             {verb}
           </button>
-          <button type="button" className="btn-quiet h-11 py-0" onClick={() => setMode("changes")}>
-            Pedir alterações
-          </button>
+          {noRounds ? (
+            <button type="button" className="btn-quiet h-11 py-0" onClick={() => setMode("extra")}>
+              Pedir revisão extra
+            </button>
+          ) : (
+            <button type="button" className="btn-quiet h-11 py-0" onClick={() => setMode("changes")}>
+              Pedir alterações
+            </button>
+          )}
         </div>
       )}
 
@@ -105,8 +134,33 @@ export function ApprovalCard({ a }: { a: Approval }) {
         </div>
       )}
 
+      {mode === "extra" && r && (
+        <div role="group" aria-label="Pedir revisão extra" className="mt-4 space-y-3 rounded-xl border border-line bg-raised/60 p-4">
+          <p className="font-display text-base text-ink">
+            Já usou {r.included === 1 ? "a revisão incluída" : `as ${r.included} revisões incluídas`}
+          </p>
+          <p className="text-[14px] leading-relaxed text-ink-dim">
+            Pode aprovar a versão atual, ou pedir uma revisão extra. Dizemos-lhe o valor antes de começar e só avançamos se aceitar.
+          </p>
+          <label className="block">
+            <span className="mb-1.5 block text-[13px] font-medium text-ink-dim">O que quer mudar?</span>
+            <textarea value={comment} onChange={(e) => setComment(e.target.value)} rows={3} maxLength={1500} className="field" placeholder="Ex.: a data está errada: é domingo, 14 de fevereiro" />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy || comment.trim().length < 5} className="btn-violet h-11 disabled:opacity-50" onClick={sendExtra}>
+              {busy ? "A enviar…" : "Pedir revisão extra"}
+            </button>
+            <button type="button" disabled={busy} className="btn-quiet h-11 py-0" onClick={() => setMode("confirm")}>
+              Voltar e aprovar
+            </button>
+          </div>
+        </div>
+      )}
+
       {mode === "changes" && (
         <div className="mt-4 space-y-3">
+          {/* TEL-33: avisa que ronda vai gastar e se é a última incluída (RN-35, RN-36). */}
+          {r && changesNotice(r) && <p className="text-[13px] leading-relaxed text-ink-dim">{changesNotice(r)}</p>}
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-medium text-ink-dim">O que quer alterar?</span>
             <textarea

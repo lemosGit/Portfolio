@@ -2,6 +2,7 @@ import type { AdjustmentRequest } from "@/lib/academic/adjustments";
 import type { Section } from "@/lib/academic/chapters";
 import type { AcademicBrief } from "@/lib/academic/brief";
 import type { DesignSpec } from "@/lib/design/spec";
+import type { Rounds } from "@/lib/design/rounds";
 import type { Payment } from "@/lib/payments/model";
 import type { Approval } from "@/lib/approvals/model";
 /**
@@ -132,6 +133,8 @@ export type Project = {
   academicBrief?: AcademicBrief;
   /** Ficha técnica da peça (M7-01); só no Design. */
   designSpec?: DesignSpec;
+  /** Rondas de revisão (M7-03, RN-35/36); só no Design. */
+  rounds?: Rounds;
   /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
   filesPurgeOn?: string;
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */

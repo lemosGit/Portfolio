@@ -4,7 +4,7 @@ import { getProjectById } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
-import { DEFAULT_DEPOSIT_PCT, QUOTE_LABEL, depositFromPct, loadQuotes, type Quote } from "@/lib/quotes/model";
+import { DEFAULT_DEPOSIT_PCT, DEFAULT_ROUNDS, QUOTE_LABEL, depositFromPct, loadQuotes, type Quote } from "@/lib/quotes/model";
 import { ActionForm, Field } from "../../../_components/forms";
 import { inputCls } from "../../../_components/styles";
 import { AdminHeader, Badge, Empty, NotifyClient, Section } from "../../../_components/ui";
@@ -63,7 +63,7 @@ export default async function QuotePage({ params }: { params: Promise<{ id: stri
         <Section title={`Rascunho v${draft.version}`} description="Reveja os valores e envie ao cliente. Depois de enviado já não se edita.">
           <ActionForm action={updateQuote} submit="Guardar rascunho">
             <input type="hidden" name="id" value={draft.id} />
-            <QuoteFields q={draft} />
+            <QuoteFields q={draft} design={p.serviceType === "design"} />
           </ActionForm>
           <div className="mt-5 border-t border-line pt-5">
             <ActionForm action={sendQuote} submit="Enviar ao cliente" pendingLabel="A enviar…">
@@ -77,7 +77,7 @@ export default async function QuotePage({ params }: { params: Promise<{ id: stri
           <Section title="Novo orçamento" description={active ? "Para enviar outro, retire primeiro o que está enviado." : "Cria um rascunho; envia-o a seguir."}>
             <ActionForm action={createQuote} submit="Criar rascunho" pendingLabel="A criar…">
               <input type="hidden" name="projeto" value={p.id} />
-              <QuoteFields />
+              <QuoteFields design={p.serviceType === "design"} />
             </ActionForm>
           </Section>
         )
@@ -106,14 +106,16 @@ export default async function QuotePage({ params }: { params: Promise<{ id: stri
 }
 
 function QuoteSummary({ q }: { q: Quote }) {
+  const rows: [string, string][] = [
+    ["Total", kz(q.totalKz)],
+    [`Sinal (${q.depositPct}%)`, kz(q.depositKz)],
+    ["Restante", kz(q.totalKz - q.depositKz)],
+    ["Entrega", q.deliveryDueOn ? longDate(q.deliveryDueOn) : "Por definir"],
+  ];
+  if (q.roundsIncluded != null) rows.push(["Rondas incluídas", String(q.roundsIncluded)]);
   return (
     <dl className="grid gap-3 sm:grid-cols-4">
-      {[
-        ["Total", kz(q.totalKz)],
-        [`Sinal (${q.depositPct}%)`, kz(q.depositKz)],
-        ["Restante", kz(q.totalKz - q.depositKz)],
-        ["Entrega", q.deliveryDueOn ? longDate(q.deliveryDueOn) : "Por definir"],
-      ].map(([k, v]) => (
+      {rows.map(([k, v]) => (
         <div key={k} className="rounded-xl border border-line p-3">
           <dt className="text-xs text-ink-faint">{k}</dt>
           <dd className="mt-1 text-sm font-semibold text-ink">{v}</dd>
@@ -123,9 +125,10 @@ function QuoteSummary({ q }: { q: Quote }) {
   );
 }
 
-function QuoteFields({ q }: { q?: Quote }) {
+function QuoteFields({ q, design }: { q?: Quote; design: boolean }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
+      <input type="hidden" name="servico" value={design ? "design" : "academic"} />
       <Field label="Valor total (Kz)" hint="Ex.: 90 000 ou 90 000,50">
         <input name="total" required inputMode="decimal" defaultValue={q ? String(q.totalKz) : ""} className={inputCls} placeholder="90 000" />
       </Field>
@@ -145,6 +148,11 @@ function QuoteFields({ q }: { q?: Quote }) {
           placeholder="Calculado pela %"
         />
       </Field>
+      {design && (
+        <Field label="Rondas de revisão incluídas" hint="Por omissão 2 (RN-35). Depois disso, cada ronda é um extra pago e aceite (RN-36).">
+          <input name="rondas" type="number" min={0} max={10} defaultValue={q?.roundsIncluded ?? DEFAULT_ROUNDS} className={inputCls} />
+        </Field>
+      )}
     </div>
   );
 }

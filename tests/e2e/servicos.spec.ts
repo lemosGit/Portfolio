@@ -99,4 +99,17 @@ test.describe("Design (M5-14)", () => {
     await expect(page.getByRole("button", { name: "Comparar V1 e V2" })).toBeVisible();
     expect(errors).toEqual([]);
   });
+
+  test("Rondas: 'Ronda 1 de 2' no próximo passo, na prova e no Projeto; aviso da última ronda (M7-03)", async ({ page }) => {
+    await page.goto("/cliente");
+    await expect(page.getByRole("region", { name: "Revisões" }).getByText("Ronda 1 de 2")).toBeVisible();
+    const card = page.getByRole("article", { name: "Aprovar Convite V2" });
+    await expect(card.getByText("Ronda 1 de 2")).toBeVisible();
+    await card.getByRole("button", { name: "Pedir alterações" }).click();
+    await expect(card.getByText("Esta é a ronda 2 de 2 incluídas", { exact: false })).toBeVisible();
+    // o comentário à V1 aparece ligado à V1 (Outras versões)
+    await expect(page.getByRole("list", { name: "Comentários à V1" })).toContainText("Os nomes podem ser maiores?");
+    await page.goto("/cliente/projeto");
+    await expect(page.getByRole("list").filter({ hasText: "Briefing" }).getByText("Ronda 1 de 2")).toBeVisible();
+  });
 });

@@ -18,7 +18,11 @@ export type ProofVersion = {
   files: FileItem[];
   /** O pedido do cliente que levou a esta versão (RF-20.82): comentário de "pedir alterações" na anterior. */
   request: string | null;
+  /** Comentários sobre esta versão (M7-03): as respostas com texto à aprovação desta prova, pela ordem. */
+  comments: ProofComment[];
 };
+
+export type ProofComment = { by: "client" | "admin"; kind: "aprovar" | "pedir_alteracoes" | string; text: string; at: string };
 
 export type ProofSeries = {
   key: string;
@@ -33,13 +37,26 @@ const isImage = (f: FileItem) => f.mime.startsWith("image/");
 export const coverOf = (v: Pick<ProofVersion, "files">): FileItem | undefined =>
   v.files.find((f) => f.thumbUrl && !f.purged) ?? v.files.find((f) => isImage(f) && !f.purged);
 
-/** Comentário de "pedir alterações" do cliente à versão `label` desta série (pela aprovação da prova). */
+/** Aprovações da prova `label` desta série (pelo título do snapshot e a versão). */
+const approvalsFor = (approvals: Approval[], title: string, label: string) =>
+  approvals.filter((a) => a.subject === "prova" && a.versionLabel === label && (a.snapshot.title ?? "").toLowerCase() === title.toLowerCase());
+
+/** Comentário de "pedir alterações" do cliente à versão `label` desta série. */
 function requestFor(approvals: Approval[], title: string, label: string): string | null {
-  const ap = approvals.find(
-    (a) => a.subject === "prova" && a.versionLabel === label && (a.snapshot.title ?? "").toLowerCase() === title.toLowerCase(),
-  );
-  const r = ap?.responses.filter((x) => x.kind === "pedir_alteracoes" && x.actorRole === "client" && x.comment).at(-1);
+  const r = approvalsFor(approvals, title, label)
+    .flatMap((a) => a.responses)
+    .filter((x) => x.kind === "pedir_alteracoes" && x.actorRole === "client" && x.comment)
+    .at(-1);
   return r?.comment ?? null;
+}
+
+/** Comentários (com texto) à versão `label`, do mais antigo ao mais recente (M7-03, "comentário ligado à versão"). */
+function commentsFor(approvals: Approval[], title: string, label: string): ProofComment[] {
+  return approvalsFor(approvals, title, label)
+    .flatMap((a) => a.responses)
+    .filter((x) => x.comment)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map((x) => ({ by: x.actorRole, kind: x.kind, text: x.comment!, at: x.createdAt }));
 }
 
 /** Séries com o papel "prova" → galeria. A série com a versão mais recente vem primeiro. */
@@ -63,6 +80,7 @@ export function proofsFrom(series: FileSeries[], approvals: Approval[] = []): Pr
             purged: v.purged,
             files: v.files,
             request: prev ? requestFor(approvals, s.title, prev.label) : null,
+            comments: commentsFor(approvals, s.title, v.label),
           };
         }),
       };
