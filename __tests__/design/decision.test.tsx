@@ -57,3 +57,35 @@ describe("DesignApprovals", () => {
     expect(screen.getByText("Ver histórico")).toBeTruthy();
   });
 });
+
+describe("DesignDecision — contador de rondas e ronda extra (M7-09, RN-35, RN-36)", () => {
+  const withRounds = (r: { included: number; used: number; remaining: number }) => ({ ...toView(base), rounds: r });
+
+  it("antes do primeiro pedido: '2 rondas incluídas' e as 2 ainda no preço", () => {
+    render(<DesignDecision project={withRounds({ included: 2, used: 0, remaining: 2 })} unread={0} />);
+    expect(screen.getByText("2 rondas incluídas")).toBeTruthy();
+    expect(screen.getByText("Ainda pode pedir 2 revisões incluídas no preço.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Pedir alterações" })).toBeTruthy();
+  });
+
+  it("rondas esgotadas: 'Ronda 2 de 2', aviso do extra e 'Pedir revisão extra' em vez de 'Pedir alterações'", () => {
+    render(<DesignDecision project={withRounds({ included: 2, used: 2, remaining: 0 })} unread={0} />);
+    expect(screen.getByText("Ronda 2 de 2")).toBeTruthy();
+    expect(screen.getByText("Já usou as revisões incluídas: uma nova revisão é um extra.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Pedir revisão extra" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Pedir alterações" })).toBeNull();
+  });
+
+  it("com um extra aceite, há mais uma ronda: 'Ronda 2 de 3' e volta 'Pedir alterações'", () => {
+    render(<DesignDecision project={withRounds({ included: 3, used: 2, remaining: 1 })} unread={0} />);
+    expect(screen.getByText("Ronda 2 de 3")).toBeTruthy();
+    expect(screen.getByText("Ainda pode pedir 1 revisão incluída no preço.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Pedir alterações" })).toBeTruthy();
+  });
+
+  it("sem rondas no orçamento: o aviso diz que qualquer revisão é extra", () => {
+    render(<DesignDecision project={withRounds({ included: 0, used: 0, remaining: 0 })} unread={0} />);
+    expect(screen.getByText("Sem rondas incluídas")).toBeTruthy();
+    expect(screen.getByText("Este orçamento não inclui revisões: uma revisão é um extra.")).toBeTruthy();
+  });
+});
