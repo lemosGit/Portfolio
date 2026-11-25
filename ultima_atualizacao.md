@@ -5,9 +5,9 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M5-09b Gerar miniaturas WebP e limpar ficheiros diariamente | #122 | `lib/files/browser-images.ts`, `lib/files/cleanup.ts`, `app/api/cron/limpeza/route.ts`, `supabase/migrations/0008_files_retention.sql` |
-| ⏭️ Próxima | M6-01 Implementar a ficha do trabalho académico (v0.2.0) | #54 | — |
-| ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · **R-06 pôr OTP a 86 400 s no painel (agora obrigatório: sem isto o link mágico expira em 1 h)** · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
+| ✅ Última feita | M6-01 Implementar a ficha do trabalho académico | #54 | `supabase/migrations/0009_academic_briefs.sql`, `lib/academic/brief.ts`, `app/admin/_components/AcademicBriefForm.tsx`, `app/cliente/_blocks/academic.tsx` |
+| ⏭️ Próxima | M6-02 Mostrar a contagem do prazo em destaque | #55 | — |
+| ❓ Perguntas em aberto | **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
 
@@ -84,3 +84,4 @@
 | 2026-11-25 | M5 | #129 | Integração da M5 na `main` (merge do #129) e teste em produção pelo Chrome: admin (cliente Académico, fases, ficheiros com miniatura, aprovação, extra, link mágico) e cliente (entrada pelo link, aprovar em 2 passos, aceitar o extra, enviar referência) | PR #129 |
 | 2026-11-25 | M5 | — | Correções do teste em produção: mensagem do Avançar/Reabrir e estilo dos textareas e campos do admin (D-148) | `app/admin/_components/PhaseNav.tsx`, `app/admin/_components/styles.ts`, `app/globals.css` |
 | 2026-11-25 | M5-99 | #53 | Demo v0.1 em produção (Académico e Design de teste, Tech real), notas de versão com 9 limitações conhecidas (Q-093) | `docs/06-entrega/releases/v0.1.0.md` |
+| 2026-11-25 | M6-01 | #54 | Ficha do trabalho académico: migração 0009 (aplicada em produção), formulário no projeto do admin, bloco "Ficha do trabalho" em "ver detalhes" no cliente; 5 unitários, 1 E2E, SQL 0009 + RLS; captura do Académico aprovada; R-06 confirmado feito (Q-094, D-149) | `supabase/migrations/0009_academic_briefs.sql`, `lib/academic/brief.ts`, `app/admin/_components/AcademicBriefForm.tsx`, `app/cliente/_blocks/academic.tsx` |

@@ -89,3 +89,14 @@ test("Pagamentos: totais em Kz e estado de cada pagamento (M5-11)", async ({ pag
   await expect(block.getByText("Pendente", { exact: true })).toBeVisible();
   await expect(block.getByText("O pagamento é feito fora do portal", { exact: false })).toBeVisible();
 });
+
+test("Ficha do trabalho: fechada na primeira vista, abre em 'Ver detalhes' (M6-01)", async ({ page }) => {
+  await page.goto("/cliente");
+  const block = page.getByRole("region", { name: "Ficha do trabalho" });
+  await expect(block).toBeVisible();
+  await expect(block.getByText("Universidade Agostinho Neto")).toBeHidden();
+  await block.getByText("Ver detalhes").click();
+  await expect(block.getByText("Universidade Agostinho Neto")).toBeVisible();
+  await expect(block.getByText("APA", { exact: true })).toBeVisible();
+  await expect(block.getByText("7 dias depois da entrega")).toBeVisible();
+});

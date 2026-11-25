@@ -297,6 +297,19 @@ export const projects: Project[] = [
         responses: [{ kind: "pedir_alteracoes", comment: "Falta o capítulo da metodologia.", actorRole: "client", createdAt: at(-8, 10) }],
       },
     ],
+    // M6-01: ficha do trabalho (atrás de "ver detalhes").
+    academicBrief: {
+      topic: "O microcrédito e as zungueiras de Luanda",
+      workType: "universitario",
+      educationLevel: "licenciatura",
+      institution: "Universidade Agostinho Neto",
+      discipline: "Economia",
+      citationStyle: "APA",
+      citationNotes: "7.ª edição; margens de 2,5 cm; Times New Roman 12.",
+      pagesTarget: 45,
+      usesChapters: true,
+      adjustDays: 7,
+    },
     // M5-11: sinal pago e restante por pagar (bloqueia os ficheiros finais, RN-14).
     payments: [
       { id: "pg_sinal", kind: "sinal", description: "Sinal (50%)", amountKz: 45000, dueOn: null, status: "pago", paidOn: at(-12).slice(0, 10), extraRounds: 0, gatesPhase: { key: "estrutura", name: "Estrutura (índice)", position: 3 }, createdAt: at(-13, 9) },

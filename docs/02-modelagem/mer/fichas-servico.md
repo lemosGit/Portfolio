@@ -206,5 +206,5 @@ O prazo de entrega fica em `projects.due_on`, que vem do orçamento (D-044, D-05
 | `design_specs` | lê | tudo |
 
 ## 8. Impacto no código (para a M5–M7)
-- Migração `0007_fichas_servico.sql`: as 4 tabelas, os triggers F1 a F6, a RLS e a alteração do seed da fase `ajustes` (D-061).
+- ~~Migração `0007_fichas_servico.sql`~~ → uma migração por tarefa (D-149): `0009_academic_briefs.sql` (M6-01); as outras tabelas entram com a M6-03, a M6-05 e a M7-01.
 - O admin preenche a ficha no briefing (M6-01 #54, M7-01 #64). O cliente vê-a atrás de "ver detalhes" (RF-10.11, RF-20.12).

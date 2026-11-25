@@ -210,6 +210,12 @@ task("M5-99", "Demo e entrega parcial v0.1 — fundação multi-serviço", "entr
      ["M5-08", "M5-09", "M5-10", "M5-11", "M5-12", "M5-13"], ent="`docs/06-entrega/releases/v0.1.0.md`",
      ac=["Preview Vercel com um projeto de cada serviço", "Notas de versão com limitações conhecidas"])
 
+# (M9-07 acrescentada na M5-99, issue #132 — fica aqui só para a lista completa; a milestone é a M9)
+task("M9-07", "Reduzir o tempo de resposta das páginas e ações do admin", "bug", ["backend", "frontend"], "should", "M", ["M5-99"],
+     ent="Correções + medições antes/depois em `docs/05-qa/relatorios/desempenho-admin.md`",
+     ac=["Medir onde está o tempo (sessão, consultas em série, revalidatePath, região Supabase vs Vercel dub1)",
+         "Páginas do admin < 1 s e ações < 2 s no p75", "Feedback visível durante ações longas"])
+
 # ───────────────────────── M6 — Académico ─────────────────────────
 task("M6-01", "Implementar a ficha do trabalho académico", "feature", ["backend", "frontend"], "must", "S", ["M5-99"], mod="academico",
      ent="Admin: formulário · Cliente: bloco 'Ficha do trabalho'",

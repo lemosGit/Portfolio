@@ -4,6 +4,7 @@ import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSq
 import { addDemo, deleteDemo, postponeFilesPurge, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
+import { loadBrief } from "@/lib/academic/brief";
 import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
 import { emailEnabled } from "@/lib/email/send";
 import { WARN_DAYS, daysUntil } from "@/lib/files/retention";
@@ -13,6 +14,7 @@ import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
 import { inputCls, textareaCls } from "../../_components/styles";
+import { AcademicBriefForm } from "../../_components/AcademicBriefForm";
 import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
@@ -43,6 +45,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .returns<{ id: string; status: LinkStatus; channel: string; expires_at: string; used_at: string | null; created_at: string }[]>(),
   ]);
   const links = linkRows ?? [];
+  // M6-01: ficha do trabalho académico (null até ser criada).
+  const brief = p.serviceType === "academic" ? await loadBrief(sb, p.id) : null;
   // Limpeza dos ficheiros (#122): data calculada na BD (files_purge_on, 0008).
   const { data: retention } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
   const purgeOn = retention?.files_purge_on ?? null;
@@ -152,6 +156,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           ))}
         </ul>
       </Section>
+
+      {p.serviceType === "academic" && (
+        <Section
+          id="ficha"
+          title="Ficha do trabalho"
+          description={brief ? "O cliente vê-a atrás de “ver detalhes” (RF-10.11)." : "Ainda por preencher. Preencha-a no briefing: o cliente vê-a atrás de “ver detalhes”."}
+        >
+          <AcademicBriefForm projectId={p.id} brief={brief} dueOn={p.dueOn} />
+        </Section>
+      )}
 
       {purgeOn && (
         <Section
