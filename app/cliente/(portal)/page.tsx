@@ -1,3 +1,4 @@
+import { specHeadline } from "@/lib/design/spec";
 import { layoutFor } from "@/lib/portal/service-layouts";
 import { requirePortal } from "@/lib/portal/session";
 import { Blocks } from "../_blocks";
@@ -13,7 +14,8 @@ export default async function Overview() {
     <div className="space-y-6">
       <PageHeader
         section="Visão geral"
-        eyebrow="Vamos construir algo bom"
+        // RF-20.02: no Design, o tipo de peça e a data do evento no topo (M7-01).
+        eyebrow={project.designSpec ? specHeadline(project.designSpec) : "Vamos construir algo bom"}
         unread={unread}
         source={project.source} serviceType={project.serviceType}
         title={

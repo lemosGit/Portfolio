@@ -5,6 +5,7 @@ import { addDemo, deleteDemo, postponeFilesPurge, deleteMeeting, deleteProject, 
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
 import { loadBrief } from "@/lib/academic/brief";
+import { loadSpec } from "@/lib/design/spec";
 import { loadAdjustments } from "@/lib/academic/adjustments";
 import { loadSeries } from "@/lib/files/data";
 import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
@@ -17,6 +18,7 @@ import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
 import { inputCls, textareaCls } from "../../_components/styles";
 import { AcademicBriefForm } from "../../_components/AcademicBriefForm";
+import { DesignSpecForm } from "../../_components/DesignSpecForm";
 import { AdminAdjustments } from "../../_components/AdminAdjustments";
 import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
@@ -50,6 +52,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const links = linkRows ?? [];
   // M6-01: ficha do trabalho académico (null até ser criada).
   const brief = p.serviceType === "academic" ? await loadBrief(sb, p.id) : null;
+  const spec = p.serviceType === "design" ? await loadSpec(sb, p.id) : null;
   // M6-06: pedidos de ajuste e versões de entregáveis que os podem resolver.
   const [adjustments, deliverableVersions] =
     p.serviceType === "academic"
@@ -179,6 +182,20 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           ))}
         </ul>
       </Section>
+
+      {p.serviceType === "design" && (
+        <Section
+          id="ficha-tecnica"
+          title="Ficha técnica da peça"
+          description={
+            spec
+              ? "O cliente vê o tipo de peça e a data do evento no topo; o resto atrás de “ver detalhes” (RF-20.12)."
+              : "Ainda por preencher. Preencha-a no briefing: tipo, medidas, material, quantidade, acabamento e textos."
+          }
+        >
+          <DesignSpecForm projectId={p.id} spec={spec} />
+        </Section>
+      )}
 
       {p.serviceType === "academic" && (
         <Section

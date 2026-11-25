@@ -5,6 +5,7 @@
 import type { BlockId, ServiceLayout } from "@/lib/portal/service-layouts";
 import { AcademicAdjustments, AcademicBrief, AcademicChapters, AcademicCountdown } from "./academic";
 import { Approvals } from "./approvals";
+import { DesignSpecBlock } from "./design";
 import { NextStep, PhaseBar } from "./common";
 import { Payments, PaymentsCompact } from "./payments";
 import { TechDemoFeedback, TechHeroProgress, TechNeedsClient, TechRoadmapMeetingNews } from "./tech";
@@ -24,6 +25,7 @@ const BLOCKS: Record<BlockId, (p: BlockProps) => React.ReactNode> = {
   "aca-countdown": AcademicCountdown,
   "aca-chapters": AcademicChapters,
   "aca-adjustments": AcademicAdjustments,
+  "des-spec": DesignSpecBlock,
 };
 
 export function Blocks({ ids, grid, ...props }: BlockProps & { ids: BlockId[]; grid?: ServiceLayout["overviewGrid"] }) {

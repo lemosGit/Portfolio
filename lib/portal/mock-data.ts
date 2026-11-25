@@ -366,6 +366,26 @@ export const projects: Project[] = [
       { position: 6, key: "producao", name: "Produção / impressão", description: "A peça está a ser produzida.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
       { position: 7, key: "entrega-levantamento", name: "Entrega / levantamento", description: "Data e local de levantamento, ficheiros finais.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
     ]),
+    // M7-01: ficha técnica da peça (atrás de "ver detalhes"; tipo e evento no topo).
+    designSpec: {
+      pieceType: "convite_impresso",
+      pieceLabel: "Convite do casamento, dobrado, com envelope",
+      widthCm: 14.8,
+      heightCm: 21,
+      sizeNotes: "A5 fechado; A4 aberto",
+      material: "Papel couché 300 g",
+      quantity: 120,
+      finish: "Laminação mate e envelope kraft",
+      hasPrint: true,
+      hasDigitalFiles: true,
+      eventDate: at(24).slice(0, 10), // sábado, 19/12 com o relógio fixo dos testes (a V2 corrigiu a data)
+      keyTexts: [
+        { label: "Noivos", value: "Ana & Paulo" },
+        { label: "Data", value: "Sábado, 19 de dezembro, às 16h" },
+        { label: "Local", value: "Igreja da Sagrada Família, Luanda" },
+        { label: "Copo-d'água", value: "Salão Girassol" },
+      ],
+    },
     approvals: [
       {
         id: "ap_conv2",

@@ -7,6 +7,7 @@ import { toView } from "./data";
 import { loadApprovals } from "@/lib/approvals/model";
 import { loadPayments } from "@/lib/payments/model";
 import { loadBrief } from "@/lib/academic/brief";
+import { loadSpec } from "@/lib/design/spec";
 import { applyChapterProgress, loadSections } from "@/lib/academic/chapters";
 import { loadAdjustments } from "@/lib/academic/adjustments";
 import { loadPhases } from "./phase-source";
@@ -128,7 +129,7 @@ export async function loadPortal(
   const now = new Date().toISOString();
   // Fases: GitHub no Desenvolvimento (em cache; o webhook invalida-a), BD no Académico e no Design (ADR-001).
   const blocks = p.service_type !== "development";
-  const [loaded, approvals, payments, filesPurgeOn, academicBrief, adjustedDueOn, sections, adjustments] = await Promise.all([
+  const [loaded, approvals, payments, filesPurgeOn, academicBrief, adjustedDueOn, sections, adjustments, designSpec] = await Promise.all([
     loadPhases(
       { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
       sb,
@@ -153,6 +154,8 @@ export async function loadPortal(
     p.service_type === "academic" ? loadSections(sb, p.id) : Promise.resolve([]),
     // M6-06: pedidos de ajuste.
     p.service_type === "academic" ? loadAdjustments(sb, p.id) : Promise.resolve([]),
+    // M7-01: ficha técnica da peça (só no Design); tolera a tabela em falta.
+    p.service_type === "design" ? loadSpec(sb, p.id) : Promise.resolve(null),
   ]);
   // A % da fase Desenvolvimento vem dos capítulos quando o trabalho os tem (RF-10.41, RF-10.43).
   const sync = { ...loaded, phases: applyChapterProgress(loaded.phases, sections, academicBrief?.usesChapters ?? true) };
@@ -170,6 +173,7 @@ export async function loadPortal(
     payments,
     filesPurgeOn,
     academicBrief: academicBrief ?? undefined,
+    designSpec: designSpec ?? undefined,
     adjustedDueOn,
     sections: p.service_type === "academic" ? sections : undefined,
     adjustments: p.service_type === "academic" ? adjustments : undefined,

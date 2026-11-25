@@ -9,6 +9,7 @@ import { shortDate } from "@/lib/portal/format";
 import type { PhaseView, ProjectView } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import { AcademicBrief } from "../_blocks/academic";
+import { DesignSpecBlock } from "../_blocks/design";
 import { StateChip } from "../_blocks/common";
 
 const CHAPTER_TEXT = { concluido: "Pronto", em_curso: "A escrever", por_iniciar: "Por começar" } as const;
@@ -81,6 +82,7 @@ export function PhasesProject({ project }: { project: ProjectView }) {
         </ol>
       </section>
       {academic && <AcademicBrief project={project} unread={0} />}
+      {project.serviceType === "design" && <DesignSpecBlock project={project} unread={0} />}
     </div>
   );
 }
