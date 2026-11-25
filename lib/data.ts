@@ -29,6 +29,13 @@ export const whatsappWith = (message: string) =>
 export const academicRequestMessage =
   "Olá! Vim pelo site da GeniusFrela e gostava de pedir um trabalho académico. Podemos conversar sobre o tema, as normas e o prazo?";
 
+export const designRequestMessage =
+  "Olá! Vim pelo site da GeniusFrela e gostava de pedir um trabalho de design. Podemos conversar sobre a peça, a quantidade e a data do evento?";
+
+/** Mensagem do WhatsApp por serviço (páginas dos serviços e estado vazio do Portfólio). */
+export const requestMessageFor = (service: ServiceId | "all") =>
+  service === "academic" ? academicRequestMessage : service === "design" ? designRequestMessage : projectRequestMessage;
+
 export const navLinks = [
   { id: "sobre", label: "Sobre" },
   { id: "servicos", label: "Serviços" },
@@ -131,6 +138,7 @@ export const services: Service[] = [
     short: "Design",
     examples: ["Logótipos", "Convites e lonas de festa", "Camisolas personalizadas"],
     tone: "design",
+    href: "/servicos/design",
   },
 ];
 

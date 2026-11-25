@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { academicRequestMessage, projects, services, whatsappLink, whatsappWith, type ServiceId } from "@/lib/data";
+import { projects, requestMessageFor, services, whatsappWith, type ServiceId } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { WhatsappIcon } from "./Icons";
 import { ProjectCard } from "./ProjectCard";
@@ -76,7 +76,7 @@ export function Projects() {
               Ainda não publicámos trabalhos deste serviço. Fale connosco para saber o que podemos fazer por si.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <a href={filter === "academic" ? whatsappWith(academicRequestMessage) : whatsappLink} target="_blank" rel="noopener noreferrer" className="btn-primary">
+              <a href={whatsappWith(requestMessageFor(filter))} target="_blank" rel="noopener noreferrer" className="btn-primary">
                 <WhatsappIcon className="h-4 w-4" /> Fale connosco
               </a>
               {service?.href && !service.href.startsWith("#") && (

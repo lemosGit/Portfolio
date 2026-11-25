@@ -299,6 +299,16 @@ section[id] {
     transform: translateY(-2px);
   }
 
+  /* Botão principal da página do Design (Lilás Criativo #A78BFA, ADR-004; texto #170F2E, 6,7:1). */
+  .btn-design {
+    @apply relative inline-flex items-center gap-2.5 bg-svc-design px-6 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-[#170f2e] transition duration-300;
+    box-shadow: 0 0 36px -8px rgba(167, 139, 250, 0.55);
+  }
+  .btn-design:hover {
+    box-shadow: 0 0 52px -6px rgba(167, 139, 250, 0.8);
+    transform: translateY(-2px);
+  }
+
   .btn-ghost {
     @apply inline-flex items-center gap-2.5 border border-accent/30 bg-accent/[0.04] px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.16em] text-ink transition duration-300;
   }
