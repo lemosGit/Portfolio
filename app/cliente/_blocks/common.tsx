@@ -3,6 +3,7 @@
  * Design System V1: Concluído (verde), Em curso (cor do módulo), Aguarda a sua resposta
  * (coral, só quando a ação é do cliente), Planeado (cinzento), Atrasada (cor do módulo + etiqueta).
  */
+import { CHAPTERS_PHASE_KEY, chapterProgress } from "@/lib/academic/chapters";
 import { approvalTitle } from "@/lib/approvals/model";
 import { blockingPayment, kz, payLabel } from "@/lib/payments/model";
 import type { PhaseView } from "@/lib/portal/types";
@@ -82,6 +83,11 @@ export function NextStep({ project }: BlockProps) {
   const ph = project.currentPhase;
   const allDone = project.phaseViews.every((p) => p.status === "done" || p.status === "skipped");
   // Um pedido de aprovação pendente é sempre um passo do cliente (M5-10, D-136).
+  // M6-07: na fase Desenvolvimento do Académico com capítulos, o progresso diz "X de Y capítulos" (wireframe, RF-10.41).
+  const chapters =
+    ph.key === CHAPTERS_PHASE_KEY && project.academicBrief?.usesChapters !== false && (project.sections?.length ?? 0) > 0
+      ? chapterProgress(project.sections!)
+      : null;
   const pending = (project.approvals ?? []).filter((a) => a.status === "pendente");
   // RF-30.24: um pagamento por pagar que trava uma fase por começar é o passo do cliente.
   const blocking = blockingPayment(project.payments ?? [], Object.fromEntries(project.phaseViews.map((p) => [p.key ?? "", p.state ?? ""])));
@@ -114,7 +120,7 @@ export function NextStep({ project }: BlockProps) {
       {!allDone && ph.percent > 0 && ph.status === "current" && (
         <div className="mt-5 space-y-2">
           <div className="flex justify-between text-[13px]">
-            <span className="text-ink-dim">Progresso da fase</span>
+            <span className="text-ink-dim">{chapters ? `${chapters.done} de ${chapters.total} capítulos` : "Progresso da fase"}</span>
             <b className="font-semibold text-accent-soft">{ph.percent}%</b>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-line">

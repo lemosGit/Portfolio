@@ -79,13 +79,15 @@ test("Aprovações: pendente em destaque, aprovar em dois passos e histórico (M
   expect(errors).toEqual([]);
 });
 
-test("Pagamentos: totais em Kz e estado de cada pagamento (M5-11)", async ({ page }) => {
+test("Pagamentos compactos: o que falta e a lista em 'Ver pagamentos' (M5-11, M6-07)", async ({ page }) => {
   await page.goto("/cliente");
   const block = page.getByRole("region", { name: "Pagamentos" });
-  await expect(block.getByText("90 000 Kz")).toBeVisible();
-  await expect(block.getByText("45 000 Kz")).toHaveCount(4); // pago, em falta e os dois pagamentos
+  await expect(block.getByText("Sinal pago")).toBeVisible();
+  await expect(block.getByText("45 000 Kz").first()).toBeVisible();
+  await expect(block.getByText("restante, antes da entrega", { exact: false }).first()).toBeVisible();
+  await expect(block.getByText("Sinal (50%)")).toBeHidden();
+  await block.getByText("Ver pagamentos").click();
   await expect(block.getByText("Sinal (50%)")).toBeVisible();
-  await expect(block.getByText("Pago", { exact: true }).last()).toBeVisible();
   await expect(block.getByText("Pendente", { exact: true })).toBeVisible();
   await expect(block.getByText("O pagamento é feito fora do portal", { exact: false })).toBeVisible();
 });
@@ -117,15 +119,14 @@ test("Contagem do prazo em destaque: 12 dias até 7 de dezembro (M6-02)", async 
   expect(order).toBe(true);
 });
 
-test("Capítulos: '2 de 5' concluídos e o estado de cada um, só o título (M6-03)", async ({ page }) => {
+test("Capítulos: '2 de 5' no próximo passo e a lista na página Projeto, só o título (M6-03, M6-07)", async ({ page }) => {
   await page.goto("/cliente");
-  const block = page.getByRole("region", { name: "Capítulos" });
-  await expect(block.getByText("2 de 5")).toBeVisible();
-  await expect(block.getByText("3. Metodologia")).toBeHidden();
-  await block.getByText("Ver capítulos").click();
-  await expect(block.getByText("3. Metodologia")).toBeVisible();
-  await expect(block.getByText("Em curso", { exact: true })).toBeVisible();
-  await expect(block.getByText("Concluído", { exact: true })).toHaveCount(2);
+  await expect(page.getByText("2 de 5 capítulos")).toBeVisible();
+  await page.goto("/cliente/projeto");
+  const list = page.getByRole("list", { name: "Capítulos" });
+  await expect(list.getByText("3. Metodologia")).toBeVisible();
+  await expect(list.getByText("A escrever")).toBeVisible();
+  await expect(list.getByText("Pronto", { exact: true })).toHaveCount(2);
 });
 
 test("Histórico: o orçamento v1 aparece como aceite (M6-04)", async ({ page }) => {
@@ -135,4 +136,24 @@ test("Histórico: o orçamento v1 aparece como aceite (M6-04)", async ({ page })
   await expect(block.getByText("Orçamento v1")).toBeVisible();
   await expect(block.getByText("· Aceite")).toBeVisible();
   await expect(block.getByText("Você: aceitou")).toBeVisible();
+});
+
+test("Projeto (TEL-11): fases na vertical, sem os separadores do Tech (M6-07)", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/cliente/projeto");
+  await expect(page.getByRole("heading", { name: "O seu trabalho" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Tarefas" })).toHaveCount(0);
+  await expect(page.getByText("Em curso", { exact: true })).toBeVisible();
+  await expect(page.getByText("7 dias", { exact: true })).toBeVisible(); // fase Ajustes
+  expect(errors).toEqual([]);
+});
+
+test("360 px sem scroll horizontal (RNF-201, M6-07)", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 740 });
+  for (const path of ["/cliente", "/cliente/projeto", "/cliente/entregas", "/cliente/mensagens"]) {
+    await page.goto(path);
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(over, path).toBe(0);
+  }
 });

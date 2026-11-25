@@ -16,10 +16,12 @@ export type DbPhaseRow = {
   next_step_owner: "geniusfrela" | "cliente" | null;
   progress: number | null;
   client_can_upload: boolean;
+  /** Quando a fase foi concluída (página Projeto, M6-07); opcional nos dados de exemplo. */
+  completed_at?: string | null;
 };
 
 export const DB_PHASE_COLS =
-  "position, key, name, description, status, due_on, next_step, next_step_owner, progress, client_can_upload";
+  "position, key, name, description, status, due_on, next_step, next_step_owner, progress, client_can_upload, completed_at";
 
 /** project_phases → Phase (ordenadas por position). Pura, para testar sem BD. */
 export function mapDbPhases(rows: DbPhaseRow[]): Phase[] {
@@ -37,6 +39,7 @@ export function mapDbPhases(rows: DbPhaseRow[]): Phase[] {
       nextStep: r.next_step ? { text: r.next_step, owner: r.next_step_owner } : undefined,
       progress: r.status === "concluida" ? 1 : r.progress != null ? r.progress / 100 : undefined,
       clientCanUpload: r.client_can_upload,
+      completedAt: r.completed_at ?? undefined,
     }));
 }
 

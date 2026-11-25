@@ -35,6 +35,11 @@ test.describe("@visual Académico — referência", () => {
     await page.evaluate(() => document.fonts.ready);
     await expect(page).toHaveScreenshot("academico-visao-geral.png", { fullPage: true });
   });
+  test("Académico Projeto @visual", async ({ page }) => {
+    await page.goto("/cliente/projeto");
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page).toHaveScreenshot("academico-projeto.png", { fullPage: true });
+  });
 });
 
 test.describe("@visual Design — referência", () => {

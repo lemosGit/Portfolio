@@ -23,7 +23,7 @@ export default async function Overview() {
         }
       />
 
-      <Blocks ids={layoutFor(project.serviceType).pages.overview} project={project} unread={unread} />
+      <Blocks ids={layoutFor(project.serviceType).pages.overview} grid={layoutFor(project.serviceType).overviewGrid} project={project} unread={unread} />
     </div>
   );
 }
