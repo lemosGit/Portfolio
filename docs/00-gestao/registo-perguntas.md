@@ -102,6 +102,7 @@ Consulta: Supabase MCP `get_advisors(security)` na M5-13 (2026-11-24) para o T15
 | Q-093 | 2026-11-25 | M5 | M5-99: como fazer a demo "um projeto de cada serviço" (os previews da Vercel pedem login e não há Design em produção)? Marcar a v0.1.0 no GitHub? | Demo em produção com dados de teste (Cliente de teste M5 — Académico; Cliente de teste Design — Design, criado pelo painel; Tech dos clientes reais); tag `v0.1.0` + GitHub Release depois do merge das notas | `docs/06-entrega/releases/v0.1.0.md` |
 | Q-094 | 2026-11-25 | M6 | M6-01: aprovar a captura do Académico com o bloco "Ficha do trabalho" e aplicar a migração 0009 em produção? | Sim aos dois; 0009 aplicada (tabela vazia, RLS, 3 políticas), Security Advisor sem avisos novos da tabela; o aviso `auth_otp_long_expiry` confirma o R-06 feito (aceite, D-078) | D-149, `supabase/migrations/0009_academic_briefs.sql` |
 Issue criada com confirmação (2026-11-25): #132 [M9-07] Reduzir o tempo de resposta das páginas e ações do admin (limitação L3 da v0.1.0), também em `scripts/tarefas.py` e no quadro #9.
+| Q-095 | 2026-11-25 | M6 | M6-02: aprovar a captura do Académico com a contagem do prazo (12 dias em destaque, âmbar, depois da barra de fases)? | Sim (vista e aprovada) | D-150, `tests/e2e/__screenshots__/…/academico-visao-geral-*.png` |
 
 Skill usada: `lemos-engineer-01` (planeamento e backlog M0), 2026-11-23.
 Consulta de documentação: Supabase (MCP `search_docs`) para os limites do plano gratuito — ficheiro ≤ 50 MB, OTP ≤ 86 400 s, SMTP próprio 30/h — na M1-06, 2026-11-23.

@@ -100,3 +100,19 @@ test("Ficha do trabalho: fechada na primeira vista, abre em 'Ver detalhes' (M6-0
   await expect(block.getByText("APA", { exact: true })).toBeVisible();
   await expect(block.getByText("7 dias depois da entrega")).toBeVisible();
 });
+
+test("Contagem do prazo em destaque: 12 dias até 7 de dezembro (M6-02)", async ({ page }) => {
+  await page.goto("/cliente");
+  const block = page.getByRole("region", { name: "Prazo de entrega" });
+  await expect(block.getByText("12", { exact: true })).toBeVisible();
+  await expect(block.getByText("dias", { exact: true })).toBeVisible();
+  await expect(block.getByText("7 de dezembro de 2026")).toBeVisible();
+  await expect(block.getByText("Prazo próximo")).toHaveCount(0);
+  // a contagem vem antes do próximo passo (D-107)
+  const order = await page.evaluate(() => {
+    const a = document.querySelector("#prazo-title")!.getBoundingClientRect().top;
+    const b = document.querySelector("#proximo-title")!.getBoundingClientRect().top;
+    return a < b;
+  });
+  expect(order).toBe(true);
+});

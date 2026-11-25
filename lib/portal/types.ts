@@ -115,6 +115,10 @@ export type Project = {
   approvals?: Approval[];
   /** Pagamentos (Académico e Design, M5-11). O cliente não vê os anulados (RLS). */
   payments?: Payment[];
+  /** false quando o projeto ainda não tem prazo (dueOn é então "agora", só para não ficar vazio). */
+  dueOnSet?: boolean;
+  /** Prazo ajustado (RN-21: + dias a aguardar o cliente), da função project_adjusted_due; só no Académico (M6-02). */
+  adjustedDueOn?: string;
   /** Ficha do trabalho académico (M6-01); só no Académico. */
   academicBrief?: AcademicBrief;
   /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
