@@ -17,7 +17,8 @@ import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
 import { splitRows, type QuoteSnapshot } from "@/lib/quotes/model";
 
-type Mode = "idle" | "confirm" | "changes" | "extra";
+/** "sent": já respondeu; os botões não voltam enquanto a página se atualiza (M7-09: um 2.º clique dava erro). */
+type Mode = "idle" | "confirm" | "changes" | "extra" | "sent";
 
 /**
  * `rounds`: só nas provas do Design (M7-03): "Ronda X de Y", aviso da última ronda e revisão extra.
@@ -52,7 +53,7 @@ export function ApprovalCard({ a, rounds, art = false, bare = false }: { a: Appr
     setBusy(false);
     if (!r.ok) return setMsg({ ok: false, text: r.error });
     setMsg({ ok: true, text: r.message });
-    setMode("idle");
+    setMode("sent");
     router.refresh();
   }
 
