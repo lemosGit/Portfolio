@@ -19,6 +19,7 @@ Fica fora: o envio real de emails pelo Resend, que se verifica à parte (§6, la
 | **B** — BD | psql em Postgres 17 (Docker) | `supabase/tests/` | local + CI | Gatilhos, transições, regras de negócio na BD, RLS, concorrência |
 | **E** — E2E | Playwright, 360 px e 1280 px | `tests/e2e/*.spec.ts` | local + CI | O portal no modo de demonstração, de ponta a ponta no browser |
 | **V** — Visual | Playwright (capturas) | `tests/e2e/tech.visual.spec.ts` | só local (D-114) | Regressão visual contra as capturas de referência aprovadas |
+| **F** — Fluxo com Supabase local | Playwright + `supabase start` (Docker) | `tests/e2e/fluxo/` | local + CI (job próprio) | Um fluxo inteiro com auth do link mágico, Storage, RLS e gatilhos reais (D-172) |
 | **M** — Manual em produção | Chrome (admin) + janela anónima (cliente, link mágico) | `joao-pereira.dev` | por entrega | O fluxo real com a BD, o Storage e o link mágico (como na M6-99 e na M7-99) |
 
 **Estado** de cada caso: ✅ automatizado · 🟢 verificado à mão em produção (sem automação) · 🟡 parcial · ⬜ por testar · ❌ funcionalidade por implementar.
@@ -70,8 +71,8 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 | CT | US | Caso (dado · quando · então) | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
 | CT-001 | US-001 | Admin cria um projeto Design → 7 fases do modelo, sem campo de repositório; Académico idem | B, U, M | B `0006_fases.sql` (modelos e fases), U `project-form.test.ts` | ✅ 🟢 | Repetir na M9-02/03 (passo 1) |
-| CT-002 | US-002 | "Gerar link" → link de 24 h, uso único; "Abrir no WhatsApp" com a mensagem e o link | U, M | U `access-links.test.ts` | ✅ 🟢 | M9-05: expiração e 2.º uso em produção |
-| CT-003 | US-003 | Link válido → entra no projeto; link usado ou expirado → "peça um novo" com WhatsApp | E, M | E `tech.spec.ts` (link inválido) | 🟡 🟢 | M9-05: link usado e link expirado |
+| CT-002 | US-002 | "Gerar link" → link de 24 h, uso único; "Abrir no WhatsApp" com a mensagem e o link | U, M, F | U `access-links.test.ts` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | 2.º uso automatizado (F). M9-05: expiração. O botão "Gerar link" fica preso no Supabase local (#132) |
+| CT-003 | US-003 | Link válido → entra no projeto; link usado ou expirado → "peça um novo" com WhatsApp | E, M, F | E `tech.spec.ts` (link inválido) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | Link usado: automatizado (F). M9-05: link expirado |
 | CT-004 | US-004 | Visão geral: etiqueta do serviço, barra de fases, fase atual e um só botão de ação | E, V | E `academico.spec.ts`, `servicos.spec.ts` (Visão geral) · V capturas `*-visao-geral-*` | ✅ | — |
 | CT-005 | US-005 | Admin conclui uma fase ou põe "a aguardar o cliente" → a barra e o próximo passo mudam; fase "não aplicável" | U, B, M | U `admin-phases.test.ts` · B `0006_fases.sql` | ✅ 🟢 | M9-02/03: verificar no cliente logo a seguir (L4: concluir e avançar não é atómico) |
 | CT-006 | US-006 | Cliente com 2 projetos troca no seletor → fases, provas e pagamentos do outro | M | — | ⬜ | **M9-03**: usar os 2 projetos do Cliente de teste Design |
@@ -81,14 +82,14 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 ### 4.2 Pagamentos
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
-| CT-009 | US-009 | Admin marca o sinal pago com a data → pago, no histórico, "Desfazer pago" | U, B, M | U `payments.test.ts` · B `0007_blocos.sql` | ✅ 🟢 | — |
+| CT-009 | US-009 | Admin marca o sinal pago com a data → pago, no histórico, "Desfazer pago" | U, B, M, F | U `payments.test.ts` · B `0007_blocos.sql` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
 | CT-010 | US-010 | Cliente vê total, pago, em falta e o estado (pendente, pago, em atraso); sem botão de pagar | U, C, E | U `payments.test.ts` (em atraso em Luanda) · C `academico/payments.test.tsx` · E `academico.spec.ts` (pagamentos compactos) | ✅ | — |
-| CT-011 | US-011 | Aceite com o sinal pendente → "Pagar o sinal" com o valor; a fase seguinte não avança (RN-11, D-052) | U, C, B, M | B `0011_aceite.sql`, `0017_orcamento_design.sql`, `0018_correcoes_v03.sql` (mensagem "50 000 Kz") · C `design/art-lock.test.tsx` | ✅ 🟢 | — |
+| CT-011 | US-011 | Aceite com o sinal pendente → "Pagar o sinal" com o valor; a fase seguinte não avança (RN-11, D-052) | U, C, B, M, F | B `0011_aceite.sql`, `0017_orcamento_design.sql`, `0018_correcoes_v03.sql` (mensagem "50 000 Kz") · C `design/art-lock.test.tsx` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
 
 ### 4.3 Aprovações
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
-| CT-012 | US-012 | "Aceitar" mostra a regra do sinal; aceite com data, hora e autor; Design com design + impressão | C, B, E, M | C `design/quote.test.tsx` · B `0011_aceite.sql`, `0017_orcamento_design.sql` · E `academico.spec.ts`, `servicos.spec.ts` (histórico) | ✅ 🟢 | — |
+| CT-012 | US-012 | "Aceitar" mostra a regra do sinal; aceite com data, hora e autor; Design com design + impressão | C, B, E, M, F | C `design/quote.test.tsx` · B `0011_aceite.sql`, `0017_orcamento_design.sql` · E `academico.spec.ts`, `servicos.spec.ts` (histórico) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
 | CT-013 | US-013 | "Pedir alterações" sem texto pede o comentário; com texto fica com a versão; o admin é avisado | U, C, B, E | B `0007_blocos.sql` (comentário vazio recusado, RN-05) · U `approvals.test.ts` (autor e comentário) · C `design/rounds.test.tsx` · E `academico.spec.ts` (aprovações, RN-05) | ✅ | Aviso ao admin por email: G3 |
 | CT-014 | US-014 | Admin reabre a arte aprovada com motivo → pendente; com a produção começada → recusado (RN-43); reaberta, volta a aceitar provas (RN-41) | B | B `0007_blocos.sql`, `0015_arte.sql`, `0018_correcoes_v03.sql` | ✅ | M9-03: reabrir no ecrã do admin |
 | CT-014b | — | Duas respostas em paralelo à mesma aprovação → 1 sucesso, 1 "já foi respondido" | B | B `concorrencia.sh` (T3) | ✅ | — |
@@ -98,7 +99,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 |---|---|---|---|---|---|---|
 | CT-015 | US-015 | Cliente envia uma foto de 4 MB (aceite, com progresso) e um PDF de 12 MB (recusado antes do envio); formato fora da lista e conteúdo falso recusados | U, M | U `files.test.ts` (tipos, assinatura, limites) | 🟡 | **M9-02**: enviar no briefing com os ficheiros da §3.4 |
 | CT-016 | US-016 | Nova versão de um entregável → a anterior fica e a nova é a atual; prova de peça com a arte aprovada recusada (RN-41) | U, E, B, M | U `files.test.ts` · E `academico.spec.ts`, `servicos.spec.ts` (Ficheiros) · B `0018_correcoes_v03.sql` | ✅ 🟢 | — |
-| CT-017 | US-017 | Descarregar usa um link temporário; um ficheiro bloqueado por pagamento aparece mas não se descarrega (RN-14) | B, C, M | B `0007_blocos.sql`, `0012_ajustes.sql` (RN-14) · C `design/gallery.test.tsx` (bloqueada sem imagem) | 🟡 🟢 | **M9-05**: link expira (URL assinada de 15 min) e não abre noutra sessão |
+| CT-017 | US-017 | Descarregar usa um link temporário; um ficheiro bloqueado por pagamento aparece mas não se descarrega (RN-14) | B, C, M, F | B `0007_blocos.sql`, `0012_ajustes.sql` (RN-14) · C `design/gallery.test.tsx` (bloqueada sem imagem) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | **M9-05**: link expira (URL assinada de 15 min) e não abre noutra sessão |
 | CT-018 | US-018 | Projeto concluído há 83 dias → aviso; "Adiar"; aos 90 dias apagados, fica o registo; o cliente vê "até quando" | U, B, E | U `retention.test.ts` · B `0008_retencao.sql` · E `tech.spec.ts` (T13, `CRON_SECRET`) | ✅ | Email do aviso: G3 |
 
 ### 4.5 Mensagens e avisos
@@ -113,10 +114,10 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 |---|---|---|---|---|---|---|
 | CT-022 | US-022 | Admin preenche a ficha → o cliente vê-a em "Ver detalhes" | U, B, E | U `academic-brief.test.ts` · B `0009_ficha.sql` · E `academico.spec.ts` (ficha) | ✅ 🟢 | — |
 | CT-023 | US-023 | Faltam 36 h → contagem em horas, "Prazo próximo"; depois do prazo, "Atrasada" | U, C, E | U `countdown.test.ts` · C `academico/countdown.test.tsx` (limites 4/3 dias, horas, meia-noite) · E `academico.spec.ts` | ✅ | — |
-| CT-024 | US-024 | Pedir alterações ao índice → a fase 3 volta a "em curso"; "não aplicável" num trabalho curto | B, E, M | B `0011_aceite.sql` (índice) · E `academico.spec.ts` (aprovações) | ✅ 🟢 | — |
+| CT-024 | US-024 | Pedir alterações ao índice → a fase 3 volta a "em curso"; "não aplicável" num trabalho curto | B, E, M, F | B `0011_aceite.sql` (índice) · E `academico.spec.ts` (aprovações) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
 | CT-025 | US-025 | 3 de 5 capítulos → "3 de 5 capítulos" e %, sem o texto; sem capítulos, só o progresso | U, C, B, E | U `chapters.test.ts` · C `academico/chapters.test.tsx` · B `0010_capitulos.sql` · E `academico.spec.ts` | ✅ | — |
-| CT-026 | US-026 | Finais carregados com o restante pendente → "falta pagar o restante" com o valor; pago → descarrega e começam os ajustes | B, M | B `0012_ajustes.sql` (RN-14) | ✅ 🟢 | M9-02: ver o aviso no cliente antes do pagamento |
-| CT-027 | US-027 | Com 4 de 7 dias de ajustes, pedido com descrição e ficheiro → o admin responde com nova versão; depois do prazo, leva às mensagens | U, C, B, M | U `adjustments.test.ts` · C `academico/adjustments.test.tsx` · B `0012_ajustes.sql` | ✅ 🟢 | Ficheiro anexo ao pedido: M9-02 |
+| CT-026 | US-026 | Finais carregados com o restante pendente → "falta pagar o restante" com o valor; pago → descarrega e começam os ajustes | B, M, F | B `0012_ajustes.sql` (RN-14) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | M9-02: ver o aviso no cliente antes do pagamento |
+| CT-027 | US-027 | Com 4 de 7 dias de ajustes, pedido com descrição e ficheiro → o admin responde com nova versão; depois do prazo, leva às mensagens | U, C, B, M, F | U `adjustments.test.ts` · C `academico/adjustments.test.tsx` · B `0012_ajustes.sql` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | Ficheiro anexo ao pedido: M9-02 |
 | CT-028 | US-028 | Prazo de ajustes terminado sem pedidos → concluído e começam os 90 dias | U, B | U `retention.test.ts` · B `0012_ajustes.sql`, `0008_retencao.sql` | ✅ | — |
 
 ### 4.7 Design
@@ -164,5 +165,5 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 
 ## 7. Rastreabilidade
 - As 36 US (US-001…US-036) têm um CT com o mesmo número (CT-001…CT-036). CT-014b e CT-101…CT-106 cobrem a concorrência e os RNF.
-- Totais em 25/11 (depois da M9-08): **31 de 36 US** com o comportamento principal automatizado (✅); 3 parciais (🟡: US-003, US-015, US-017); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108).
+- Totais em 26/11 (depois da M9-02): **33 de 36 US** com o comportamento principal automatizado (✅); 1 parcial (🟡: US-015); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108). O fluxo Académico inteiro corre no CI com o Supabase local (F).
 - Testes automáticos à data: 207 (U + C), 114 (E + V), SQL 0006…0018 + 0090 + T3.

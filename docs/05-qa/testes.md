@@ -10,6 +10,7 @@
 | `npm run e2e` | Playwright: comportamento do portal (sem `@visual`), a 360 px e 1280 px | local + CI |
 | `npm run e2e:visual` | Playwright: compara com as **capturas de referência** em `tests/e2e/__screenshots__/` | **só local** |
 | `bash scripts/db-test.sh` | Aplica `supabase/migrations/*.sql` num Postgres 17 local (Docker), com o auth/storage do Supabase simulados, e corre `supabase/tests/[0-9]*.sql` | local + CI |
+| `npx supabase start` + `npm run e2e:fluxo` | Playwright: **fluxos de ponta a ponta** com um Supabase local (Docker) e as migrações; `tests/e2e/fluxo/` (D-172) | local + CI (job "Fluxos") |
 | `npm run e2e:update` | Regera as capturas de referência | só quando uma mudança visual for **intencional e aprovada** |
 
 ## Como funciona
@@ -41,3 +42,10 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 - `supabase/tests/concorrencia.sh`: duas aprovações em paralelo (T3), chamado no fim de `scripts/db-test.sh`.
 - `scripts/teste-storage-t9.mjs`: T9 contra o Storage de produção (só com autorização).
 - Relatório completo T1–T15: [`relatorios/M5-13-rls.md`](relatorios/M5-13-rls.md).
+
+## Fluxos de ponta a ponta com Supabase local (M9-02, D-172)
+- `npx supabase start` (Docker; a 1.ª vez descarrega as imagens) aplica `supabase/migrations/*` num Supabase local. `npx supabase stop` para parar.
+- `npm run e2e:fluxo` faz o build em `.next-fluxo` e arranca o portal na porta 3200 apontado ao Supabase local (`supabase status`); recusa correr se o URL não for local. Sem emails, sem GitHub, hora real.
+- `tests/e2e/fluxo/academico.fluxo.spec.ts`: link mágico (uso único) → aceite do orçamento (o sinal trava a Estrutura) → índice aprovado → entrega final bloqueada até ao restante, depois descarregada → ajuste resolvido com a V2. Cada execução cria os seus dados com um sufixo único.
+- Limite conhecido: o link é gerado pela lógica da ação, não pelo botão do admin (no Supabase local a resposta da ação fica presa no browser; #132).
+
