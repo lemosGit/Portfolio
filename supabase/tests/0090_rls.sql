@@ -24,7 +24,7 @@ declare
   p uuid; q uuid; pay uuid; d uuid; f uuid; ap uuid;
 begin
   foreach p in array array[a, b] loop
-    insert into quotes (project_id, version, total_kz) values (p, 1, 1000) returning id into q;
+    insert into quotes (project_id, version, total_kz, design_kz, print_kz) values (p, 1, 1000, 1000, 0) returning id into q;
     insert into payments (project_id, quote_id, kind, description, amount_kz) values (p, q, 'sinal', 'Sinal', 500) returning id into pay;
     insert into deliverables (project_id, role, series_key, version_no, label, uploaded_by_role) values (p, 'prova', 'arte', 1, 'V1', 'admin') returning id into d;
     insert into deliverables (project_id, role, series_key, version_no, label, uploaded_by_role) values (p, 'interno', 'notas', 1, 'N1', 'admin');

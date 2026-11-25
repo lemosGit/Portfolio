@@ -3,7 +3,9 @@
  * "Ver histórico" com data, autor, decisão, comentário e versão (RF-30.32). Sem aprovações, não aparece.
  */
 import { RESPONSE_LABEL, STATUS_LABEL, approvalTitle } from "@/lib/approvals/model";
+import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
+import { quoteTotalLine, type QuoteSnapshot } from "@/lib/quotes/model";
 import { ApprovalCard } from "../_components/ApprovalCard";
 import { Details } from "../_components/Details";
 import { StateChip } from "./common";
@@ -41,6 +43,8 @@ export function Approvals({ project }: BlockProps) {
                   <b className="font-semibold text-ink">{approvalTitle(a)}</b>
                   <span className="text-ink-dim">· {a.status === "aprovada" && (a.subject === "orcamento" || a.subject === "extra") ? "Aceite" : STATUS_LABEL[a.status]}</span>
                 </p>
+                {/* M7-06: o orçamento decidido mantém o valor e o detalhe design + impressão à vista (RF-20.21). */}
+                {a.subject === "orcamento" && <QuoteLine q={a.snapshot as QuoteSnapshot} />}
                 <ul className="mt-1 space-y-1 text-ink-faint">
                   {a.responses.map((r, i) => (
                     <li key={i}>
@@ -56,4 +60,9 @@ export function Approvals({ project }: BlockProps) {
       )}
     </section>
   );
+}
+
+function QuoteLine({ q }: { q: QuoteSnapshot }) {
+  if (q.total_kz == null) return null;
+  return <p className="mt-1 text-ink-dim">{quoteTotalLine(q.total_kz, q.design_kz ?? null, q.print_kz ?? null, kz)}</p>;
 }

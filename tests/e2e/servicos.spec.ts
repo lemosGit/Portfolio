@@ -133,4 +133,11 @@ test.describe("Design (M5-14)", () => {
     await page.goto("/cliente");
     await expect(page.getByText("Levantamento previsto:", { exact: false })).toContainText("Loja GeniusFrela, Talatona");
   });
+
+  test("Orçamento aceite no histórico com design + impressão (M7-06, RF-20.21)", async ({ page }) => {
+    await page.goto("/cliente");
+    const box = page.getByRole("region", { name: "Aprovações" });
+    await box.getByText("Ver histórico").click();
+    await expect(box.getByText("Valor total: 120 000 Kz (design 45 000 Kz + impressão 75 000 Kz).")).toBeVisible();
+  });
 });

@@ -15,7 +15,7 @@ import { sizeLabel } from "@/lib/design/spec";
 import { approvalTitle, type Approval } from "@/lib/approvals/model";
 import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
-import type { QuoteSnapshot } from "@/lib/quotes/model";
+import { splitRows, type QuoteSnapshot } from "@/lib/quotes/model";
 
 type Mode = "idle" | "confirm" | "changes" | "extra";
 
@@ -88,6 +88,8 @@ export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?:
       {q && q.total_kz != null && (
         <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {[
+            // M7-06: no Design, o detalhe design + impressão antes do total (RF-20.21)
+            ...splitRows(q.design_kz, q.print_kz, kz),
             ["Total", kz(Number(q.total_kz))],
             [`Sinal${q.deposit_pct ? ` (${q.deposit_pct}%)` : ""}`, q.deposit_kz != null ? kz(Number(q.deposit_kz)) : "—"],
             ["Restante", q.remaining_kz != null ? kz(Number(q.remaining_kz)) : "—"],

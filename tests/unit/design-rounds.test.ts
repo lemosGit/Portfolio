@@ -33,9 +33,9 @@ it("mensagem da revisão extra para o João", () => {
 describe("readQuote — rondas do Design (RN-35, Q-103)", () => {
   const read = (o: Record<string, string>) => readQuote((k) => o[k] ?? "");
   it("no Design, 2 por omissão e editável de 0 a 10", () => {
-    expect(read({ total: "90000", servico: "design" })).toMatchObject({ rounds_included: 2 });
-    expect(read({ total: "90000", servico: "design", rondas: "0" })).toMatchObject({ rounds_included: 0 });
-    expect(read({ total: "90000", servico: "design", rondas: "11" })).toEqual({ error: "As rondas incluídas vão de 0 a 10." });
+    expect(read({ design: "90000", servico: "design" })).toMatchObject({ rounds_included: 2 });
+    expect(read({ design: "90000", servico: "design", rondas: "0" })).toMatchObject({ rounds_included: 0 });
+    expect(read({ design: "90000", servico: "design", rondas: "11" })).toEqual({ error: "As rondas incluídas vão de 0 a 10." });
   });
   it("nos outros serviços não mexe nas rondas", () => {
     expect(read({ total: "90000", servico: "academic" })).not.toHaveProperty("rounds_included");
