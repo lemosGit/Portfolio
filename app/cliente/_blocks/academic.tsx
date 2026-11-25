@@ -3,8 +3,11 @@
  * para a primeira vista ter pouco texto (RF-30.12). Sem ficha, não aparece.
  */
 import { CITATION_STYLES, EDUCATION_LEVELS, WORK_TYPES } from "@/lib/academic/brief";
+import { countdown } from "@/lib/academic/countdown";
+import { nowMs } from "@/lib/clock";
 import { longDate } from "@/lib/portal/format";
 import { Details } from "../_components/Details";
+import { StateChip } from "./common";
 import type { BlockProps } from "./types";
 
 export function AcademicBrief({ project }: BlockProps) {
@@ -39,6 +42,48 @@ export function AcademicBrief({ project }: BlockProps) {
             ))}
         </dl>
       </Details>
+    </section>
+  );
+}
+
+/**
+ * Bloco "aca-countdown" (M6-02, RF-10.80…82): o prazo é o elemento principal da primeira vista
+ * (wireframe Académico, D-107): número grande na cor do módulo; "Prazo próximo" a ≤ 3 dias e
+ * "Atrasada" depois do prazo, nunca no coral "Ação sua" (D-088). Fuso Africa/Luanda.
+ */
+export function AcademicCountdown({ project }: BlockProps) {
+  if (!project.dueOn || project.dueOnSet === false) {
+    return (
+      <section aria-labelledby="prazo-title" className="panel p-6 sm:p-7">
+        <h2 id="prazo-title" className="text-base font-medium text-ink">
+          Prazo por definir
+        </h2>
+        <p className="mt-2 text-[14px] text-ink-dim">A data de entrega fica marcada quando aceitar o orçamento.</p>
+      </section>
+    );
+  }
+  const c = countdown(project.dueOn, project.adjustedDueOn, nowMs());
+  return (
+    <section aria-labelledby="prazo-title" className="panel p-6 sm:p-7">
+      <h2 id="prazo-title" className="sr-only">
+        Prazo de entrega
+      </h2>
+      <p className="flex flex-wrap items-baseline gap-x-3">
+        <b className="font-display text-[96px] font-semibold leading-none tracking-[-0.04em] text-accent sm:text-[120px]">{c.value}</b>
+        <span className="text-lg text-ink-dim">{c.unit}</span>
+      </p>
+      <p className="mt-3 flex flex-wrap items-center gap-2 text-[15px] text-ink-dim">
+        <span>
+          {c.mode === "late" ? "O prazo era" : "até"} <b className="font-semibold text-ink">{longDate(c.due)}</b>
+        </span>
+        {c.label && <StateChip tone="now">{c.label}</StateChip>}
+      </p>
+      {c.extraDays > 0 && (
+        <p className="mt-2 text-[13px] text-ink-faint">
+          Prazo ajustado: mais {c.extraDays} dia{c.extraDays === 1 ? "" : "s"} pelo tempo em que esperámos pela sua resposta.
+        </p>
+      )}
+      {c.mode === "late" && <p className="mt-2 text-[13px] text-ink-faint">O João indica a nova data no próximo passo.</p>}
     </section>
   );
 }

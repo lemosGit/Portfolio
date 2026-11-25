@@ -126,7 +126,7 @@ export async function loadPortal(
   const now = new Date().toISOString();
   // Fases: GitHub no Desenvolvimento (em cache; o webhook invalida-a), BD no Académico e no Design (ADR-001).
   const blocks = p.service_type !== "development";
-  const [sync, approvals, payments, filesPurgeOn, academicBrief] = await Promise.all([
+  const [sync, approvals, payments, filesPurgeOn, academicBrief, adjustedDueOn] = await Promise.all([
     loadPhases(
       { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
       sb,
@@ -143,6 +143,10 @@ export async function loadPortal(
       .then(({ data }) => data?.files_purge_on ?? undefined),
     // M6-01: a ficha só existe no Académico; loadBrief tolera a tabela em falta.
     p.service_type === "academic" ? loadBrief(sb, p.id) : Promise.resolve(null),
+    // M6-02: prazo ajustado (RN-21). Se falhar, a contagem usa o due_on.
+    p.service_type === "academic" && p.due_on
+      ? sb.rpc("project_adjusted_due", { p_project: p.id }).then(({ data }) => (typeof data === "string" ? data : undefined))
+      : Promise.resolve(undefined),
   ]);
 
   const project: Project = {
@@ -158,9 +162,11 @@ export async function loadPortal(
     payments,
     filesPurgeOn,
     academicBrief: academicBrief ?? undefined,
+    adjustedDueOn,
     repo: { owner: p.github_owner ?? "", name: p.github_repo ?? "" },
     startedOn: p.started_on ?? now,
     dueOn: p.due_on ?? now,
+    dueOnSet: Boolean(p.due_on),
     team: p.team ?? [],
     demos: p.demo_links.map((d) => ({
       id: d.id,
