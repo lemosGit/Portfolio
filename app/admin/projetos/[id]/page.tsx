@@ -11,7 +11,8 @@ import { todayLuanda } from "@/lib/payments/model";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
-import { ActionForm, ConfirmDelete, Field, inputCls } from "../../_components/forms";
+import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
+import { inputCls, textareaCls } from "../../_components/styles";
 import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
@@ -369,11 +370,11 @@ function MeetingForm({ projectId, m }: { projectId: string; m?: Meeting }) {
           <input name="link" type="url" required defaultValue={m?.callUrl} className={inputCls} placeholder="https://meet.google.com/…" />
         </Field>
         <Field label="Pauta" hint="Um tema por linha." className="sm:col-span-3">
-          <textarea name="pauta" rows={3} defaultValue={m?.agenda.join("\n")} className={`${inputCls} h-auto py-2.5`} />
+          <textarea name="pauta" rows={3} defaultValue={m?.agenda.join("\n")} className={textareaCls} />
         </Field>
         {m && (
           <Field label="Resumo / notas" hint="Depois da reunião: decisões e próximos passos." className="sm:col-span-3">
-            <textarea name="notas" rows={3} defaultValue={m.notes} className={`${inputCls} h-auto py-2.5`} />
+            <textarea name="notas" rows={3} defaultValue={m.notes} className={textareaCls} />
           </Field>
         )}
       </div>

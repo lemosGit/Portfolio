@@ -6,7 +6,8 @@ import { requireAdmin } from "@/lib/admin/session";
 import { loadSeries } from "@/lib/files/data";
 import { ROLE_LABEL } from "@/lib/files/rules";
 import { accountsEnabled } from "@/lib/supabase/admin";
-import { Field, inputCls } from "../../../_components/forms";
+import { Field } from "../../../_components/forms";
+import { inputCls } from "../../../_components/styles";
 import { AdminHeader, Empty, Section } from "../../../_components/ui";
 
 export const metadata = { title: "Ficheiros do projeto" };

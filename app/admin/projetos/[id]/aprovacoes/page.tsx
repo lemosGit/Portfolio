@@ -5,7 +5,8 @@ import { requireAdmin } from "@/lib/admin/session";
 import { RESPONSE_LABEL, SUBJECT_LABEL, approvalTitle, loadApprovals, type Approval, type ApprovalStatus } from "@/lib/approvals/model";
 import { loadSeries } from "@/lib/files/data";
 import { longDate, relative } from "@/lib/portal/format";
-import { ActionForm, Field, inputCls } from "../../../_components/forms";
+import { ActionForm, Field } from "../../../_components/forms";
+import { inputCls, textareaCls } from "../../../_components/styles";
 import { AdminHeader, Badge, Empty, NotifyClient, Section } from "../../../_components/ui";
 
 export const metadata = { title: "Aprovações do projeto" };
@@ -90,7 +91,7 @@ export default async function ApprovalsPage({ params }: { params: Promise<{ id: 
               <input name="versao" maxLength={10} className={inputCls} placeholder="V2" />
             </Field>
             <Field label="Índice (um capítulo ou secção por linha)" className="sm:col-span-2">
-              <textarea name="itens" rows={5} className={`${inputCls} h-auto py-2.5`} placeholder={"1. Introdução\n2. Revisão da literatura\n3. Metodologia"} />
+              <textarea name="itens" rows={5} className={textareaCls} placeholder={"1. Introdução\n2. Revisão da literatura\n3. Metodologia"} />
             </Field>
             <Field label="Mensagem ao cliente (opcional)" className="sm:col-span-2">
               <input name="mensagem" maxLength={1000} className={inputCls} placeholder="Ex.: juntámos o capítulo da metodologia, como pediu" />

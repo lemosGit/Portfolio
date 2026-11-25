@@ -6,11 +6,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, KeyRound, TriangleAlert } from "lucide-react";
 import type { AdminState } from "@/lib/admin/actions";
 import { cn } from "@/lib/utils";
+import { inputCls } from "./styles";
 
 type Action = (prev: AdminState, form: FormData) => Promise<AdminState>;
 
-/** Campo de formulário do design system (ver `.app .field` em globals.css). */
-export const inputCls = "field h-11";
 
 /** Formulário ligado a uma Server Action, com mensagens de erro/sucesso e credenciais únicas. */
 export function ActionForm({
@@ -70,7 +69,7 @@ export function ActionForm({
   );
 }
 
-function Submit({
+export function Submit({
   children,
   variant,
   pendingLabel,
@@ -96,7 +95,7 @@ function Submit({
   );
 }
 
-function Status({ state }: { state: AdminState }) {
+export function Status({ state }: { state: AdminState }) {
   return (
     <div aria-live="polite" className="min-h-5 text-[13px]">
       <AnimatePresence mode="wait" initial={false}>

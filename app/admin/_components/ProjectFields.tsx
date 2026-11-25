@@ -1,6 +1,7 @@
 import { SERVICE_TYPES } from "@/lib/admin/project-form";
 import type { ServiceType } from "@/lib/portal/types";
-import { Field, inputCls } from "./forms";
+import { Field } from "./forms";
+import { inputCls, textareaCls } from "./styles";
 import { ServicePicker } from "./ServicePicker";
 
 type Defaults = {
@@ -68,7 +69,7 @@ export function ProjectFields({
         <input name="resumo" defaultValue={d.tagline} className={inputCls} maxLength={160} />
       </Field>
       <Field label="Descrição" className="sm:col-span-2">
-        <textarea name="descricao" defaultValue={d.description} rows={3} className={`${inputCls} h-auto py-2.5`} />
+        <textarea name="descricao" defaultValue={d.description} rows={3} className={textareaCls} />
       </Field>
       <div className="sm:col-span-2">
         <label htmlFor="capa" className="mb-1.5 block text-[13px] font-medium text-ink-dim">

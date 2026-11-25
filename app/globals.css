@@ -497,6 +497,16 @@ section[id] {
   .app .field:hover {
     border-color: rgb(var(--c-accent) / 0.35);
   }
+  /* Áreas de texto: a altura vem de `rows` (o h-12 do .field ganhava a qualquer h-auto). */
+  .app textarea.field {
+    display: block;
+    height: auto;
+    min-height: 5.5rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
   .app .field:focus {
     border-color: rgb(var(--c-accent));
     box-shadow: 0 0 0 4px rgb(var(--c-accent) / 0.16);

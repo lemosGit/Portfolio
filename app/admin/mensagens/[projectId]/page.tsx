@@ -5,7 +5,8 @@ import { getProjectById, listThread } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, time } from "@/lib/portal/format";
 import { cn } from "@/lib/utils";
-import { ActionForm, inputCls } from "../../_components/forms";
+import { ActionForm } from "../../_components/forms";
+import { inputCls, textareaCls } from "../../_components/styles";
 import { AdminHeader, Empty, NotifyClient, Section } from "../../_components/ui";
 
 export const metadata = { title: "Conversa" };
@@ -99,7 +100,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ project
               maxLength={2000}
               required
               placeholder={`Responder a ${p.clientName.split(" ")[0]}…`}
-              className={`${inputCls} h-auto resize-y py-3`}
+              className={textareaCls}
             />
             <NotifyClient />
           </ActionForm>
