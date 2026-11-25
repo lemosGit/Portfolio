@@ -40,6 +40,8 @@ export type AcademicBrief = {
   pagesTarget: number | null;
   usesChapters: boolean;
   adjustDays: number;
+  /** Quando a entrega final foi disponibilizada (RF-10.64); começa os dias de ajustes. */
+  deliveredAt: string | null;
 };
 
 export type BriefRow = {
@@ -53,10 +55,11 @@ export type BriefRow = {
   pages_target: number | null;
   uses_chapters: boolean;
   adjust_days: number;
+  delivered_at?: string | null;
 };
 
 export const BRIEF_COLS =
-  "topic, work_type, education_level, institution, discipline, citation_style, citation_notes, pages_target, uses_chapters, adjust_days";
+  "topic, work_type, education_level, institution, discipline, citation_style, citation_notes, pages_target, uses_chapters, adjust_days, delivered_at";
 
 export const mapBrief = (r: BriefRow): AcademicBrief => ({
   topic: r.topic,
@@ -69,12 +72,13 @@ export const mapBrief = (r: BriefRow): AcademicBrief => ({
   pagesTarget: r.pages_target,
   usesChapters: r.uses_chapters,
   adjustDays: r.adjust_days,
+  deliveredAt: r.delivered_at ?? null,
 });
 
 const has = <T extends object>(o: T, k: string): k is Extract<keyof T, string> => Object.prototype.hasOwnProperty.call(o, k);
 
 /** Formulário do admin → linha de academic_briefs (sem project_id), ou erro em português. */
-export function readBrief(get: (k: string) => string): Omit<BriefRow, never> | { error: string } {
+export function readBrief(get: (k: string) => string): Omit<BriefRow, "delivered_at"> | { error: string } {
   const topic = get("tema");
   if (!topic) return { error: "Escreva o tema do trabalho." };
   if (topic.length > 300) return { error: "O tema tem no máximo 300 caracteres." };

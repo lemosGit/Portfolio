@@ -331,6 +331,7 @@ export const projects: Project[] = [
       pagesTarget: 45,
       usesChapters: true,
       adjustDays: 7,
+      deliveredAt: null,
     },
     // M5-11: sinal pago e restante por pagar (bloqueia os ficheiros finais, RN-14).
     payments: [

@@ -5,6 +5,8 @@ import { addDemo, deleteDemo, postponeFilesPurge, deleteMeeting, deleteProject, 
 import { getProjectById, withProgress } from "@/lib/admin/data";
 import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
 import { loadBrief } from "@/lib/academic/brief";
+import { loadAdjustments } from "@/lib/academic/adjustments";
+import { loadSeries } from "@/lib/files/data";
 import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
 import { emailEnabled } from "@/lib/email/send";
 import { WARN_DAYS, daysUntil } from "@/lib/files/retention";
@@ -15,6 +17,7 @@ import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field } from "../../_components/forms";
 import { inputCls, textareaCls } from "../../_components/styles";
 import { AcademicBriefForm } from "../../_components/AcademicBriefForm";
+import { AdminAdjustments } from "../../_components/AdminAdjustments";
 import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
@@ -47,6 +50,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const links = linkRows ?? [];
   // M6-01: ficha do trabalho académico (null até ser criada).
   const brief = p.serviceType === "academic" ? await loadBrief(sb, p.id) : null;
+  // M6-06: pedidos de ajuste e versões de entregáveis que os podem resolver.
+  const [adjustments, deliverableVersions] =
+    p.serviceType === "academic"
+      ? await Promise.all([
+          loadAdjustments(sb, p.id),
+          loadSeries(sb, p.id).then((series) =>
+            "error" in series
+              ? []
+              : series.filter((x) => x.role === "entregavel").flatMap((x) => x.versions.map((v) => ({ id: v.deliverableId, label: `${x.title} ${v.label}` }))),
+          ),
+        ])
+      : [[], []];
   // Limpeza dos ficheiros (#122): data calculada na BD (files_purge_on, 0008).
   const { data: retention } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
   const purgeOn = retention?.files_purge_on ?? null;
@@ -172,6 +187,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           description={brief ? "O cliente vê-a atrás de “ver detalhes” (RF-10.11)." : "Ainda por preencher. Preencha-a no briefing: o cliente vê-a atrás de “ver detalhes”."}
         >
           <AcademicBriefForm projectId={p.id} brief={brief} dueOn={p.dueOn} />
+        </Section>
+      )}
+
+      {p.serviceType === "academic" && (
+        <Section id="ajustes" title="Entrega final e ajustes" description="RF-10.60…74: a entrega fica disponível com o restante pago; depois, o cliente tem os dias de ajustes da ficha.">
+          <AdminAdjustments projectId={p.id} brief={brief} requests={adjustments} versions={deliverableVersions} now={Date.now()} />
         </Section>
       )}
 

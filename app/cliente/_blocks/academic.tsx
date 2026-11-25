@@ -4,10 +4,12 @@
  */
 import { CITATION_STYLES, EDUCATION_LEVELS, WORK_TYPES } from "@/lib/academic/brief";
 import { SECTION_LABEL, chapterProgress } from "@/lib/academic/chapters";
+import { ADJUSTMENT_LABEL, adjustWindow } from "@/lib/academic/adjustments";
 import { countdown } from "@/lib/academic/countdown";
 import { nowMs } from "@/lib/clock";
 import { longDate } from "@/lib/portal/format";
 import { Details } from "../_components/Details";
+import { AdjustmentForm } from "../_components/AdjustmentForm";
 import { StateChip } from "./common";
 import type { BlockProps } from "./types";
 
@@ -60,6 +62,34 @@ export function AcademicCountdown({ project }: BlockProps) {
           Prazo por definir
         </h2>
         <p className="mt-2 text-[14px] text-ink-dim">A data de entrega fica marcada quando aceitar o orçamento.</p>
+      </section>
+    );
+  }
+  // RF-10.83: depois da entrega final, conta os dias para pedir ajustes.
+  const b = project.academicBrief;
+  if (b?.deliveredAt) {
+    const w = adjustWindow(b.deliveredAt, b.adjustDays, nowMs());
+    return (
+      <section aria-labelledby="prazo-title" className="panel p-6 sm:p-7">
+        <h2 id="prazo-title" className="sr-only">
+          Prazo de ajustes
+        </h2>
+        {w.open ? (
+          <>
+            <p className="flex flex-wrap items-baseline gap-x-3">
+              <b className="font-display text-[96px] font-semibold leading-none tracking-[-0.04em] text-accent sm:text-[120px]">{w.daysLeft}</b>
+              <span className="text-lg text-ink-dim">{w.daysLeft === 1 ? "dia para pedir ajustes" : "dias para pedir ajustes"}</span>
+            </p>
+            <p className="mt-3 text-[15px] text-ink-dim">
+              até <b className="font-semibold text-ink">{longDate(w.lastDay)}</b> · a entrega final já está em Ficheiros
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="font-display text-[28px] leading-tight text-ink">Trabalho entregue</p>
+            <p className="mt-2 text-[15px] text-ink-dim">O prazo de ajustes terminou a {longDate(w.lastDay)}.</p>
+          </>
+        )}
       </section>
     );
   }
@@ -121,6 +151,58 @@ export function AcademicChapters({ project }: BlockProps) {
           ))}
         </ol>
       </Details>
+    </section>
+  );
+}
+
+/**
+ * Bloco "aca-adjustments" (M6-06, RF-10.71, RF-10.72): só depois da entrega final. Dentro do prazo,
+ * o cliente pede um ajuste (o ficheiro opcional vai em Ficheiros, Q-098); depois, "fale connosco".
+ */
+export function AcademicAdjustments({ project }: BlockProps) {
+  const b = project.academicBrief;
+  if (!b?.deliveredAt) return null;
+  const w = adjustWindow(b.deliveredAt, b.adjustDays, nowMs());
+  const list = project.adjustments ?? [];
+  return (
+    <section aria-labelledby="ajustes-title" className="panel p-6 sm:p-7">
+      <h2 id="ajustes-title" className="text-base font-medium text-ink">
+        Ajustes
+      </h2>
+      {w.open ? (
+        <>
+          <p className="mt-2 text-[14px] leading-relaxed text-ink-dim">
+            Pequenas correções para cumprir a ficha (tema, normas, nº de páginas) estão incluídas. Mudar o tema ou o nº de páginas é trabalho
+            novo. Pode juntar ficheiros em <a href="/cliente/entregas" className="underline">Ficheiros</a>.
+          </p>
+          <AdjustmentForm projectId={project.id} />
+        </>
+      ) : (
+        <p className="mt-2 text-[14px] text-ink-dim">
+          Prazo de ajustes terminado —{" "}
+          <a href="/cliente/mensagens" className="font-medium text-accent underline">
+            fale connosco
+          </a>
+          .
+        </p>
+      )}
+      {list.length > 0 && (
+        <ul className="mt-4 divide-y divide-line border-t border-line">
+          {list.map((r) => (
+            <li key={r.id} className="py-3 text-[14px]">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-ink">{r.description}</p>
+                <StateChip tone={r.status === "resolvido" ? "done" : r.status === "aberto" ? "now" : "planned"}>{ADJUSTMENT_LABEL[r.status]}</StateChip>
+              </div>
+              <p className="mt-1 text-xs text-ink-faint">
+                {longDate(r.createdAt)}
+                {r.resolvedByLabel && ` · resolvido em ${r.resolvedByLabel}`}
+                {r.adminNote && ` · ${r.adminNote}`}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

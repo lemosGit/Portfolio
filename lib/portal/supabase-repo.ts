@@ -8,6 +8,7 @@ import { loadApprovals } from "@/lib/approvals/model";
 import { loadPayments } from "@/lib/payments/model";
 import { loadBrief } from "@/lib/academic/brief";
 import { applyChapterProgress, loadSections } from "@/lib/academic/chapters";
+import { loadAdjustments } from "@/lib/academic/adjustments";
 import { loadPhases } from "./phase-source";
 import type { Client, DemoLink, Feedback, Meeting, Project, ProjectView, ServiceType } from "./types";
 
@@ -127,7 +128,7 @@ export async function loadPortal(
   const now = new Date().toISOString();
   // Fases: GitHub no Desenvolvimento (em cache; o webhook invalida-a), BD no Académico e no Design (ADR-001).
   const blocks = p.service_type !== "development";
-  const [loaded, approvals, payments, filesPurgeOn, academicBrief, adjustedDueOn, sections] = await Promise.all([
+  const [loaded, approvals, payments, filesPurgeOn, academicBrief, adjustedDueOn, sections, adjustments] = await Promise.all([
     loadPhases(
       { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
       sb,
@@ -150,6 +151,8 @@ export async function loadPortal(
       : Promise.resolve(undefined),
     // M6-03: capítulos (só título e estado).
     p.service_type === "academic" ? loadSections(sb, p.id) : Promise.resolve([]),
+    // M6-06: pedidos de ajuste.
+    p.service_type === "academic" ? loadAdjustments(sb, p.id) : Promise.resolve([]),
   ]);
   // A % da fase Desenvolvimento vem dos capítulos quando o trabalho os tem (RF-10.41, RF-10.43).
   const sync = { ...loaded, phases: applyChapterProgress(loaded.phases, sections, academicBrief?.usesChapters ?? true) };
@@ -169,6 +172,7 @@ export async function loadPortal(
     academicBrief: academicBrief ?? undefined,
     adjustedDueOn,
     sections: p.service_type === "academic" ? sections : undefined,
+    adjustments: p.service_type === "academic" ? adjustments : undefined,
     repo: { owner: p.github_owner ?? "", name: p.github_repo ?? "" },
     startedOn: p.started_on ?? now,
     dueOn: p.due_on ?? now,
