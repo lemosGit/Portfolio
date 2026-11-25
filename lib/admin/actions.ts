@@ -17,6 +17,7 @@ import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model
 import { postponeTo } from "@/lib/files/retention";
 import { readBrief } from "@/lib/academic/brief";
 import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
+import { readQuote } from "@/lib/quotes/model";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -1096,4 +1097,66 @@ export async function deleteSection(_p: AdminState, f: FormData): Promise<AdminS
   if (!data?.length) return { error: "Capítulo não encontrado." };
   refresh();
   return { ok: true, message: "Capítulo apagado." };
+}
+
+/* ───────────── Orçamentos (M6-04, RF-10.20…23) ───────────── */
+// Um orçamento novo é um rascunho; enviá-lo cria a aprovação do cliente (0007). Aceite = prazo do
+// projeto, sinal (trava a fase 3) e restante criados pela BD. Só se editam rascunhos (estados.md §3).
+
+/** Cria um rascunho (versão seguinte). Só um rascunho de cada vez. */
+export async function createQuote(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const q = readQuote((k) => str(f, k));
+  if ("error" in q) return q;
+  const { data: rows } = await sb.from("quotes").select("version, status").eq("project_id", projectId).returns<{ version: number; status: string }[]>();
+  if ((rows ?? []).some((r) => r.status === "rascunho")) return { error: "Já há um rascunho: edite-o ou envie-o." };
+  const version = Math.max(0, ...(rows ?? []).map((r) => r.version)) + 1;
+  const { error } = await sb.from("quotes").insert({ project_id: projectId, version, ...q });
+  if (error) return { error: `Não foi possível criar o orçamento: ${error.message}` };
+  refresh();
+  return { ok: true, message: `Rascunho v${version} criado. Reveja e carregue em “Enviar ao cliente”.` };
+}
+
+/** Edita um rascunho (a BD recusa mexer em valores de um orçamento enviado). */
+export async function updateQuote(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const q = readQuote((k) => str(f, k));
+  if ("error" in q) return q;
+  const { data, error } = await sb.from("quotes").update(q).eq("id", str(f, "id")).eq("status", "rascunho").select("version");
+  if (error) return { error: `Não foi possível guardar: ${error.message}` };
+  if (!data?.length) return { error: "Só se edita um rascunho." };
+  refresh();
+  return { ok: true, message: "Rascunho guardado." };
+}
+
+/** Envia ao cliente: cria a aprovação "orcamento" com a regra do sinal (RN-13) e põe a fase 2 à espera. */
+export async function sendQuote(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb
+    .from("quotes")
+    .update({ status: "enviado" })
+    .eq("id", str(f, "id"))
+    .eq("status", "rascunho")
+    .select("project_id, version, total_kz")
+    .maybeSingle<{ project_id: string; version: number; total_kz: number | string }>();
+  if (error) {
+    return { error: error.code === "23505" ? "Já há um orçamento enviado ou aceite: substitua-o antes de enviar outro." : `Não foi possível enviar: ${error.message}` };
+  }
+  if (!data) return { error: "Só se envia um rascunho." };
+  refresh();
+  const mail = await notify(f, sb, data.project_id, (c) =>
+    approvalRequestEmail({ ...c, title: `Orçamento v${data.version}`, message: `Valor total: ${kz(Number(data.total_kz))}.` }),
+  );
+  return { ok: true, message: `Orçamento v${data.version} enviado ao cliente.${emailNote(mail)}` };
+}
+
+/** Retira um orçamento enviado e ainda não aceite (enviado → substituído). Cancela a aprovação pendente. */
+export async function withdrawQuote(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb.from("quotes").update({ status: "substituido" }).eq("id", str(f, "id")).eq("status", "enviado").select("version");
+  if (error) return { error: `Não foi possível retirar: ${error.message}` };
+  if (!data?.length) return { error: "Só se retira um orçamento enviado e ainda não aceite." };
+  refresh();
+  return { ok: true, message: `Orçamento v${data[0].version} retirado. Crie uma versão nova.` };
 }

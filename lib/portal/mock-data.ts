@@ -286,6 +286,20 @@ export const projects: Project[] = [
         responses: [{ kind: "aprovar", comment: null, actorRole: "client", createdAt: at(-5, 9) }],
       },
       {
+        id: "ap_orc1",
+        subject: "orcamento",
+        versionLabel: "v1",
+        snapshot: {
+          total_kz: 90000, deposit_pct: 50, deposit_kz: 45000, remaining_kz: 45000, delivery_due_on: at(12).slice(0, 10),
+          deposit_rule: "O sinal não é devolvido se desistir depois de pagar, porque cobre o trabalho já começado.",
+        },
+        status: "aprovada",
+        requestedAt: at(-13, 9),
+        decidedAt: at(-13, 18),
+        phase: { position: 2, name: "Orçamento e aceite" },
+        responses: [{ kind: "aprovar", comment: null, actorRole: "client", createdAt: at(-13, 18) }],
+      },
+      {
         id: "ap_idx1",
         subject: "indice",
         versionLabel: "V1",

@@ -53,5 +53,5 @@ export async function respondToApproval(id: string, kind: "aprovar" | "pedir_alt
 
   revalidatePath("/cliente", "layout");
   revalidatePath("/admin", "layout");
-  return { ok: true, message: kind === "aprovar" ? "Aprovado. Obrigado!" : "Pedido de alterações enviado. Vamos tratar disso." };
+  return { ok: true, message: kind === "aprovar" ? "Feito. Obrigado!" : "Pedido de alterações enviado. Vamos tratar disso." };
 }

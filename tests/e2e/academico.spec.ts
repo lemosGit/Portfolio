@@ -127,3 +127,12 @@ test("Capítulos: '2 de 5' concluídos e o estado de cada um, só o título (M6-
   await expect(block.getByText("Em curso", { exact: true })).toBeVisible();
   await expect(block.getByText("Concluído", { exact: true })).toHaveCount(2);
 });
+
+test("Histórico: o orçamento v1 aparece como aceite (M6-04)", async ({ page }) => {
+  await page.goto("/cliente");
+  const block = page.getByRole("region", { name: "Aprovações" });
+  await block.getByText("Ver histórico").click();
+  await expect(block.getByText("Orçamento v1")).toBeVisible();
+  await expect(block.getByText("· Aceite")).toBeVisible();
+  await expect(block.getByText("Você: aceitou")).toBeVisible();
+});

@@ -39,12 +39,12 @@ export function Approvals({ project }: BlockProps) {
               <li key={a.id} className="py-3 text-[13px]">
                 <p className="flex flex-wrap items-center gap-2">
                   <b className="font-semibold text-ink">{approvalTitle(a)}</b>
-                  <span className="text-ink-dim">· {STATUS_LABEL[a.status]}</span>
+                  <span className="text-ink-dim">· {a.status === "aprovada" && (a.subject === "orcamento" || a.subject === "extra") ? "Aceite" : STATUS_LABEL[a.status]}</span>
                 </p>
                 <ul className="mt-1 space-y-1 text-ink-faint">
                   {a.responses.map((r, i) => (
                     <li key={i}>
-                      {longDate(r.createdAt)} · {r.actorRole === "client" ? "Você" : "GeniusFrela"}: {RESPONSE_LABEL[r.kind].toLowerCase()}
+                      {longDate(r.createdAt)} · {r.actorRole === "client" ? "Você" : "GeniusFrela"}: {(r.kind === "aprovar" && (a.subject === "orcamento" || a.subject === "extra") ? "aceitou" : RESPONSE_LABEL[r.kind]).toLowerCase()}
                       {r.comment && <> — “{r.comment}”</>}
                     </li>
                   ))}
