@@ -55,4 +55,30 @@ begin
 end $$;
 reset role;
 
+-- M6-05: índice para aprovação ligado à fase Estrutura (RF-10.31, RF-10.32)
+select set_config('request.jwt.claims', :'ADMIN', false); set role authenticated;
+do $$ begin
+  insert into approvals (project_id, project_phase_id, subject, version_label, snapshot)
+  values ('80000000-0000-0000-0000-0000000000a1', pg_temp.ph('estrutura'), 'indice', 'V1', '{"title":"Índice","items":["1. Introdução","2. Métodos"]}');
+  assert (select status from project_phases where id = pg_temp.ph('estrutura')) = 'aguarda_cliente', 'índice pedido: fase à espera do cliente';
+end $$;
+reset role;
+select set_config('request.jwt.claims', :'CA', false); set role authenticated;
+select respond_approval((select id from approvals where project_id = '80000000-0000-0000-0000-0000000000a1' and subject = 'indice' and status = 'pendente'), 'pedir_alteracoes', 'Falta a metodologia') is not null;
+reset role;
+select set_config('request.jwt.claims', :'ADMIN', false); set role authenticated;
+do $$ begin
+  assert (select status from project_phases where id = pg_temp.ph('estrutura')) = 'em_curso', 'RF-10.32: pedir alterações volta a em curso';
+  insert into approvals (project_id, project_phase_id, subject, version_label, snapshot)
+  values ('80000000-0000-0000-0000-0000000000a1', pg_temp.ph('estrutura'), 'indice', 'V2', '{"title":"Índice","items":["1. Introdução","2. Metodologia","3. Resultados"]}');
+end $$;
+reset role;
+select set_config('request.jwt.claims', :'CA', false); set role authenticated;
+select respond_approval((select id from approvals where project_id = '80000000-0000-0000-0000-0000000000a1' and subject = 'indice' and status = 'pendente'), 'aprovar') is not null;
+reset role;
+do $$ begin
+  assert (select status from project_phases where id = (select id from project_phases where project_id = '80000000-0000-0000-0000-0000000000a1' and key = 'estrutura')) = 'concluida',
+    'índice V2 aprovado: fase Estrutura concluída';
+end $$;
+
 \echo '✔ 0011: o trabalho só começa com o orçamento aceite e o sinal pago (RN-11, D-013)'

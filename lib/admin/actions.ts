@@ -1160,3 +1160,39 @@ export async function withdrawQuote(_p: AdminState, f: FormData): Promise<AdminS
   refresh();
   return { ok: true, message: `Orçamento v${data[0].version} retirado. Crie uma versão nova.` };
 }
+
+/* ───────────── Índice para aprovação (M6-05, RF-10.30…32) ───────────── */
+
+/**
+ * Pede ao cliente a aprovação do índice, gerado a partir dos capítulos (M6-03). Liga-o à fase
+ * "estrutura": em curso passa a "a aguardar o cliente"; "pedir alterações" volta a pô-la em curso
+ * (phase_resume) e avisa o João; aprovar conclui-a (complete_phase) — tudo na BD (0007).
+ */
+export async function requestIndexApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const message = opt(f, "mensagem");
+  if (message && message.length > 1000) return { error: "A mensagem tem no máximo 1000 caracteres." };
+  const [{ data: sections }, { data: phase }, { count: previous }] = await Promise.all([
+    sb.from("academic_sections").select("title").eq("project_id", projectId).order("position").returns<{ title: string }[]>(),
+    sb.from("project_phases").select("id, status").eq("project_id", projectId).eq("key", "estrutura").maybeSingle<{ id: string; status: string }>(),
+    sb.from("approvals").select("id", { count: "exact", head: true }).eq("project_id", projectId).eq("subject", "indice"),
+  ]);
+  const items = (sections ?? []).map((s) => s.title);
+  if (items.length === 0) return { error: "Crie primeiro os capítulos: o índice é gerado a partir deles." };
+  const label = `V${(previous ?? 0) + 1}`;
+  const { error } = await sb.from("approvals").insert({
+    project_id: projectId,
+    project_phase_id: phase?.id ?? null,
+    subject: "indice",
+    version_label: label,
+    snapshot: { title: "Índice", items, ...(message && { message }) },
+  });
+  if (error) {
+    return { error: error.code === "23505" ? "Já há um índice à espera do cliente. Cancele-o em Aprovações antes de pedir outro." : `Não foi possível pedir: ${error.message}` };
+  }
+  refresh();
+  const waiting = phase?.status === "em_curso" ? " A fase Estrutura fica a aguardar o cliente." : "";
+  const mail = await notify(f, sb, projectId, (c) => approvalRequestEmail({ ...c, title: `Índice ${label}`, message }));
+  return { ok: true, message: `Índice ${label} (${items.length} capítulos) enviado para aprovação.${waiting}${emailNote(mail)}` };
+}
