@@ -10,6 +10,8 @@ const CI = !!process.env.CI;
  */
 export default defineConfig({
   testDir: "tests/e2e",
+  // Os fluxos com o Supabase local têm a sua config (playwright.fluxo.config.ts, M9-02).
+  testIgnore: "fluxo/**",
   fullyParallel: true,
   forbidOnly: CI,
   retries: CI ? 1 : 0,

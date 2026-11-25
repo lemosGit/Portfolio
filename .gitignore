@@ -5,6 +5,7 @@
 
 # next.js
 /.next/
+/.next-fluxo/
 /out/
 
 # production
@@ -37,6 +38,8 @@ env.local
 /test-results/
 /playwright-report/
 /blob-report/
+/playwright-report-fluxo/
+/test-results-fluxo/
 
 # ficheiros de teste gerados (scripts/gerar_ficheiros_teste.py)
 /tests/fixtures/gerados/

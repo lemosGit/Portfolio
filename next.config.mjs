@@ -2,6 +2,8 @@ const candongueiroPay = "https://lemosgit.github.io/candongueiro_pay";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // O teste do fluxo com o Supabase local (M9-02) tem o seu próprio build, para não pisar o do E2E de demonstração.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
   images: { formats: ["image/avif", "image/webp"] },
