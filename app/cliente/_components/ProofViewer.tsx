@@ -177,7 +177,7 @@ function sideLabel(f: FileItem, j: number) {
 function Thumb({ v, now, className, onClick }: { v: ProofVersion; now?: boolean; className?: string; onClick: () => void }) {
   const cover = coverOf(v);
   const frame = cn("overflow-hidden rounded-xl border bg-surface", now ? "border-accent ring-1 ring-accent/50" : "border-line", className);
-  if (v.locked || !cover?.thumbUrl) return <NoPreview v={v} className={frame} />;
+  if (v.locked || !cover?.thumbUrl) return <NoPreview v={v} className={frame} compact />;
   return (
     <button type="button" onClick={onClick} aria-label={`Ampliar ${v.label}`} className={cn(frame, "block")}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -186,16 +186,28 @@ function Thumb({ v, now, className, onClick }: { v: ProofVersion; now?: boolean;
   );
 }
 
-function NoPreview({ v, className }: { v: ProofVersion; className?: string }) {
+/**
+ * Sem imagem (bloqueada, ou um formato sem pré-visualização, como SVG ou PDF). `compact` (miniaturas):
+ * só o ícone e o tipo, com o nome em `title` — o nome cortado não se lia (M7-99).
+ */
+function NoPreview({ v, className, compact = false }: { v: ProofVersion; className?: string; compact?: boolean }) {
+  const name = v.files[0]?.name;
+  const ext = name?.split(".").pop()?.toUpperCase();
   return (
-    <div className={cn("grid place-items-center rounded-xl border border-line bg-surface p-4 text-center text-xs text-ink-faint", className)}>
+    <div className={cn("grid place-items-center rounded-xl border border-line bg-surface text-center text-xs text-ink-faint", compact ? "p-1.5" : "p-4", className)}>
       {v.locked ? (
         <span className="inline-flex items-center gap-1.5">
-          <Lock size={14} aria-hidden /> Disponível depois do pagamento
+          <Lock size={14} aria-hidden /> {compact ? <span className="sr-only">Disponível depois do pagamento</span> : "Disponível depois do pagamento"}
+        </span>
+      ) : compact ? (
+        <span className="flex flex-col items-center gap-1" title={name}>
+          <FileText size={16} aria-hidden />
+          {ext && <span aria-hidden className="font-semibold">{ext}</span>}
+          <span className="sr-only">{name ?? "Sem pré-visualização"}</span>
         </span>
       ) : (
-        <span className="inline-flex items-center gap-1.5">
-          <FileText size={14} aria-hidden /> {v.files[0]?.name ?? "Sem pré-visualização"}
+        <span className="inline-flex min-w-0 items-center gap-1.5 break-all">
+          <FileText size={14} aria-hidden className="shrink-0" /> {name ?? "Sem pré-visualização"}
         </span>
       )}
     </div>
