@@ -1,9 +1,11 @@
 import { BrandMark } from "@/components/BrandMark";
 import { longDate, relative } from "@/lib/portal/format";
+import { isOpen } from "@/lib/portal/hours";
 import { requirePortal } from "@/lib/portal/session";
 import type { Feedback } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import { FeedbackComposer } from "../../_components/Feedback";
+import { HoursNotice } from "../../_components/HoursNotice";
 import { PageHeader } from "../../_components/PageHeader";
 
 export const metadata = { title: "Mensagens" };
@@ -82,6 +84,10 @@ export default async function MessagesPage() {
           <h2 id="new-title" className="mt-2.5 text-base font-medium text-ink">
             Nova mensagem
           </h2>
+          {/* M9-08 (RF-30.63): fora do horário (08h–20h, Luanda) a mensagem segue na mesma, com o aviso. */}
+          <div className="mt-4">
+            <HoursNotice open={isOpen()} />
+          </div>
           <div className="mt-6">
             <FeedbackComposer targets={targets} />
           </div>
