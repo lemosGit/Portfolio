@@ -76,6 +76,8 @@ function PaymentList({ list }: { list: Payment[] }) {
  * Pagamentos compactos (wireframe Académico, M6-07, D-155): o que falta numa linha, a etiqueta do
  * último pagamento feito e a lista atrás de "Ver pagamentos". Só leitura, sem pagamento online (D-009).
  */
+const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
 export function PaymentsCompact({ project }: BlockProps) {
   const list = (project.payments ?? []).filter((p) => p.status !== "anulado");
   if (list.length === 0) return null;
@@ -96,10 +98,21 @@ export function PaymentsCompact({ project }: BlockProps) {
       </div>
       <p className="mt-2 text-[15px] text-ink">
         {t.missing > 0 ? (
-          <>
-            Falta <b className="font-semibold">{kz(t.missing)}</b>
-            {next && <span className="text-ink-dim">, {next.description.charAt(0).toLowerCase() + next.description.slice(1)}</span>}.
-          </>
+          next && next.amountKz < t.missing ? (
+            // M6-99: com mais de um pagamento por fazer, o total não se confunde com o próximo
+            // ("Falta 60 000 Kz, sinal (50%)" lia-se como se o sinal fosse 60 000 Kz).
+            <>
+              Falta <b className="font-semibold">{kz(t.missing)}</b> no total.{" "}
+              <span className="text-ink-dim">
+                Próximo: {lower(next.description)}, <b className="font-semibold text-ink">{kz(next.amountKz)}</b>.
+              </span>
+            </>
+          ) : (
+            <>
+              Falta <b className="font-semibold">{kz(t.missing)}</b>
+              {next && <span className="text-ink-dim">, {lower(next.description)}</span>}.
+            </>
+          )
         ) : (
           "Não há nada por pagar."
         )}
