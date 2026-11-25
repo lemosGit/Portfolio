@@ -8,6 +8,7 @@ import { projects } from "@/lib/portal/mock-data";
 import type { DesignSpec } from "@/lib/design/spec";
 
 vi.mock("@/app/cliente/_components/ProofGallery", () => ({ ProofGallery: () => null })); // lê ficheiros no servidor
+vi.mock("@/app/cliente/_components/DesignFinalFiles", () => ({ DesignFinalFiles: () => null }));
 
 const base = projects.find((p) => p.id === "p_convite")!;
 const show = (over: Partial<DesignSpec> | null) =>

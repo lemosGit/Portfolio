@@ -272,3 +272,23 @@ export function adjustmentClosedEmail(o: { clientName: string; projectName: stri
     text: `Olá ${firstName(o.clientName)},\n\n${line}${o.note ? `\n${o.note}` : ""}\n\n${href}`,
   };
 }
+
+/** Design (M7-05, RF-20.72): a peça está pronta para levantar, ou o levantamento foi marcado. */
+export function pickupEmail(o: { clientName: string; projectName: string; ready: boolean; when: string | null; place: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  const title = o.ready ? "A sua peça está pronta" : "Marcámos o levantamento";
+  const line = [o.when && `<strong>${esc(o.when)}</strong>`, o.place && esc(o.place)].filter(Boolean).join(" · ");
+  return {
+    subject: `${o.projectName}: ${o.ready ? "pronto para levantar" : "levantamento marcado"}`,
+    html: layout({
+      preheader: o.ready ? "Já pode levantar a sua peça." : "Veja quando e onde levantar a sua peça.",
+      title,
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, ${o.ready ? "a peça de" : "o levantamento de"} <strong>${esc(o.projectName)}</strong> ${o.ready ? "está pronta." : "está marcado."}</p>${
+        line ? `<p style="margin:0">${line}</p>` : ""
+      }`,
+      cta: { href, label: "Ver na Área do Cliente" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\n${title}: ${o.projectName}.${o.when ? `\n${o.when}` : ""}${o.place ? `\n${o.place}` : ""}\n\n${href}`,
+  };
+}
+

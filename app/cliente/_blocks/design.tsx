@@ -1,10 +1,13 @@
 /**
  * Blocos do Design (M7). Acento Lilás Criativo (ADR-004) pelo data-service do layout.
  */
-import { PIECE_TYPES, sizeLabel } from "@/lib/design/spec";
+import { MapPin } from "lucide-react";
+import { PIECE_TYPES, eventSlack, mapsUrl, sizeLabel } from "@/lib/design/spec";
 import { longDate } from "@/lib/portal/format";
 import { Details } from "../_components/Details";
+import { DesignFinalFiles } from "../_components/DesignFinalFiles";
 import { ProofGallery } from "../_components/ProofGallery";
+import { StateChip } from "./common";
 import type { BlockProps } from "./types";
 
 /**
@@ -64,4 +67,97 @@ export function DesignSpecBlock({ project }: BlockProps) {
 /** Bloco "des-proof" (M7-02, RF-20.05, RF-20.80): a prova atual em grande e as outras versões (TEL-30). */
 export function DesignProof({ project }: BlockProps) {
   return <ProofGallery project={project} view="overview" />;
+}
+
+const pickupWhen = (iso: string) =>
+  new Date(iso).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long", timeZone: "Africa/Luanda" });
+const pickupHour = (iso: string) => new Date(iso).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Luanda" });
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+/**
+ * Bloco "des-pickup" (M7-05, RF-20.61, RF-20.70…72; wireframe TEL-30 A e C):
+ * - Entrega em curso (ou produção pronta): "Pronto para levantar" com a data e o local em destaque,
+ *   "Abrir no mapa", os ficheiros digitais (se a ficha os prevê) e a folga até ao evento.
+ * - Produção em curso: o estado com uma frase curta e o levantamento previsto.
+ * - Antes disso, só uma linha com o levantamento previsto, se já houver data.
+ */
+export function DesignPickup({ project }: BlockProps) {
+  const s = project.designSpec;
+  if (!s) return null;
+  const phase = (k: string) => project.phaseViews.find((p) => p.key === k);
+  const prod = phase("producao");
+  const ent = phase("entrega-levantamento");
+  const where = s.pickupPlace;
+  const slack = eventSlack(s.eventDate, s.pickupAt);
+
+  if (s.deliveredAt) {
+    return (
+      <section aria-labelledby="levantar-title" className="panel p-5 sm:p-6">
+        <StateChip tone="done">Entregue</StateChip>
+        <h2 id="levantar-title" className="mt-3 font-display text-[22px] text-ink">
+          Peça entregue a {new Date(s.deliveredAt).toLocaleDateString("pt-PT", { day: "numeric", month: "long", timeZone: "Africa/Luanda" })}
+        </h2>
+        {s.hasDigitalFiles && <DesignFinalFiles projectId={project.id} />}
+      </section>
+    );
+  }
+
+  const ready = ent?.status === "current" || s.productionStatus === "pronto";
+  if (ready) {
+    return (
+      <section aria-labelledby="levantar-title" className="panel p-5 sm:p-6">
+        <StateChip tone="done">{s.hasPrint ? "Pronto para levantar" : "Pronto"}</StateChip>
+        <h2 id="levantar-title" className="sr-only">
+          Entrega e levantamento
+        </h2>
+        {s.pickupAt ? (
+          <>
+            <p className="mt-3 font-display text-[28px] leading-tight text-ink">{cap(pickupWhen(s.pickupAt))}</p>
+            <p className="mt-1 text-[15px] text-ink">
+              {where ?? "Local a combinar"} <span className="text-ink-dim">· às {pickupHour(s.pickupAt)}</span>
+            </p>
+          </>
+        ) : (
+          <p className="mt-3 text-[15px] text-ink-dim">Vamos combinar consigo a data e o local {s.hasPrint ? "de levantamento" : "de entrega"}.</p>
+        )}
+        {where && (
+          <a href={mapsUrl(where)} target="_blank" rel="noopener noreferrer" className="btn-violet mt-4 h-11 w-full justify-center sm:w-auto">
+            <MapPin size={16} aria-hidden /> Abrir no mapa
+          </a>
+        )}
+        {s.hasDigitalFiles && <DesignFinalFiles projectId={project.id} />}
+        {slack !== null && slack >= 0 && s.eventDate && (
+          <p className="mt-4 text-[13px] text-ink-dim">
+            O evento é a {new Date(`${s.eventDate}T12:00:00Z`).toLocaleDateString("pt-PT", { day: "numeric", month: "long" })}: tem {slack} dia{slack === 1 ? "" : "s"} de folga.
+          </p>
+        )}
+      </section>
+    );
+  }
+
+  if (prod?.status === "current") {
+    return (
+      <section aria-labelledby="levantar-title" className="panel p-5 sm:p-6">
+        <StateChip tone="now">Em produção</StateChip>
+        <h2 id="levantar-title" className="mt-3 font-display text-[22px] text-ink">
+          {s.productionStatus === "a_imprimir" ? `Estamos a imprimir ${s.quantity > 1 ? `as ${s.quantity.toLocaleString("pt-PT")} peças` : "a sua peça"}.` : "A sua peça está em produção."}
+        </h2>
+        {s.pickupAt && (
+          <p className="mt-2 text-[14px] text-ink-dim">
+            Levantamento previsto: {pickupWhen(s.pickupAt)}
+            {where ? ` · ${where}` : ""}
+          </p>
+        )}
+      </section>
+    );
+  }
+
+  // TEL-30 A: antes da produção, só a linha do levantamento previsto (se já houver data).
+  if (!s.pickupAt) return null;
+  return (
+    <p className="px-1 text-[13px] text-ink-dim">
+      Levantamento previsto: <b className="font-semibold text-ink">{pickupWhen(s.pickupAt)}</b>
+      {where ? ` · ${where}` : ""}
+    </p>
+  );
 }
