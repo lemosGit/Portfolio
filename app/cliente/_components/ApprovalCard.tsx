@@ -11,6 +11,7 @@ import { Check, TriangleAlert } from "lucide-react";
 import { respondToApproval } from "@/lib/approvals/actions";
 import { requestExtraRound } from "@/lib/design/actions";
 import { changesNotice, roundsLabel, type Rounds } from "@/lib/design/rounds";
+import { sizeLabel } from "@/lib/design/spec";
 import { approvalTitle, type Approval } from "@/lib/approvals/model";
 import { kz } from "@/lib/payments/model";
 import { longDate } from "@/lib/portal/format";
@@ -18,13 +19,18 @@ import type { QuoteSnapshot } from "@/lib/quotes/model";
 
 type Mode = "idle" | "confirm" | "changes" | "extra";
 
-/** `rounds`: só nas provas do Design (M7-03): "Ronda X de Y", aviso da última ronda e revisão extra. */
-export function ApprovalCard({ a, rounds }: { a: Approval; rounds?: Rounds }) {
+/**
+ * `rounds`: só nas provas do Design (M7-03): "Ronda X de Y", aviso da última ronda e revisão extra.
+ * `art`: prova do Design = aprovação final da arte para produção (M7-04, TEL-34): aviso de irreversibilidade,
+ * os textos-chave do snapshot (RN-42) e a caixa "Confirmo" que ativa o botão (D-071).
+ */
+export function ApprovalCard({ a, rounds, art = false }: { a: Approval; rounds?: Rounds; art?: boolean }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("idle");
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [checked, setChecked] = useState(false);
   const title = approvalTitle(a);
 
   async function sendExtra() {
@@ -52,7 +58,8 @@ export function ApprovalCard({ a, rounds }: { a: Approval; rounds?: Rounds }) {
 
   // Orçamento e extra aceitam-se; o resto aprova-se (RF-10.21, RF-30.25).
   const accept = a.subject === "orcamento" || a.subject === "extra";
-  const verb = accept ? "Aceitar" : "Aprovar";
+  const isArt = art && a.subject === "prova";
+  const verb = accept ? "Aceitar" : isArt ? "Aprovar arte para produção" : "Aprovar";
   const q = a.subject === "orcamento" ? (a.snapshot as QuoteSnapshot) : null;
   // Rondas só nas provas do Design (RN-35, RN-36).
   const r = a.subject === "prova" ? rounds : undefined;
@@ -115,7 +122,46 @@ export function ApprovalCard({ a, rounds }: { a: Approval; rounds?: Rounds }) {
         </div>
       )}
 
-      {mode === "confirm" && (
+      {mode === "confirm" && isArt && (
+        <div role="group" aria-label="Aprovar para produção" className="mt-4 space-y-3 rounded-xl border border-line bg-raised/60 p-4">
+          <p className="flex items-start gap-2 text-[14px] text-action">
+            <TriangleAlert size={16} aria-hidden className="mt-0.5 shrink-0" />
+            {a.snapshot.has_print === false
+              ? "Depois de aprovar, esta é a arte final e já não pode ser alterada."
+              : "Depois de aprovar, a peça vai para impressão e já não pode ser alterada."}
+          </p>
+          <dl className="divide-y divide-line rounded-xl border border-line text-[14px]">
+            {[
+              ...(a.snapshot.key_texts ?? []).map((k) => [k.label || "Texto", k.value] as const),
+              ...(a.snapshot.event_date ? [["Data do evento", longDate(a.snapshot.event_date)] as const] : []),
+              ...(sizeLabel({ widthCm: a.snapshot.width_cm ?? null, heightCm: a.snapshot.height_cm ?? null })
+                ? [["Medidas", sizeLabel({ widthCm: a.snapshot.width_cm ?? null, heightCm: a.snapshot.height_cm ?? null })!] as const]
+                : []),
+              ...(a.snapshot.quantity ? [["Quantidade", a.snapshot.quantity.toLocaleString("pt-PT")] as const] : []),
+              ["Versão", a.versionLabel ?? "—"] as const,
+            ].map(([k, v], i) => (
+              <div key={i} className="flex items-baseline justify-between gap-3 px-3 py-2">
+                <dt className="text-ink-faint">{k}</dt>
+                <dd className="text-right font-semibold text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <label className="flex items-start gap-2.5 text-[14px] text-ink">
+            <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#a78bfa]" />
+            Confirmo que os nomes, a data e a quantidade estão certos
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy || !checked} className="btn-violet h-11 disabled:opacity-50" onClick={() => send("aprovar")}>
+              {busy ? "A enviar…" : "Aprovar para produção"}
+            </button>
+            <button type="button" disabled={busy} className="btn-quiet h-11 py-0" onClick={() => { setMode("idle"); setChecked(false); }}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {mode === "confirm" && !isArt && (
         <div role="group" aria-label={accept ? "Confirmar aceite" : "Confirmar aprovação"} className="mt-4 rounded-xl border border-line bg-raised/60 p-4">
           <p className="flex items-start gap-2 text-[14px] text-ink">
             <TriangleAlert size={16} aria-hidden className="mt-0.5 shrink-0 text-action" />

@@ -33,7 +33,7 @@ test.describe("Design (M5-14)", () => {
     await expect(page.getByText("Fase 4 de 7")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Revisões" })).toBeVisible();
     await expect(page.getByText("Aguarda a sua resposta").first()).toBeVisible();
-    await expect(page.getByRole("article", { name: "Aprovar Convite V2" })).toBeVisible();
+    await expect(page.getByRole("article", { name: "Aprovar arte para produção Convite V2" })).toBeVisible();
     const pay = page.getByRole("region", { name: "Pagamentos" });
     await expect(pay.getByText("120 000 Kz")).toBeVisible();
     await expect(pay.getByText("Restante, antes da produção")).toBeVisible();
@@ -103,7 +103,7 @@ test.describe("Design (M5-14)", () => {
   test("Rondas: 'Ronda 1 de 2' no próximo passo, na prova e no Projeto; aviso da última ronda (M7-03)", async ({ page }) => {
     await page.goto("/cliente");
     await expect(page.getByRole("region", { name: "Revisões" }).getByText("Ronda 1 de 2")).toBeVisible();
-    const card = page.getByRole("article", { name: "Aprovar Convite V2" });
+    const card = page.getByRole("article", { name: "Aprovar arte para produção Convite V2" });
     await expect(card.getByText("Ronda 1 de 2")).toBeVisible();
     await card.getByRole("button", { name: "Pedir alterações" }).click();
     await expect(card.getByText("Esta é a ronda 2 de 2 incluídas", { exact: false })).toBeVisible();
@@ -111,5 +111,21 @@ test.describe("Design (M5-14)", () => {
     await expect(page.getByRole("list", { name: "Comentários à V1" })).toContainText("Os nomes podem ser maiores?");
     await page.goto("/cliente/projeto");
     await expect(page.getByRole("list").filter({ hasText: "Briefing" }).getByText("Ronda 1 de 2")).toBeVisible();
+  });
+
+  test("Aprovar arte para produção: aviso, textos-chave e 'Confirmo' (M7-04)", async ({ page }) => {
+    await page.goto("/cliente");
+    const card = page.getByRole("article", { name: "Aprovar arte para produção Convite V2" });
+    await card.getByRole("button", { name: "Aprovar arte para produção" }).click();
+    const box = card.getByRole("group", { name: "Aprovar para produção" });
+    await expect(box.getByText("a peça vai para impressão e já não pode ser alterada", { exact: false })).toBeVisible();
+    await expect(box.getByText("Ana & Paulo")).toBeVisible();
+    await expect(box.getByText("120", { exact: true })).toBeVisible();
+    const go = box.getByRole("button", { name: "Aprovar para produção" });
+    await expect(go).toBeDisabled();
+    await box.getByText("Confirmo que os nomes, a data e a quantidade estão certos").click();
+    await expect(go).toBeEnabled();
+    await go.click();
+    await expect(card.getByRole("alert")).toContainText("modo de demonstração");
   });
 });

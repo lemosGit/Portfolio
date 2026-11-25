@@ -20,6 +20,8 @@ export type ProofVersion = {
   request: string | null;
   /** Comentários sobre esta versão (M7-03): as respostas com texto à aprovação desta prova, pela ordem. */
   comments: ProofComment[];
+  /** A arte desta versão foi aprovada para produção (M7-04, RF-20.52). */
+  approved: boolean;
 };
 
 export type ProofComment = { by: "client" | "admin"; kind: "aprovar" | "pedir_alteracoes" | string; text: string; at: string };
@@ -81,6 +83,7 @@ export function proofsFrom(series: FileSeries[], approvals: Approval[] = []): Pr
             files: v.files,
             request: prev ? requestFor(approvals, s.title, prev.label) : null,
             comments: commentsFor(approvals, s.title, v.label),
+            approved: approvalsFor(approvals, s.title, v.label).some((a) => a.status === "aprovada"),
           };
         }),
       };

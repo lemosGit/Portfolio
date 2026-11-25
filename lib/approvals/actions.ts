@@ -28,23 +28,26 @@ export async function respondToApproval(id: string, kind: "aprovar" | "pedir_alt
   // Aviso ao João (RF-30.35). Nunca faz falhar a resposta.
   const { data: a } = await sb
     .from("approvals")
-    .select("subject, version_label, snapshot, project_id, projects (name, clients (name))")
+    .select("subject, version_label, snapshot, project_id, projects (name, service_type, clients (name))")
     .eq("id", id)
     .maybeSingle<{
       subject: ApprovalSubject;
       version_label: string | null;
       snapshot: ApprovalSnapshot;
       project_id: string;
-      projects: { name: string; clients: { name: string } | null } | null;
+      projects: { name: string; service_type: string; clients: { name: string } | null } | null;
     }>();
   if (a) {
+    // M7-04: no Design, aprovar uma prova é aprovar a arte para produção (o João prepara a impressão).
+    const art = a.subject === "prova" && a.projects?.service_type === "design" && kind === "aprovar";
+    const title = approvalTitle({ subject: a.subject, versionLabel: a.version_label, snapshot: a.snapshot });
     await sendEmail({
       to: process.env.ADMIN_EMAIL ?? profile.email,
       ...approvalAnsweredEmail({
         clientName: a.projects?.clients?.name ?? "O cliente",
         projectName: a.projects?.name ?? "o projeto",
         projectId: a.project_id,
-        title: approvalTitle({ subject: a.subject, versionLabel: a.version_label, snapshot: a.snapshot }),
+        title: art ? `${title} para produção` : title,
         approved: kind === "aprovar",
         comment: text || null,
       }),
@@ -53,5 +56,9 @@ export async function respondToApproval(id: string, kind: "aprovar" | "pedir_alt
 
   revalidatePath("/cliente", "layout");
   revalidatePath("/admin", "layout");
-  return { ok: true, message: kind === "aprovar" ? "Feito. Obrigado!" : "Pedido de alterações enviado. Vamos tratar disso." };
+  const artDone = a?.subject === "prova" && a.projects?.service_type === "design" && kind === "aprovar";
+  return {
+    ok: true,
+    message: artDone ? "Arte aprovada para produção. Obrigado!" : kind === "aprovar" ? "Feito. Obrigado!" : "Pedido de alterações enviado. Vamos tratar disso.",
+  };
 }
