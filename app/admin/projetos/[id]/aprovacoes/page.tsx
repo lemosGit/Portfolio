@@ -4,6 +4,7 @@ import { getProjectById } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { RESPONSE_LABEL, SUBJECT_LABEL, approvalTitle, loadApprovals, type Approval, type ApprovalStatus } from "@/lib/approvals/model";
 import { loadSeries } from "@/lib/files/data";
+import { loadSections } from "@/lib/academic/chapters";
 import { longDate, relative } from "@/lib/portal/format";
 import { ActionForm, Field } from "../../../_components/forms";
 import { inputCls, textareaCls } from "../../../_components/styles";
@@ -30,7 +31,7 @@ export default async function ApprovalsPage({ params }: { params: Promise<{ id: 
   const p = await getProjectById(sb, id);
   if (!p) notFound();
 
-  const [approvals, series, { data: phases }] = await Promise.all([
+  const [approvals, series, { data: phases }, sections] = await Promise.all([
     loadApprovals(sb, p.id),
     loadSeries(sb, p.id),
     sb
@@ -39,6 +40,8 @@ export default async function ApprovalsPage({ params }: { params: Promise<{ id: 
       .eq("project_id", p.id)
       .order("position")
       .returns<{ id: string; position: number; name: string }[]>(),
+    // M6-05: o índice pré-preenchido vem dos capítulos (no Académico).
+    p.serviceType === "academic" ? loadSections(sb, p.id) : Promise.resolve([]),
   ]);
   // Versões que se podem pedir para aprovar: entregáveis e provas (nunca internos nem referências).
   const versions = "error" in series ? [] : series.filter((s) => s.role === "entregavel" || s.role === "prova").flatMap((s) => s.versions.map((v) => ({ id: v.deliverableId, label: `${s.title} ${v.label}`, files: v.files.length })));
@@ -91,7 +94,7 @@ export default async function ApprovalsPage({ params }: { params: Promise<{ id: 
               <input name="versao" maxLength={10} className={inputCls} placeholder="V2" />
             </Field>
             <Field label="Índice (um capítulo ou secção por linha)" className="sm:col-span-2">
-              <textarea name="itens" rows={5} className={textareaCls} placeholder={"1. Introdução\n2. Revisão da literatura\n3. Metodologia"} />
+              <textarea name="itens" rows={5} className={textareaCls} defaultValue={sections.map((x) => x.title).join("\n")} placeholder={"1. Introdução\n2. Revisão da literatura\n3. Metodologia"} />
             </Field>
             <Field label="Mensagem ao cliente (opcional)" className="sm:col-span-2">
               <input name="mensagem" maxLength={1000} className={inputCls} placeholder="Ex.: juntámos o capítulo da metodologia, como pediu" />

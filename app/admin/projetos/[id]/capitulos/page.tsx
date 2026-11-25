@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import { ArrowDown, ArrowUp, Trash2 } from "lucide-react";
-import { addSections, deleteSection, importSectionsFromIndex, moveSection, updateSection } from "@/lib/admin/actions";
+import { addSections, deleteSection, importSectionsFromIndex, moveSection, requestIndexApproval, updateSection } from "@/lib/admin/actions";
 import { getProjectById } from "@/lib/admin/data";
 import { requireAdmin } from "@/lib/admin/session";
 import { loadBrief } from "@/lib/academic/brief";
 import { SECTION_LABEL, chapterProgress, loadSections, type Section } from "@/lib/academic/chapters";
 import { ActionForm, Field } from "../../../_components/forms";
 import { inputCls, textareaCls } from "../../../_components/styles";
-import { AdminHeader, Badge, Empty, Progress, Section as Panel } from "../../../_components/ui";
+import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section as Panel } from "../../../_components/ui";
 
 export const metadata = { title: "Capítulos do trabalho" };
 
@@ -34,7 +34,12 @@ export default async function ChaptersPage({ params }: { params: Promise<{ id: s
     );
   }
 
-  const [sections, brief] = await Promise.all([loadSections(sb, p.id), loadBrief(sb, p.id)]);
+  const [sections, brief, { data: pending }] = await Promise.all([
+    loadSections(sb, p.id),
+    loadBrief(sb, p.id),
+    sb.from("approvals").select("version_label").eq("project_id", p.id).eq("subject", "indice").eq("status", "pendente").maybeSingle<{ version_label: string | null }>(),
+  ]);
+  const pendingIndex = pending ? (pending.version_label ?? "atual") : null;
   const { done, total, ratio } = chapterProgress(sections);
   const usesChapters = brief?.usesChapters ?? true;
 
@@ -69,6 +74,27 @@ export default async function ChaptersPage({ params }: { params: Promise<{ id: s
           </ol>
         )}
       </Panel>
+
+      {sections.length > 0 && (
+        <Panel
+          title="Pedir aprovação do índice"
+          description={
+            pendingIndex
+              ? `O índice ${pendingIndex} está à espera do cliente. Para enviar outro, cancele-o em Aprovações.`
+              : "O índice enviado é a lista de capítulos acima, nesta ordem. Com a fase Estrutura em curso, ela fica a aguardar o cliente; se ele pedir alterações, volta a em curso e recebe um email."
+          }
+        >
+          {!pendingIndex && (
+            <ActionForm action={requestIndexApproval} submit="Pedir aprovação do índice" pendingLabel="A pedir…">
+              <input type="hidden" name="projeto" value={p.id} />
+              <Field label="Mensagem ao cliente (opcional)">
+                <input name="mensagem" maxLength={1000} className={inputCls} placeholder="Ex.: juntámos o capítulo da metodologia, como pediu" />
+              </Field>
+              <NotifyClient />
+            </ActionForm>
+          )}
+        </Panel>
+      )}
 
       <Panel title="Acrescentar capítulos" description="Um capítulo ou secção por linha; entram no fim do índice.">
         <ActionForm action={addSections} submit="Acrescentar" resetOnOk pendingLabel="A acrescentar…">
