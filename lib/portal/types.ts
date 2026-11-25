@@ -65,6 +65,8 @@ export type Phase = {
   /** Progresso da fase, 0–1 (capítulos ou project_phases.progress). */
   progress?: number;
   clientCanUpload?: boolean;
+  /** Data de conclusão (fonte BD). */
+  completedAt?: string;
 };
 
 export type DemoLink = {

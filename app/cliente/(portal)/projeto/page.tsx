@@ -20,6 +20,7 @@ import type { PhaseView, ProjectView, Task } from "@/lib/portal/types";
 import { cn } from "@/lib/utils";
 import { CoverBackdrop, Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
+import { PhasesProject } from "../../_components/PhasesProject";
 
 export const metadata = { title: "Meu projeto" };
 
@@ -33,6 +34,16 @@ type ViewId = (typeof VIEWS)[number]["id"];
 export default async function ProjectPage({ searchParams }: { searchParams: Promise<{ vista?: string }> }) {
   const [{ project, unread }, { vista }] = await Promise.all([requirePortal(), searchParams]);
   const view: ViewId = VIEWS.some((v) => v.id === vista) ? (vista as ViewId) : "etapas";
+
+  // Académico e Design: fases na vertical (TEL-11, M6-07); o Tech mantém as etapas do GitHub.
+  if ((project.serviceType ?? "development") !== "development") {
+    return (
+      <div className="space-y-8">
+        <PageHeader section="Projeto" eyebrow="Fase a fase" title="O meu projeto" unread={unread} source={project.source} serviceType={project.serviceType} />
+        <PhasesProject project={project} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

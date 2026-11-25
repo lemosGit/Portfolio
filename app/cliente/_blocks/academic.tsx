@@ -29,11 +29,12 @@ export function AcademicBrief({ project }: BlockProps) {
     ["Ajustes", `${b.adjustDays} dia${b.adjustDays === 1 ? "" : "s"} depois da entrega`],
   ];
   return (
-    <section aria-labelledby="ficha-title" className="panel p-6 sm:p-7">
-      <h2 id="ficha-title" className="text-base font-medium text-ink">
+    <section aria-labelledby="ficha-title" className="px-1">
+      <h2 id="ficha-title" className="sr-only">
         Ficha do trabalho
       </h2>
-      <Details className="mt-2">
+      {/* Wireframe (TEL-13): um link discreto "Ver detalhes do trabalho" que abre a ficha (RF-10.11). */}
+      <Details label="Ver detalhes do trabalho" className="[&>summary]:font-semibold [&>summary]:text-accent">
         <dl className="grid gap-x-6 gap-y-2.5 text-[14px] sm:grid-cols-[160px_1fr]">
           {rows
             .filter(([, v]) => v)
@@ -44,6 +45,9 @@ export function AcademicBrief({ project }: BlockProps) {
               </div>
             ))}
         </dl>
+        <p className="mt-3 text-[13px] text-ink-faint">
+          Há algum erro? <a href="/cliente/mensagens" className="underline">Diga-nos nas mensagens</a>.
+        </p>
       </Details>
     </section>
   );

@@ -21,7 +21,9 @@ export type BlockId =
   | "aca-brief"
   | "aca-countdown"
   | "aca-chapters"
-  | "aca-adjustments";
+  | "aca-adjustments"
+  // Pagamentos compactos (wireframe Académico, M6-07): o que falta + "Ver pagamentos"
+  | "payments-compact";
 
 export type NavIcon = "home" | "project" | "files" | "messages" | "agenda";
 export type NavItem = { href: string; label: string; icon: NavIcon; badge?: boolean };
@@ -31,6 +33,12 @@ export type ServiceLayout = {
   label: string;
   nav: NavItem[];
   pages: { overview: BlockId[] };
+  /**
+   * Grelha da Visão geral (M6-07). Sem ela, os blocos empilham-se (Tech, Design). Com ela, cada bloco
+   * vai num invólucro com a sua classe: no telemóvel ficam pela ordem da lista; no computador as
+   * classes põem-nos em colunas (wireframe Académico, D-155).
+   */
+  overviewGrid?: { container: string; place: Partial<Record<BlockId, string>>; rest: string };
 };
 
 const NAV = {
@@ -53,9 +61,22 @@ export const SERVICE_LAYOUTS: Record<ServiceType, ServiceLayout> = {
   academic: {
     label: "Académico",
     nav: [NAV.overview, NAV.project("Projeto"), NAV.files("Ficheiros"), NAV.messages],
-    // A contagem do prazo é o elemento principal (M6-02, D-107); os capítulos (M6-03) vêm a seguir ao
-    // próximo passo; a ficha fica no fim, em "ver detalhes".
-    pages: { overview: ["phase-bar", "aca-countdown", "next-step", "aca-adjustments", "aca-chapters", "approvals", "payments", "aca-brief"] },
+    // Wireframe aprovado (G2, D-107, M6-07): no telemóvel a contagem é o primeiro elemento; no computador
+    // a barra de fases vai em cima e por baixo duas colunas — contagem | próximo passo (com os capítulos),
+    // ajustes, aprovações, pagamentos compactos e "Ver detalhes do trabalho".
+    pages: { overview: ["aca-countdown", "phase-bar", "next-step", "aca-adjustments", "approvals", "payments-compact", "aca-brief"] },
+    // No computador: barra de fases em cima; contagem e pagamentos à esquerda, próximo passo à direita;
+    // ajustes, aprovações e a ficha na largura toda (grid-flow-dense preenche a coluna da esquerda).
+    overviewGrid: {
+      container: "grid gap-6 xl:grid-cols-2 xl:grid-flow-row-dense xl:items-start",
+      place: {
+        "phase-bar": "xl:order-first xl:col-span-2",
+        "aca-countdown": "xl:col-start-1",
+        "next-step": "xl:col-start-2 xl:row-span-2",
+        "payments-compact": "xl:col-start-1",
+      },
+      rest: "xl:col-span-2",
+    },
   },
   design: {
     label: "Design",
