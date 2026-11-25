@@ -9,7 +9,7 @@ import type { Client, Feedback, Project, Task } from "./types";
 import { now as clockNow, nowMs } from "@/lib/clock";
 
 const DAY = 86_400_000;
-function at(days: number, hour = 10, minute = 0) {
+export function at(days: number, hour = 10, minute = 0) {
   const d = new Date(nowMs() + days * DAY);
   d.setHours(hour, minute, 0, 0);
   return d.toISOString();
@@ -32,7 +32,22 @@ export const clients: Client[] = [
     email: "kiala@exemplo.ao",
     initials: "KD",
   },
+  // Design (M5-14): a "Dona Teresa" da PER-04, a organizar o casamento da filha.
+  {
+    id: "c_teresa",
+    name: "Teresa Mendes",
+    company: "",
+    email: "teresa@exemplo.ao",
+    initials: "TM",
+  },
 ];
+
+/** Contas do modo de demonstração, uma por serviço (M5-14). Todas com DEMO_CREDENTIALS.password. */
+export const DEMO_ACCOUNTS = [
+  { service: "Tech", email: DEMO_CREDENTIALS.email },
+  { service: "Académico", email: "kiala@exemplo.ao" },
+  { service: "Design", email: "teresa@exemplo.ao" },
+] as const;
 
 let n = 1;
 const t = (
@@ -242,6 +257,107 @@ export const projects: Project[] = [
       { position: 6, key: "entrega-final", name: "Entrega final", description: "Ficheiros finais em PDF e Word.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
       { position: 7, key: "ajustes", name: "Ajustes", description: "Pequenas correções dentro do prazo combinado.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: true },
     ]),
+    // M5-10 (Q-085): um índice atualizado à espera do cliente + o histórico do índice anterior.
+    approvals: [
+      {
+        id: "ap_idx3",
+        subject: "indice",
+        versionLabel: "V3",
+        snapshot: {
+          title: "Índice",
+          message: "Juntámos a secção 4.3 sobre as taxas de juro, como sugeriu o orientador.",
+          items: ["1. Introdução", "2. Revisão da literatura", "3. Metodologia", "4. Resultados", "4.3 Taxas de juro praticadas", "5. Conclusões", "Referências"],
+        },
+        status: "pendente",
+        requestedAt: at(-1, 17),
+        decidedAt: null,
+        phase: null,
+        responses: [],
+      },
+      {
+        id: "ap_idx2",
+        subject: "indice",
+        versionLabel: "V2",
+        snapshot: { title: "Índice", items: ["1. Introdução", "2. Revisão da literatura", "3. Metodologia", "4. Resultados", "5. Conclusões"] },
+        status: "aprovada",
+        requestedAt: at(-6, 11),
+        decidedAt: at(-5, 9),
+        phase: { position: 3, name: "Estrutura (índice)" },
+        responses: [{ kind: "aprovar", comment: null, actorRole: "client", createdAt: at(-5, 9) }],
+      },
+      {
+        id: "ap_idx1",
+        subject: "indice",
+        versionLabel: "V1",
+        snapshot: { title: "Índice", items: ["1. Introdução", "2. Revisão da literatura", "3. Resultados", "4. Conclusões"] },
+        status: "alteracoes_pedidas",
+        requestedAt: at(-9, 16),
+        decidedAt: at(-8, 10),
+        phase: { position: 3, name: "Estrutura (índice)" },
+        responses: [{ kind: "pedir_alteracoes", comment: "Falta o capítulo da metodologia.", actorRole: "client", createdAt: at(-8, 10) }],
+      },
+    ],
+    // M5-11: sinal pago e restante por pagar (bloqueia os ficheiros finais, RN-14).
+    payments: [
+      { id: "pg_sinal", kind: "sinal", description: "Sinal (50%)", amountKz: 45000, dueOn: null, status: "pago", paidOn: at(-12).slice(0, 10), extraRounds: 0, gatesPhase: { key: "estrutura", name: "Estrutura (índice)", position: 3 }, createdAt: at(-13, 9) },
+      { id: "pg_rest", kind: "restante", description: "Restante, antes da entrega", amountKz: 45000, dueOn: at(12).slice(0, 10), status: "pendente", paidOn: null, extraRounds: 0, gatesPhase: null, createdAt: at(-13, 9) },
+    ],
+    demos: [],
+    meetings: [],
+    syncedAt: at(0, 10),
+    source: "exemplo",
+  },
+  // Design (M5-14, D-127): convite de casamento na 2.ª ronda de revisões, à espera da aprovação da V2;
+  // o restante trava a produção (RN-15).
+  {
+    id: "p_convite",
+    slug: "convite-casamento",
+    clientId: "c_teresa",
+    name: "Convite de casamento",
+    tagline: "Ana & Paulo · 120 convites impressos",
+    description: "Convite A5 dobrado, papel couché 300 g, com envelope; versão digital para o WhatsApp.",
+    serviceType: "design",
+    repo: { owner: "", name: "" },
+    startedOn: at(-10),
+    dueOn: at(18),
+    team: [{ initials: "JP", name: "João Pereira" }],
+    phases: mapDbPhases([
+      { position: 1, key: "briefing", name: "Briefing", description: "Tipo de peça, medidas, quantidades, referências e textos.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: true },
+      { position: 2, key: "orcamento-sinal", name: "Orçamento e sinal", description: "Valor do design e da impressão, e o sinal.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 3, key: "conceito", name: "Conceito / esboço", description: "Primeira proposta visual.", status: "concluida", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 4, key: "revisoes", name: "Revisões", description: "Rondas de ajuste com os seus comentários.", status: "aguarda_cliente", due_on: null, next_step: "Veja a V2 do convite e aprove ou peça alterações.", next_step_owner: "cliente", progress: null, client_can_upload: true },
+      { position: 5, key: "aprovacao-arte", name: "Aprovação final da arte", description: "Aprovar a arte para produção.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 6, key: "producao", name: "Produção / impressão", description: "A peça está a ser produzida.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+      { position: 7, key: "entrega-levantamento", name: "Entrega / levantamento", description: "Data e local de levantamento, ficheiros finais.", status: "por_iniciar", due_on: null, next_step: null, next_step_owner: null, progress: null, client_can_upload: false },
+    ]),
+    approvals: [
+      {
+        id: "ap_conv2",
+        subject: "prova",
+        versionLabel: "V2",
+        snapshot: { title: "Convite", message: "Nomes maiores e a data corrigida para sábado, 19 de dezembro.", files: ["convite-v2-frente.jpg", "convite-v2-verso.jpg"] },
+        status: "pendente",
+        requestedAt: at(-1, 15),
+        decidedAt: null,
+        phase: { position: 4, name: "Revisões" },
+        responses: [],
+      },
+      {
+        id: "ap_conv1",
+        subject: "prova",
+        versionLabel: "V1",
+        snapshot: { title: "Convite", files: ["convite-v1-frente.jpg", "convite-v1-verso.jpg"] },
+        status: "alteracoes_pedidas",
+        requestedAt: at(-5, 11),
+        decidedAt: at(-4, 20),
+        phase: { position: 4, name: "Revisões" },
+        responses: [{ kind: "pedir_alteracoes", comment: "Os nomes podem ser maiores? E a data é sábado, não domingo.", actorRole: "client", createdAt: at(-4, 20) }],
+      },
+    ],
+    payments: [
+      { id: "pg_c_sinal", kind: "sinal", description: "Sinal (50%)", amountKz: 60000, dueOn: null, status: "pago", paidOn: at(-8).slice(0, 10), extraRounds: 0, gatesPhase: { key: "conceito", name: "Conceito / esboço", position: 3 }, createdAt: at(-9, 10) },
+      { id: "pg_c_rest", kind: "restante", description: "Restante, antes da produção", amountKz: 60000, dueOn: at(7).slice(0, 10), status: "pendente", paidOn: null, extraRounds: 0, gatesPhase: { key: "producao", name: "Produção / impressão", position: 6 }, createdAt: at(-9, 10) },
+    ],
     demos: [],
     meetings: [],
     syncedAt: at(0, 10),

@@ -2,6 +2,7 @@ import { Download, Globe, Smartphone } from "lucide-react";
 import { longDate, relative } from "@/lib/portal/format";
 import { requirePortal } from "@/lib/portal/session";
 import { AppQr } from "../../_components/AppQr";
+import { ClientFiles } from "../../_components/ClientFiles";
 import { Details } from "../../_components/Details";
 import { PageHeader } from "../../_components/PageHeader";
 import { PreviewWindow } from "../../_components/Widgets";
@@ -12,6 +13,20 @@ const KIND = { web: "Web", android: "Android", ios: "iOS" } as const;
 
 export default async function DeliveriesPage() {
   const { project, unread } = await requirePortal();
+  // Académico e Design: a página "Ficheiros" (M5-09). O Tech mantém as entregas de sempre.
+  if ((project.serviceType ?? "development") !== "development") {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          section="Ficheiros"
+          eyebrow="Versões e referências"
+          title="Os ficheiros do seu projeto"
+          unread={unread} source={project.source} serviceType={project.serviceType}
+        />
+        <ClientFiles project={project} />
+      </div>
+    );
+  }
   const app = project.latestApp;
   const history = [...project.demos].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
 

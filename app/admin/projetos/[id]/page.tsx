@@ -1,16 +1,23 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, Eye, Globe, MessageSquare, Smartphone, Trash2 } from "lucide-react";
-import { addDemo, deleteDemo, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
+import { BadgeCheck, ExternalLink, Eye, FolderOpen, Globe, ListChecks, MessageSquare, Smartphone, Trash2, Wallet } from "lucide-react";
+import { addDemo, deleteDemo, postponeFilesPurge, deleteMeeting, deleteProject, saveMeeting, updateProject } from "@/lib/admin/actions";
 import { getProjectById, withProgress } from "@/lib/admin/data";
+import { PHASE_LABEL, PHASE_TONE } from "@/lib/admin/phases";
+import { VIEW_LABEL as LINK_LABEL, linkView, type LinkStatus } from "@/lib/access/links";
+import { emailEnabled } from "@/lib/email/send";
+import { WARN_DAYS, daysUntil } from "@/lib/files/retention";
+import { todayLuanda } from "@/lib/payments/model";
 import { requireAdmin } from "@/lib/admin/session";
 import { longDate, relative, shortDate, time } from "@/lib/portal/format";
 import type { Meeting } from "@/lib/portal/types";
 import { ActionForm, ConfirmDelete, Field, inputCls } from "../../_components/forms";
+import { AccessLinkPanel } from "../../_components/AccessLinkPanel";
 import { ProjectFields } from "../../_components/ProjectFields";
 import { AdminHeader, Badge, Empty, NotifyClient, Progress, Section } from "../../_components/ui";
 
 export const metadata = { title: "Projeto" };
+
 
 /** ISO → { data: "2026-11-25", hora: "14:30" } em hora de Luanda (UTC+1). */
 function luandaParts(iso: string) {
@@ -23,7 +30,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { sb } = await requireAdmin();
   const p = await getProjectById(sb, id);
   if (!p) notFound();
-  const v = await withProgress(p, sb);
+  const [v, { data: linkRows }] = await Promise.all([
+    withProgress(p, sb),
+    // Eventos do link mágico (quem gerou e quando): a RLS só deixa o admin ler.
+    sb
+      .from("access_links")
+      .select("id, status, channel, expires_at, used_at, created_at")
+      .eq("project_id", id)
+      .order("created_at", { ascending: false })
+      .limit(5)
+      .returns<{ id: string; status: LinkStatus; channel: string; expires_at: string; used_at: string | null; created_at: string }[]>(),
+  ]);
+  const links = linkRows ?? [];
+  // Limpeza dos ficheiros (#122): data calculada na BD (files_purge_on, 0008).
+  const { data: retention } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
+  const purgeOn = retention?.files_purge_on ?? null;
+  const purgeDays = purgeOn ? daysUntil(purgeOn, todayLuanda()) : null;
 
   const now = Date.now();
   const upcoming = p.meetings.filter((m) => new Date(m.endsAt).getTime() > now).reverse();
@@ -46,23 +68,46 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </>
         }
         actions={
-          <Link href={`/admin/mensagens/${p.id}`} className="btn-quiet h-11 py-0">
-            <MessageSquare size={16} aria-hidden /> Mensagens
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {p.serviceType !== "development" && (
+              <>
+                <Link href={`/admin/projetos/${p.id}/aprovacoes`} className="btn-quiet h-11 py-0">
+                  <BadgeCheck size={16} aria-hidden /> Aprovações
+                </Link>
+                <Link href={`/admin/projetos/${p.id}/pagamentos`} className="btn-quiet h-11 py-0">
+                  <Wallet size={16} aria-hidden /> Pagamentos
+                </Link>
+              </>
+            )}
+            <Link href={`/admin/projetos/${p.id}/ficheiros`} className="btn-quiet h-11 py-0">
+              <FolderOpen size={16} aria-hidden /> Ficheiros
+            </Link>
+            <Link href={`/admin/mensagens/${p.id}`} className="btn-quiet h-11 py-0">
+              <MessageSquare size={16} aria-hidden /> Mensagens
+            </Link>
+          </div>
         }
       />
 
       <Section
         title={`Progresso · ${v.percent}%`}
         description={
-          v.source === "github"
+          p.serviceType !== "development"
+            ? v.source === "bd"
+              ? "Fases guardadas na base de dados. O cliente vê o estado, o prazo e o próximo passo de cada fase."
+              : "Não foi possível ler as fases da base de dados."
+            : v.source === "github"
             ? `Lido do GitHub (${repo}) ${relative(v.syncedAt)}. ${v.closedCount} de ${v.total} issues fechadas.`
             : repo
               ? `Não foi possível ler ${repo}. Confirme o GITHUB_TOKEN e o acesso do token a este repositório.`
               : "Sem repositório GitHub associado: indique-o em “Dados do projeto”."
         }
         actions={
-          repo ? (
+          p.serviceType !== "development" ? (
+            <Link href={`/admin/projetos/${p.id}/fases`} className="btn-violet h-9 py-0 text-[13px]">
+              <ListChecks size={14} aria-hidden /> Gerir fases
+            </Link>
+          ) : repo ? (
             <div className="flex flex-wrap gap-2">
               <Link href={`/admin/projetos/${p.id}/tarefas`} className="btn-violet h-9 py-0 text-[13px]">
                 <Eye size={14} aria-hidden /> Tarefas visíveis
@@ -82,7 +127,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <p className="text-sm font-semibold text-ink">
                   {ph.number}. {ph.title}
                 </p>
-                {ph.status === "done" ? (
+                {ph.state ? (
+                  <Badge tone={PHASE_TONE[ph.state]}>{PHASE_LABEL[ph.state]}</Badge>
+                ) : ph.status === "done" ? (
                   <Badge tone="ok">Concluída</Badge>
                 ) : ph.status === "current" ? (
                   <Badge tone="accent">Em curso</Badge>
@@ -90,13 +137,59 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   <Badge>Por iniciar</Badge>
                 )}
               </div>
-              <Progress percent={ph.percent} className="mt-3 h-1" />
-              <p className="mt-2 text-xs text-ink-faint">
-                {ph.closedCount}/{ph.total} issues · {ph.tasks.length} visíveis ao cliente
+              <Progress percent={ph.state ? Math.round((ph.progress ?? 0) * 100) : ph.percent} className="mt-3 h-1" />
+              <p className="mt-2 truncate text-xs text-ink-faint">
+                {ph.state
+                  ? ph.nextStep
+                    ? `Próximo passo: ${ph.nextStep.text}`
+                    : ph.dueOn
+                      ? `Prazo: ${shortDate(ph.dueOn)}`
+                      : ph.description
+                  : `${ph.closedCount}/${ph.total} issues · ${ph.tasks.length} visíveis ao cliente`}
               </p>
             </li>
           ))}
         </ul>
+      </Section>
+
+      {purgeOn && (
+        <Section
+          id="ficheiros-retencao"
+          title={purgeDays! <= 0 ? "Ficheiros apagados" : purgeDays! <= WARN_DAYS ? `Os ficheiros são apagados daqui a ${purgeDays} dia${purgeDays === 1 ? "" : "s"}` : "Limpeza dos ficheiros"}
+          tone={purgeDays! <= WARN_DAYS ? "danger" : undefined}
+          description={`Projeto ${p.status === "cancelado" ? "cancelado" : "entregue"}: os ficheiros saem do armazenamento a ${longDate(purgeOn)} (90 dias depois, RN-08). Fica o registo (nome, data, autor).`}
+        >
+          {purgeDays! > 0 && (
+            <ActionForm action={postponeFilesPurge} submit="Adiar 30 dias" variant="quiet" pendingLabel="A adiar…">
+              <input type="hidden" name="projeto" value={p.id} />
+            </ActionForm>
+          )}
+        </Section>
+      )}
+
+      <Section
+        id="acesso"
+        title="Acesso do cliente"
+        description="Um link de uso único, válido 24 horas, que leva o cliente direto a este projeto sem senha. O email e a senha continuam a funcionar."
+      >
+        <AccessLinkPanel projectId={p.id} emailOn={emailEnabled} />
+        {links.length > 0 && (
+          <ul className="mt-5 divide-y divide-line border-t border-line text-xs text-ink-dim">
+            {links.map((l) => {
+              const v = linkView({ status: l.status, expiresAt: l.expires_at });
+              return (
+                <li key={l.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
+                  <span className="text-ink">Gerado {relative(l.created_at)}</span>
+                  <span>· {l.channel === "copiar" ? "copiado" : l.channel === "whatsapp" ? "WhatsApp" : "email"}</span>
+                  {l.used_at && <span>· usado {relative(l.used_at)}</span>}
+                  <span className="ml-auto">
+                    <Badge tone={v === "ativo" ? "accent" : v === "usado" ? "ok" : "neutral"}>{LINK_LABEL[v]}</Badge>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </Section>
 
       <Section title="Dados do projeto">
@@ -104,6 +197,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <input type="hidden" name="id" value={p.id} />
           <ProjectFields
             showSlug
+            serviceType={p.serviceType}
             d={{
               name: p.name,
               slug: p.slug,
@@ -127,15 +221,17 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <Field label="Motivo da mudança de estado" hint="Fica no histórico. Obrigatório para pausar, cancelar ou reabrir.">
               <input name="motivo" maxLength={500} className={inputCls} placeholder="Ex.: a pedido do cliente, em exames" />
             </Field>
-            <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
-              <input
-                name="mapa"
-                defaultValue={p.phaseMap ? JSON.stringify(p.phaseMap) : ""}
-                className={`${inputCls} font-mono`}
-                spellCheck={false}
-                placeholder="(padrão)"
-              />
-            </Field>
+            {p.serviceType === "development" && (
+              <Field label="Mapa de fases (avançado)" hint='Só se o projeto não seguir M0–M11. Ex.: {"M3": 3}'>
+                <input
+                  name="mapa"
+                  defaultValue={p.phaseMap ? JSON.stringify(p.phaseMap) : ""}
+                  className={`${inputCls} font-mono`}
+                  spellCheck={false}
+                  placeholder="(padrão)"
+                />
+              </Field>
+            )}
           </div>
         </ActionForm>
       </Section>

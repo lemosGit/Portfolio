@@ -4,6 +4,8 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { toView } from "./data";
+import { loadApprovals } from "@/lib/approvals/model";
+import { loadPayments } from "@/lib/payments/model";
 import { loadPhases } from "./phase-source";
 import type { Client, DemoLink, Feedback, Meeting, Project, ProjectView, ServiceType } from "./types";
 
@@ -122,10 +124,23 @@ export async function loadPortal(
 
   const now = new Date().toISOString();
   // Fases: GitHub no Desenvolvimento (em cache; o webhook invalida-a), BD no Académico e no Design (ADR-001).
-  const sync = await loadPhases(
-    { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
-    sb,
-  );
+  const blocks = p.service_type !== "development";
+  const [sync, approvals, payments, filesPurgeOn] = await Promise.all([
+    loadPhases(
+      { id: p.id, serviceType: p.service_type, githubOwner: p.github_owner, githubRepo: p.github_repo, phaseMap: p.phase_map },
+      sb,
+    ),
+    // Aprovações só no Académico e no Design (M5-10); uma falha não deita a página abaixo.
+    blocks ? loadApprovals(sb, p.id).then((r) => ("error" in r ? [] : r)) : Promise.resolve([]),
+    blocks ? loadPayments(sb, p.id).then((r) => ("error" in r ? [] : r)) : Promise.resolve([]),
+    // #122: à parte e tolerante a erro, para a página não cair se a migração 0008 ainda não estiver aplicada.
+    sb
+      .from("projects")
+      .select("files_purge_on")
+      .eq("id", p.id)
+      .maybeSingle<{ files_purge_on: string | null }>()
+      .then(({ data }) => data?.files_purge_on ?? undefined),
+  ]);
 
   const project: Project = {
     id: p.id,
@@ -136,6 +151,9 @@ export async function loadPortal(
     description: p.description ?? "",
     coverUrl: p.cover_url ?? undefined,
     serviceType: p.service_type,
+    approvals,
+    payments,
+    filesPurgeOn,
     repo: { owner: p.github_owner ?? "", name: p.github_repo ?? "" },
     startedOn: p.started_on ?? now,
     dueOn: p.due_on ?? now,

@@ -34,3 +34,9 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 ## Esqueleto genérico (M5-06)
 - `tests/e2e/academico.spec.ts`: com o cliente de exemplo `c_kiala` (Académico): etiqueta, barra de fases, próximo passo, menu de 4 entradas, redirecionamento da Agenda.
 - Capturas de referência atualizadas a 2026-11-24 (Q-082): as do Tech ganharam a etiqueta "TECH"; novas `academico-visao-geral-*`. A extração dos blocos do Tech foi verificada **antes** da etiqueta, com as capturas antigas a passar sem alteração.
+
+## Segurança / RLS (M5-13)
+- `supabase/tests/0090_rls.sql`: o cliente A não lê nem escreve dados do cliente B, históricos só de inserção, `anon` sem acesso (T1, T2, T6, T7, T10–T12).
+- `supabase/tests/concorrencia.sh`: duas aprovações em paralelo (T3), chamado no fim de `scripts/db-test.sh`.
+- `scripts/teste-storage-t9.mjs`: T9 contra o Storage de produção (só com autorização).
+- Relatório completo T1–T15: [`relatorios/M5-13-rls.md`](relatorios/M5-13-rls.md).

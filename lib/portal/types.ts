@@ -1,3 +1,5 @@
+import type { Payment } from "@/lib/payments/model";
+import type { Approval } from "@/lib/approvals/model";
 /**
  * Tipos do Portal do Cliente.
  * Fases e tarefas espelham o formato do GitHub (milestones e issues), para que a
@@ -108,6 +110,12 @@ export type Project = {
   syncedAt: string; // ISO — última leitura do GitHub
   /** Por omissão "development" (os projetos e dados de exemplo anteriores à 0006). */
   serviceType?: ServiceType;
+  /** Aprovações (Académico e Design, M5-10): pendentes primeiro. */
+  approvals?: Approval[];
+  /** Pagamentos (Académico e Design, M5-11). O cliente não vê os anulados (RLS). */
+  payments?: Payment[];
+  /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
+  filesPurgeOn?: string;
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */
   source: "github" | "bd" | "exemplo" | "erro";
 };

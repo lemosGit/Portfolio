@@ -9,8 +9,28 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { githubTag, setIssueVisible } from "@/lib/github/phases";
 import { redirect } from "next/navigation";
 import { emailNote, sendEmail, type SendResult } from "@/lib/email/send";
-import { demoEmail, meetingEmail, replyEmail } from "@/lib/email/templates";
+import { accessLinkEmail, approvalRequestEmail, demoEmail, meetingEmail, paymentEmail, phaseEmail, replyEmail } from "@/lib/email/templates";
+import { LINKS_PER_HOUR, LINK_TTL_MS, entryUrl, looksLikeToken, type LinkChannel } from "@/lib/access/links";
+import { digest } from "@/lib/access/digest";
+import { SITE_URL } from "@/lib/email/send";
+import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
+import { postponeTo } from "@/lib/files/retention";
+import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
+import {
+  ADMIN_PHASE_COLS,
+  PHASE_LABEL,
+  isTransitionAllowed,
+  mapAdminPhase,
+  needsNote,
+  planAdvance,
+  planBack,
+  readPhaseDetails,
+  type AdminPhaseRow,
+  type Step,
+} from "./phases";
+import { opt, readProject, readServiceType, str } from "./project-form";
 import { requireAdminStrict as requireAdmin } from "./session";
 
 export type AdminState = {
@@ -19,17 +39,16 @@ export type AdminState = {
   message?: string;
   /** Credenciais a mostrar uma única vez (conta nova ou senha redefinida). */
   credentials?: { email: string; password: string };
+  /** Link mágico acabado de gerar (M5-12): o token só existe aqui, nunca na BD. */
+  link?: { url: string; expiresAt: string; clientName: string; projectName: string };
 };
 
 /* ───────────── utilitários ───────────── */
 
-const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim();
-const opt = (f: FormData, k: string) => str(f, k) || null;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^\d{2}:\d{2}$/;
-const REPO = /^[\w.-]+\/[\w.-]+$/;
 const isUrl = (s: string) => {
   try {
     const u = new URL(s);
@@ -39,13 +58,6 @@ const isUrl = (s: string) => {
   }
 };
 
-const slugify = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 /** Senha temporária legível (sem 0/O, 1/l): o cliente troca-a no primeiro acesso. */
 function tempPassword() {
@@ -72,47 +84,8 @@ function accounts() {
   }
 }
 
-function parseRepo(raw: string): { owner: string | null; repo: string | null } | { error: string } {
-  const v = raw.replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/$/, "");
-  if (!v) return { owner: null, repo: null };
-  if (!REPO.test(v)) return { error: "Repositório inválido. Use o formato dono/repositorio (ex.: lemosGit/candongueiro_pay)." };
-  const [owner, repo] = v.split("/");
-  return { owner, repo };
-}
 
-type ProjectFields = {
-  name: string;
-  slug: string;
-  tagline: string | null;
-  description: string | null;
-  github_owner: string | null;
-  github_repo: string | null;
-  started_on: string | null;
-  due_on: string | null;
-};
 
-function readProject(f: FormData, nameKey = "projeto"): ProjectFields | { error: string } {
-  const name = str(f, nameKey);
-  if (name.length < 2) return { error: "Indique o nome do projeto." };
-  const slug = slugify(str(f, "slug") || name);
-  if (!slug) return { error: "O identificador (slug) do projeto ficou vazio. Escreva um nome com letras ou números." };
-  const repo = parseRepo(str(f, "repo"));
-  if ("error" in repo) return repo;
-  const started = opt(f, "inicio");
-  const due = opt(f, "entrega");
-  if ((started && !DATE.test(started)) || (due && !DATE.test(due))) return { error: "Datas inválidas." };
-  if (started && due && due < started) return { error: "A data de entrega é anterior à data de início." };
-  return {
-    name,
-    slug,
-    tagline: opt(f, "resumo"),
-    description: opt(f, "descricao"),
-    github_owner: repo.owner,
-    github_repo: repo.repo,
-    started_on: started,
-    due_on: due,
-  };
-}
 
 /** Nome e email do cliente de um projeto, para os avisos. */
 async function contactOf(sb: Awaited<ReturnType<typeof requireAdmin>>["sb"], projectId: string) {
@@ -193,7 +166,9 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
   const email = str(f, "email").toLowerCase();
   if (name.length < 2) return { error: "Indique o nome do cliente." };
   if (!EMAIL.test(email)) return { error: "Email inválido." };
-  const project = readProject(f);
+  const serviceType = readServiceType(f);
+  if (typeof serviceType !== "string") return serviceType;
+  const project = readProject(f, serviceType);
   if ("error" in project) return project;
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
@@ -225,6 +200,7 @@ export async function createClientAccount(_p: AdminState, f: FormData): Promise<
     .from("projects")
     .insert({
       ...project,
+      service_type: serviceType, // o trigger da BD cria as 7 fases no Académico e no Design (B1)
       client_id: client.id,
       started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
       team: [{ initials: "JP", name: "João Pereira" }],
@@ -336,7 +312,9 @@ export async function deleteClient(_p: AdminState, f: FormData): Promise<AdminSt
 
 export async function createProject(_p: AdminState, f: FormData): Promise<AdminState> {
   const { sb } = await requireAdmin();
-  const project = readProject(f);
+  const serviceType = readServiceType(f);
+  if (typeof serviceType !== "string") return serviceType;
+  const project = readProject(f, serviceType);
   if ("error" in project) return project;
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
@@ -345,6 +323,7 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
     .from("projects")
     .insert({
       ...project,
+      service_type: serviceType, // o trigger da BD cria as 7 fases no Académico e no Design (B1)
       client_id: str(f, "cliente"),
       started_on: project.started_on ?? new Date().toISOString().slice(0, 10),
       team: [{ initials: "JP", name: "João Pereira" }],
@@ -362,14 +341,22 @@ export async function createProject(_p: AdminState, f: FormData): Promise<AdminS
 
 export async function updateProject(_p: AdminState, f: FormData): Promise<AdminState> {
   const { sb } = await requireAdmin();
-  const project = readProject(f);
+  const id = str(f, "id");
+  const { data: before } = await sb
+    .from("projects")
+    .select("status, service_type")
+    .eq("id", id)
+    .single<{ status: string; service_type: ServiceType }>();
+  if (!before) return { error: "Projeto não encontrado." };
+  // O tipo de serviço não muda depois de criado (RN-02): vem sempre da BD, nunca do formulário.
+  const project = readProject(f, before.service_type);
   if ("error" in project) return project;
 
   const status = str(f, "estado");
   if (!["ativo", "entregue", "pausado", "cancelado"].includes(status)) return { error: "Estado inválido." };
 
   let phaseMap: Record<string, number> | null = null;
-  const rawMap = str(f, "mapa");
+  const rawMap = before.service_type === "development" ? str(f, "mapa") : "";
   if (rawMap) {
     try {
       const parsed = JSON.parse(rawMap);
@@ -385,7 +372,6 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
-  const id = str(f, "id");
   const cover = readCover(f);
   if (cover && "error" in cover) return cover;
   const dropCover = str(f, "remover_capa") === "1";
@@ -404,7 +390,6 @@ export async function updateProject(_p: AdminState, f: FormData): Promise<AdminS
     }
   }
 
-  const { data: before } = await sb.from("projects").select("status").eq("id", id).single<{ status: string }>();
   const { error } = await sb
     .from("projects")
     .update({ ...project, phase_map: phaseMap, ...coverPatch })
@@ -582,4 +567,430 @@ export async function setTasksVisible(_p: AdminState, f: FormData): Promise<Admi
       ? `${many ? `${numbers.length} tarefas passaram` : "A tarefa passou"} a estar visíve${many ? "is" : "l"} para o cliente.`
       : `${many ? `${numbers.length} tarefas deixaram` : "A tarefa deixou"} de estar visíve${many ? "is" : "l"} para o cliente.`,
   };
+}
+
+/* ───────────── Fases (M5-08, Académico e Design) ───────────── */
+
+async function projectPhases(sb: Sb, projectId: string) {
+  const { data, error } = await sb
+    .from("project_phases")
+    .select(ADMIN_PHASE_COLS)
+    .eq("project_id", projectId)
+    .order("position")
+    .returns<AdminPhaseRow[]>();
+  return error ? undefined : (data ?? []).map(mapAdminPhase);
+}
+
+/**
+ * Aplica os passos pela ordem, com admin_set_phase_status (a BD valida a transição, o travão
+ * de pagamento D-052 e grava o histórico). Não é atómico: se um passo falhar, os anteriores
+ * ficam e a mensagem diz o que ficou feito.
+ */
+async function applySteps(sb: Sb, steps: Step[], note: string | null) {
+  const done: Step[] = [];
+  for (const s of steps) {
+    const { error } = await sb.rpc("admin_set_phase_status", { p_phase: s.id, p_status: s.to, p_note: note });
+    if (error) return { done, error: error.message };
+    done.push(s);
+  }
+  return { done };
+}
+
+/** Resumo para o admin e aviso ao cliente (só das mudanças visíveis: os passos intermédios contam uma vez). */
+async function finishPhaseChange(
+  f: FormData,
+  sb: Sb,
+  projectId: string,
+  done: Step[],
+  failed: string | undefined,
+  note: string | null,
+): Promise<AdminState> {
+  const last = new Map<string, Step>();
+  for (const s of done) last.set(s.id, s);
+  const changes = [...last.values()].map((s) => ({ name: s.name, to: s.to }));
+  if (changes.length) refresh();
+  const summary = changes.map((c) => `“${c.name}”: ${PHASE_LABEL[c.to as DbPhaseState].toLowerCase()}`).join("; ");
+  if (failed) {
+    return { error: changes.length ? `Feito: ${summary}. Depois falhou: ${failed}` : failed };
+  }
+  const phases = await projectPhases(sb, projectId);
+  const nextStep = phases?.find((p) => p.id === done[done.length - 1]?.id)?.nextStep;
+  const mail = changes.length
+    ? await notify(f, sb, projectId, (c) => phaseEmail({ ...c, changes, nextStep, note }))
+    : undefined;
+  return { ok: true, message: `${summary}.${emailNote(mail)}` };
+}
+
+/** Muda o estado de uma fase para um estado permitido. */
+export async function setPhaseStatus(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const to = str(f, "estado") as DbPhaseState;
+  const note = opt(f, "motivo");
+  const phases = await projectPhases(sb, projectId);
+  const ph = phases?.find((p) => p.id === str(f, "fase"));
+  if (!ph) return { error: "Fase não encontrada." };
+  if (!isTransitionAllowed(ph, to)) {
+    return { error: `Não é possível passar de “${PHASE_LABEL[ph.status]}” para “${PHASE_LABEL[to] ?? to}”.` };
+  }
+  if (needsNote(ph.status) && !note) return { error: "Indique o motivo para reabrir a fase." };
+  const step: Step = { id: ph.id, name: ph.name, from: ph.status, to };
+  const r = await applySteps(sb, [step], note);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, note);
+}
+
+/** Avançar: conclui a fase e inicia a seguinte por iniciar (Q-083). */
+export async function advancePhase(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const phases = await projectPhases(sb, projectId);
+  if (!phases) return { error: "Não foi possível ler as fases." };
+  const plan = planAdvance(phases, str(f, "fase"));
+  if ("error" in plan) return plan;
+  const r = await applySteps(sb, plan, null);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, null);
+}
+
+/** Recuar: reabre a última fase concluída antes da atual, com motivo (D-062). */
+export async function reopenPreviousPhase(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const note = opt(f, "motivo");
+  if (!note) return { error: "Indique o motivo para reabrir a fase anterior." };
+  const phases = await projectPhases(sb, projectId);
+  if (!phases) return { error: "Não foi possível ler as fases." };
+  const step = planBack(phases);
+  if ("error" in step) return step;
+  const r = await applySteps(sb, [step], note);
+  return finishPhaseChange(f, sb, projectId, r.done, r.error, note);
+}
+
+/** Prazo, próximo passo (visível ao cliente) e progresso de uma fase. */
+export async function updatePhaseDetails(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const d = readPhaseDetails((k) => str(f, k));
+  if ("error" in d) return d;
+  const { data, error } = await sb
+    .from("project_phases")
+    .update(d)
+    .eq("id", str(f, "fase"))
+    .eq("project_id", projectId)
+    .select("name")
+    .single<{ name: string }>();
+  if (error || !data) return { error: `Não foi possível guardar: ${error?.message ?? "fase não encontrada"}` };
+  refresh();
+  const mail = await notify(f, sb, projectId, (c) =>
+    phaseEmail({ ...c, changes: [{ name: data.name, to: "atualizada" }], nextStep: d.next_step }),
+  );
+  return { ok: true, message: `Fase “${data.name}” guardada.${emailNote(mail)}` };
+}
+
+/* ───────────── Aprovações (M5-10) ───────────── */
+// Orçamento e extra nascem dos orçamentos e pagamentos (0007, M5-11). Aqui: índice, prova e entrega.
+
+/** Pede uma aprovação ao cliente. A BD grava o snapshot, põe a fase "a aguardar o cliente" e garante 1 pendente por alvo. */
+export async function createApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const subject = str(f, "assunto") as ApprovalSubject;
+  const phaseId = opt(f, "fase");
+  const message = opt(f, "mensagem");
+  if (message && message.length > 1000) return { error: "A mensagem tem no máximo 1000 caracteres." };
+
+  let row: Record<string, unknown>;
+  let snapshot: ApprovalSnapshot;
+  if (subject === "indice") {
+    const items = parseItems(str(f, "itens"));
+    if (items.length === 0) return { error: "Escreva o índice: um capítulo ou secção por linha." };
+    const label = opt(f, "versao");
+    if (label && label.length > 10) return { error: "A versão tem no máximo 10 caracteres (ex.: V2)." };
+    snapshot = { title: "Índice", items, ...(message && { message }) };
+    row = { subject, version_label: label };
+  } else if (subject === "prova" || subject === "entrega") {
+    const { data: d } = await sb
+      .from("deliverables")
+      .select("id, label, title, role, project_phase_id, files (original_name)")
+      .eq("id", str(f, "versao_ficheiro"))
+      .eq("project_id", projectId)
+      .maybeSingle<{ id: string; label: string; title: string | null; role: string; project_phase_id: string | null; files: { original_name: string }[] }>();
+    if (!d) return { error: "Escolha a versão do ficheiro a aprovar." };
+    if (d.role === "interno" || d.role === "referencia") return { error: "Só se pedem aprovações de entregáveis e provas." };
+    snapshot = { title: d.title ?? (subject === "prova" ? "Prova" : "Entrega"), files: d.files.map((x) => x.original_name), ...(message && { message }) };
+    row = { subject, deliverable_id: d.id, version_label: d.label };
+    if (!phaseId && d.project_phase_id) row.project_phase_id = d.project_phase_id;
+  } else {
+    return { error: "Escolha o que o cliente vai aprovar." };
+  }
+
+  const { error } = await sb.from("approvals").insert({ project_id: projectId, project_phase_id: phaseId, ...row, snapshot });
+  if (error) {
+    return {
+      error: error.code === "23505" ? "Já há um pedido pendente para isto. Cancele-o antes de pedir outro." : `Não foi possível pedir: ${error.message}`,
+    };
+  }
+  refresh();
+  const title = approvalTitle({ subject, versionLabel: (row.version_label as string | null) ?? null, snapshot });
+  const mail = await notify(f, sb, projectId, (c) => approvalRequestEmail({ ...c, title, message }));
+  return { ok: true, message: `Pedido “${title}” enviado ao cliente.${emailNote(mail)}` };
+}
+
+/** Cancela um pedido pendente (pendente → cancelada; a fase não muda sozinha). */
+export async function cancelApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb
+    .from("approvals")
+    .update({ status: "cancelada", decided_at: new Date().toISOString() })
+    .eq("id", str(f, "id"))
+    .eq("status", "pendente")
+    .select("id");
+  if (error) return { error: `Não foi possível cancelar: ${error.message}` };
+  if (!data?.length) return { error: "Este pedido já não está pendente." };
+  refresh();
+  return { ok: true, message: "Pedido cancelado." };
+}
+
+/** Reabre uma aprovação dada, com motivo (RF-30.33, D-022). A BD recusa reabrir a arte com a produção iniciada (RN-43). */
+export async function reopenApproval(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb, userId } = await requireAdmin();
+  const reason = opt(f, "motivo");
+  if (!reason) return { error: "Indique o motivo para reabrir." };
+  if (reason.length > 2000) return { error: "O motivo tem no máximo 2000 caracteres." };
+  const { error } = await sb
+    .from("approval_responses")
+    .insert({ approval_id: str(f, "id"), kind: "reabrir", comment: reason, actor_role: "admin", actor_id: userId });
+  if (error) return { error: `Não foi possível reabrir: ${error.message}` };
+  refresh();
+  return { ok: true, message: "Aprovação reaberta: volta a aguardar o cliente." };
+}
+
+/* ───────────── Pagamentos (M5-11) ───────────── */
+// Registo manual, sem pagamento online (D-009). Sinal e restante nascem também do orçamento aceite (0007).
+
+const KINDS: PaymentKind[] = ["sinal", "restante", "extra"];
+
+/** Regista um pagamento. Um extra fica "por aceitar" e pede a aprovação do cliente (RN-07, RF-30.25). */
+export async function createPayment(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const kind = str(f, "tipo") as PaymentKind;
+  if (!KINDS.includes(kind)) return { error: "Escolha o tipo: sinal, restante ou extra." };
+  const description = str(f, "descricao") || (kind === "sinal" ? "Sinal" : kind === "restante" ? "Restante" : "");
+  if (!description) return { error: "Descreva o extra (ex.: ronda de revisão adicional)." };
+  if (description.length > 200) return { error: "A descrição tem no máximo 200 caracteres." };
+  const amount = parseKz(str(f, "valor"));
+  if (!amount) return { error: "Indique o valor em Kz (ex.: 25 000)." };
+  if (amount >= 1e10) return { error: "Valor demasiado alto." };
+  const dueOn = opt(f, "prazo");
+  if (dueOn && !DATE.test(dueOn)) return { error: "Data limite inválida." };
+  const rounds = kind === "extra" ? Number(str(f, "rondas") || 0) : 0;
+  if (!Number.isInteger(rounds) || rounds < 0 || rounds > 20) return { error: "As rondas extra vão de 0 a 20." };
+
+  const { data: pay, error } = await sb
+    .from("payments")
+    .insert({
+      project_id: projectId,
+      kind,
+      description,
+      amount_kz: amount,
+      due_on: dueOn,
+      extra_rounds: rounds,
+      gates_phase_id: opt(f, "fase"),
+    })
+    .select("id, status")
+    .single<{ id: string; status: string }>();
+  if (error || !pay) return { error: `Não foi possível registar: ${error?.message ?? "erro"}` };
+
+  if (pay.status === "por_aceitar") {
+    const { error: ae } = await sb.from("approvals").insert({
+      project_id: projectId,
+      subject: "extra",
+      payment_id: pay.id,
+      snapshot: { title: description, amount_kz: amount, extra_rounds: rounds, message: `Valor: ${kz(amount)}. Só conta depois de o aceitar.` },
+    });
+    if (ae) {
+      // Sem o pedido de aprovação o extra nunca seria aceite: anula-o e explica.
+      await sb.from("payments").update({ status: "anulado" }).eq("id", pay.id);
+      return { error: `Não foi possível pedir a aprovação do extra: ${ae.message}` };
+    }
+  }
+  refresh();
+  const mail = await notify(f, sb, projectId, (c) =>
+    pay.status === "por_aceitar"
+      ? approvalRequestEmail({ ...c, title: `Extra: ${description}`, message: `Valor: ${kz(amount)}.` })
+      : paymentEmail({ ...c, description, amount: kz(amount), paid: false, dueOn }),
+  );
+  return {
+    ok: true,
+    message: `${description} (${kz(amount)}) registado${pay.status === "por_aceitar" ? ": aguarda a aceitação do cliente" : ""}.${emailNote(mail)}`,
+  };
+}
+
+/** Marca como pago, com a data do pagamento (RF-30.22). A BD liberta a fase travada e os ficheiros bloqueados. */
+export async function markPaymentPaid(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const paidOn = str(f, "data") || todayLuanda();
+  if (!DATE.test(paidOn)) return { error: "Data do pagamento inválida." };
+  if (paidOn > todayLuanda()) return { error: "A data do pagamento não pode ser no futuro." };
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "pago", paid_on: paidOn })
+    .eq("id", str(f, "id"))
+    .eq("status", "pendente")
+    .select("project_id, description, amount_kz")
+    .maybeSingle<{ project_id: string; description: string; amount_kz: number | string }>();
+  if (error) return { error: `Não foi possível marcar como pago: ${error.message}` };
+  if (!data) return { error: "Só um pagamento pendente pode ser marcado como pago." };
+  refresh();
+  const amount = kz(Number(data.amount_kz));
+  const mail = await notify(f, sb, data.project_id, (c) => paymentEmail({ ...c, description: data.description, amount, paid: true }));
+  return { ok: true, message: `${data.description} marcado como pago.${emailNote(mail)}` };
+}
+
+/** Desfaz um "pago" registado por engano (pago → pendente). Fica na auditoria (activity_log). */
+export async function undoPaymentPaid(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "pendente" })
+    .eq("id", str(f, "id"))
+    .eq("status", "pago")
+    .select("description")
+    .maybeSingle<{ description: string }>();
+  if (error) return { error: `Não foi possível desfazer: ${error.message}` };
+  if (!data) return { error: "Este pagamento já não está marcado como pago." };
+  refresh();
+  return { ok: true, message: `${data.description} voltou a pendente.` };
+}
+
+/** Anula um pagamento por pagar (pendente ou por aceitar). Um extra por aceitar perde também o pedido de aprovação. */
+export async function cancelPayment(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const id = str(f, "id");
+  const { data, error } = await sb
+    .from("payments")
+    .update({ status: "anulado" })
+    .eq("id", id)
+    .in("status", ["pendente", "por_aceitar"])
+    .select("description")
+    .maybeSingle<{ description: string }>();
+  if (error) return { error: `Não foi possível anular: ${error.message}` };
+  if (!data) return { error: "Só se anula um pagamento por pagar." };
+  await sb.from("approvals").update({ status: "cancelada", decided_at: new Date().toISOString() }).eq("payment_id", id).eq("status", "pendente");
+  refresh();
+  return { ok: true, message: `${data.description} anulado.` };
+}
+
+/* ───────────── Link mágico (M5-12, ADR-002) ───────────── */
+// access_links só tem política de leitura para o admin: escreve-se com a chave secreta,
+// depois de requireAdminStrict (seguranca.md §4).
+
+/** Gera o link de uso único (24 h) para o cliente de um projeto. Os anteriores ficam "substituídos" (L4). */
+export async function generateAccessLink(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb, userId } = await requireAdmin();
+  const admin = accounts();
+  if (!admin) return { error: ACCOUNTS_OFF };
+  const projectId = str(f, "projeto");
+  const { data: p } = await sb
+    .from("projects")
+    .select("id, name, client_id, clients (id, name, email, user_id)")
+    .eq("id", projectId)
+    .single<{ id: string; name: string; client_id: string; clients: { id: string; name: string; email: string; user_id: string } | null }>();
+  if (!p?.clients) return { error: "Projeto ou cliente não encontrado." };
+  const c = p.clients;
+
+  // L5 / D-032: no máximo 5 links por cliente por hora.
+  const { count } = await sb
+    .from("access_links")
+    .select("id", { count: "exact", head: true })
+    .eq("client_id", c.id)
+    .gte("created_at", new Date(Date.now() - 60 * 60 * 1000).toISOString());
+  if ((count ?? 0) >= LINKS_PER_HOUR) return { error: `Já gerou ${LINKS_PER_HOUR} links para este cliente na última hora. Tente mais tarde.` };
+
+  const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email: c.email });
+  if (error || !data?.properties) return { error: `O Supabase não gerou o link: ${error?.message ?? "sem resposta"}` };
+  // D-077: uma conta com o email por confirmar recebe um link "signup". Nunca o enviamos.
+  if (data.properties.verification_type !== "magiclink") {
+    return { error: "A conta deste cliente tem o email por confirmar. Confirme-o (Clientes → editar o email) antes de gerar o link." };
+  }
+  const token = data.properties.hashed_token;
+  if (!looksLikeToken(token)) return { error: "O Supabase devolveu um token inesperado." };
+
+  const expiresAt = new Date(Date.now() + LINK_TTL_MS).toISOString();
+  await admin.from("access_links").update({ status: "substituido" }).eq("client_id", c.id).eq("status", "ativo");
+  const { error: ie } = await admin.from("access_links").insert({
+    client_id: c.id,
+    project_id: p.id,
+    token_digest: digest(token),
+    channel: "copiar",
+    expires_at: expiresAt,
+    created_by: userId, // evento: quem gerou e quando (created_at)
+  });
+  if (ie) return { error: `Não foi possível registar o link: ${ie.message}` };
+
+  revalidatePath(`/admin/projetos/${p.id}`);
+  return {
+    ok: true,
+    message: "Link gerado. Envie-o ao cliente: funciona uma vez e vale 24 horas.",
+    link: { url: entryUrl(SITE_URL, token), expiresAt, clientName: c.name, projectName: p.name },
+  };
+}
+
+/** Lê o link que o painel tem na mão e confirma que é o ativo deste projeto (o token não está na BD). */
+async function activeLinkFor(url: string, projectId: string) {
+  const admin = accounts();
+  if (!admin) return undefined;
+  let token: string | null = null;
+  try {
+    token = new URL(url).searchParams.get("t");
+  } catch {
+    return undefined;
+  }
+  if (!looksLikeToken(token ?? undefined)) return undefined;
+  const { data } = await admin
+    .from("access_links")
+    .select("id, project_id, status, expires_at, clients (name, email), projects (name)")
+    .eq("token_digest", digest(token!))
+    .maybeSingle<{ id: string; project_id: string; status: string; expires_at: string; clients: { name: string; email: string } | null; projects: { name: string } | null }>();
+  if (!data || data.project_id !== projectId || data.status !== "ativo" || Date.parse(data.expires_at) <= Date.now()) return undefined;
+  return { admin, row: data };
+}
+
+/** Envia o link por email (Resend, RF-30.52 — Should, D-039). */
+export async function emailAccessLink(url: string, projectId: string): Promise<AdminState> {
+  await requireAdmin();
+  const found = await activeLinkFor(String(url ?? ""), String(projectId ?? ""));
+  if (!found?.row.clients) return { error: "Este link já não é o ativo. Gere um novo." };
+  const { row, admin } = found;
+  const r = await sendEmail({
+    to: row.clients!.email,
+    ...accessLinkEmail({ clientName: row.clients!.name, projectName: row.projects?.name ?? "o seu projeto", url }),
+  });
+  if (!r.sent) return { error: `Email não enviado: ${r.reason}.` };
+  await admin.from("access_links").update({ channel: "email" }).eq("id", row.id);
+  revalidatePath(`/admin/projetos/${projectId}`);
+  return { ok: true, message: `Link enviado para ${row.clients!.email}.` };
+}
+
+/** Regista o último canal usado (Copiar / WhatsApp). Não falha a interface se não conseguir. */
+export async function setAccessLinkChannel(url: string, projectId: string, channel: LinkChannel): Promise<void> {
+  await requireAdmin();
+  if (channel !== "copiar" && channel !== "whatsapp") return;
+  const found = await activeLinkFor(String(url ?? ""), String(projectId ?? ""));
+  if (found) await found.admin.from("access_links").update({ channel }).eq("id", found.row.id);
+}
+
+/* ───────────── Retenção dos ficheiros (#122, RN-08) ───────────── */
+
+/** Adia a limpeza dos ficheiros 30 dias (Q-091); pode repetir-se. */
+export async function postponeFilesPurge(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const id = str(f, "projeto");
+  const { data: p } = await sb.from("projects").select("files_purge_on").eq("id", id).single<{ files_purge_on: string | null }>();
+  if (!p?.files_purge_on) return { error: "Este projeto não tem limpeza marcada (só os entregues ou cancelados)." };
+  const until = postponeTo(p.files_purge_on, todayLuanda());
+  const { error } = await sb.from("projects").update({ files_keep_until: until }).eq("id", id);
+  if (error) return { error: `Não foi possível adiar: ${error.message}` };
+  refresh();
+  return { ok: true, message: `Limpeza adiada: os ficheiros ficam até ${until.split("-").reverse().join("/")}.` };
 }

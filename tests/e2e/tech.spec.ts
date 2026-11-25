@@ -32,3 +32,22 @@ test.describe("cliente de demonstração", () => {
     }
   });
 });
+
+test.describe("link mágico (M5-12)", () => {
+  test("/cliente/entrar abre sem sessão e, com um link inválido, oferece um novo pelo WhatsApp", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+    await page.goto("/cliente/entrar?t=abcdefabcdefabcdefabcdefabcdefabcdef");
+    await expect(page).toHaveURL(/\/cliente\/entrar/);
+    await expect(page.getByRole("heading", { name: "Este link já não é válido" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Pedir um link novo no WhatsApp" })).toHaveAttribute("href", /^https:\/\/wa\.me\/\d+\?text=/);
+    await page.getByRole("link", { name: "Tenho senha: entrar com email e senha" }).click();
+    await expect(page).toHaveURL(/\/cliente\/login/);
+    expect(errors).toEqual([]);
+  });
+});
+
+test("T13: a limpeza diária recusa pedidos sem o CRON_SECRET (#122)", async ({ request }) => {
+  expect((await request.get("/api/cron/limpeza")).status()).toBe(401);
+  expect((await request.get("/api/cron/limpeza", { headers: { Authorization: "Bearer errado" } })).status()).toBe(401);
+});

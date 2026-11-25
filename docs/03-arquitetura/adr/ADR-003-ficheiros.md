@@ -62,7 +62,7 @@ sequenceDiagram
 - **Download:** URL assinada gerada no servidor com validade de **15 minutos** (D-083, dentro dos ≤ 1 h de RNF-303), depois de verificar a RLS, que a versão não está bloqueada por pagamento (RNF-304) e que não foi apagada (`purged_at`).
 - **Limpeza diária** (Q-066, D-085): `/api/cron/limpeza` no **Vercel Cron**, protegida pelo `CRON_SECRET` como o keepalive, uma vez por dia:
   1. avisa o admin dos projetos que chegam aos **83 dias** depois da conclusão (7 dias antes, RN-08);
-  2. apaga do Storage os ficheiros dos projetos com **≥ 90 dias** (sem adiamento), preenche `purged_at` e regista `purge` no `activity_log`;
+  2. apaga do Storage os ficheiros dos projetos com **≥ 90 dias** (o admin pode **adiar 30 dias**, repetível — corrigido pela D-146, Q-091), preenche `purged_at` e regista `purge` no `activity_log`;
   3. apaga os uploads **órfãos** com mais de 24 h;
   4. conclui os projetos Académico cujo prazo de ajustes terminou sem pedidos abertos (D-059).
 

@@ -1,4 +1,7 @@
+import { SERVICE_TYPES } from "@/lib/admin/project-form";
+import type { ServiceType } from "@/lib/portal/types";
 import { Field, inputCls } from "./forms";
+import { ServicePicker } from "./ServicePicker";
 
 type Defaults = {
   name?: string;
@@ -11,8 +14,22 @@ type Defaults = {
   coverUrl?: string | null;
 };
 
-/** Campos de projeto partilhados por "novo cliente", "novo projeto" e "editar projeto". */
-export function ProjectFields({ d = {}, showSlug }: { d?: Defaults; showSlug?: boolean }) {
+/**
+ * Campos de projeto partilhados por "novo cliente", "novo projeto" e "editar projeto".
+ * - Criar: escolhe-se o tipo de serviço; o repositório só aparece no Desenvolvimento.
+ * - Editar: o tipo não muda (RN-02) e só o Desenvolvimento tem repositório.
+ */
+export function ProjectFields({
+  d = {},
+  showSlug,
+  serviceType,
+}: {
+  d?: Defaults;
+  showSlug?: boolean;
+  /** Só na edição: o tipo do projeto (sem ele, o formulário pede-o). */
+  serviceType?: ServiceType;
+}) {
+  const label = SERVICE_TYPES.find((s) => s.value === serviceType)?.label;
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <Field label="Nome do projeto">
@@ -23,14 +40,23 @@ export function ProjectFields({ d = {}, showSlug }: { d?: Defaults; showSlug?: b
           <input name="slug" defaultValue={d.slug} className={inputCls} spellCheck={false} />
         </Field>
       ) : (
-        <Field label="Repositório GitHub" hint="dono/repositorio — de onde vêm as fases e tarefas.">
-          <input name="repo" defaultValue={d.repo} className={inputCls} placeholder="lemosGit/nova-app" spellCheck={false} />
-        </Field>
+        <span className="hidden sm:block" aria-hidden />
       )}
-      {showSlug && (
-        <Field label="Repositório GitHub" hint="dono/repositorio — de onde vêm as fases e tarefas." className="sm:col-span-2">
-          <input name="repo" defaultValue={d.repo} className={inputCls} placeholder="lemosGit/nova-app" spellCheck={false} />
-        </Field>
+      {serviceType ? (
+        <>
+          <Field label="Tipo de serviço" hint="Não muda depois de criado.">
+            <p className={`${inputCls} flex items-center text-ink-dim`}>{label}</p>
+          </Field>
+          {serviceType === "development" ? (
+            <Field label="Repositório GitHub" hint="dono/repositorio — de onde vêm as fases e tarefas.">
+              <input name="repo" defaultValue={d.repo} className={inputCls} placeholder="lemosGit/nova-app" spellCheck={false} />
+            </Field>
+          ) : (
+            <span className="hidden sm:block" aria-hidden />
+          )}
+        </>
+      ) : (
+        <ServicePicker defaultRepo={d.repo} />
       )}
       <Field label="Início">
         <input name="inicio" type="date" defaultValue={d.startedOn ?? undefined} className={inputCls} />

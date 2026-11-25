@@ -93,3 +93,133 @@ export function demoEmail(o: { clientName: string; projectName: string; kind: ke
     text: `Olá ${firstName(o.clientName)},\n\nHá uma versão nova de ${o.projectName} para testar: ${label}.${o.notes ? `\nO que mudou: ${o.notes}` : ""}\n\nAbrir as entregas: ${href}`,
   };
 }
+
+/** Frase para o cliente sobre o novo estado de uma fase (M5-08). */
+const PHASE_SENTENCE: Record<string, string> = {
+  em_curso: "começou",
+  aguarda_cliente: "está a aguardar uma ação sua",
+  atrasada: "está atrasada",
+  concluida: "foi concluída",
+  por_iniciar: "voltou a ficar por iniciar",
+  nao_aplicavel: "não se aplica a este projeto",
+  atualizada: "foi atualizada",
+};
+
+export function phaseEmail(o: {
+  clientName: string;
+  projectName: string;
+  changes: { name: string; to: string }[];
+  nextStep?: string | null;
+  note?: string | null;
+}) {
+  const href = `${SITE_URL}/cliente`;
+  const lines = o.changes.map((c) => `A fase “${c.name}” ${PHASE_SENTENCE[c.to] ?? "mudou de estado"}.`);
+  const waiting = o.changes.some((c) => c.to === "aguarda_cliente");
+  const extra = [o.note && `Nota: ${o.note}`, o.nextStep && `Próximo passo: ${o.nextStep}`].filter(Boolean) as string[];
+  return {
+    subject: `${o.projectName}: ${lines[lines.length - 1].replace(/\.$/, "")}`,
+    html: layout({
+      preheader: lines.join(" "),
+      title: waiting ? "Precisamos de si" : "Novidades no seu projeto",
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, há novidades em <strong>${esc(o.projectName)}</strong>:</p>
+<ul style="margin:0 0 12px;padding-left:20px">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>${extra
+        .map((e) => `<p style="margin:0 0 8px">${esc(e)}</p>`)
+        .join("")}`,
+      cta: { href, label: "Ver o projeto" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nHá novidades em ${o.projectName}:\n${lines.map((l) => `- ${l}`).join("\n")}\n${extra.length ? `\n${extra.join("\n")}\n` : ""}\nVer o projeto: ${href}`,
+  };
+}
+
+/** Pedido de aprovação ao cliente (M5-10). */
+export function approvalRequestEmail(o: { clientName: string; projectName: string; title: string; message?: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  return {
+    subject: `${o.projectName}: precisamos da sua aprovação (${o.title})`,
+    html: layout({
+      preheader: `Veja e aprove: ${o.title}.`,
+      title: "Precisamos da sua aprovação",
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))}, em <strong>${esc(o.projectName)}</strong> há um pedido à sua espera: <strong>${esc(o.title)}</strong>.</p>${
+        o.message ? `<p style="margin:0 0 12px">${esc(o.message)}</p>` : ""
+      }<p style="margin:0">Pode aprovar ou pedir alterações na Área do Cliente.</p>`,
+      cta: { href, label: "Ver o pedido" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nEm ${o.projectName} há um pedido à sua espera: ${o.title}.${o.message ? `\n${o.message}` : ""}\n\nAprovar ou pedir alterações: ${href}`,
+  };
+}
+
+/** Aviso ao João quando o cliente responde (RF-30.35). */
+export function approvalAnsweredEmail(o: { clientName: string; projectName: string; projectId: string; title: string; approved: boolean; comment?: string | null }) {
+  const href = `${SITE_URL}/admin/projetos/${o.projectId}/aprovacoes`;
+  const verb = o.approved ? "aprovou" : "pediu alterações em";
+  return {
+    subject: `${o.clientName} ${verb} ${o.title} (${o.projectName})`,
+    html: layout({
+      preheader: `${o.clientName} ${verb} ${o.title}.`,
+      title: o.approved ? "Aprovação recebida" : "Alterações pedidas",
+      body: `<p style="margin:0 0 12px"><strong>${esc(o.clientName)}</strong> ${verb} <strong>${esc(o.title)}</strong> em ${esc(o.projectName)}.</p>${
+        o.comment
+          ? `<blockquote style="margin:0;padding:12px 16px;border-left:3px solid #8b6cff;background:#f7f5ff;border-radius:8px;white-space:pre-wrap">${esc(o.comment)}</blockquote>`
+          : ""
+      }`,
+      cta: { href, label: "Abrir as aprovações" },
+    }),
+    text: `${o.clientName} ${verb} ${o.title} em ${o.projectName}.${o.comment ? `\n\n${o.comment}` : ""}\n\n${href}`,
+  };
+}
+
+/** Pagamento registado ou confirmado (M5-11). */
+export function paymentEmail(o: { clientName: string; projectName: string; description: string; amount: string; paid: boolean; dueOn?: string | null }) {
+  const href = `${SITE_URL}/cliente`;
+  const title = o.paid ? "Pagamento recebido" : "Pagamento registado";
+  const line = o.paid
+    ? `Recebemos o pagamento de <strong>${esc(o.amount)}</strong> (${esc(o.description)}). Obrigado!`
+    : `Registámos o pagamento <strong>${esc(o.description)}</strong>: ${esc(o.amount)}${o.dueOn ? `, até ${esc(longDate(o.dueOn))}` : ""}.`;
+  return {
+    subject: `${o.projectName}: ${title.toLowerCase()} (${o.description})`,
+    html: layout({
+      preheader: `${o.description}: ${o.amount}`,
+      title,
+      body: `<p style="margin:0 0 12px">Olá ${esc(firstName(o.clientName))},</p><p style="margin:0">${line}</p>`,
+      cta: { href, label: "Ver os pagamentos" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\n${o.paid ? `Recebemos o pagamento de ${o.amount} (${o.description}). Obrigado!` : `Registámos o pagamento ${o.description}: ${o.amount}${o.dueOn ? `, até ${longDate(o.dueOn)}` : ""}.`}\n\nVer os pagamentos: ${href}`,
+  };
+}
+
+/** Link de acesso enviado por email (M5-12, RF-30.52). */
+export function accessLinkEmail(o: { clientName: string; projectName: string; url: string }) {
+  return {
+    subject: `O seu acesso a ${o.projectName}`,
+    html: layout({
+      preheader: "Toque no botão para entrar na Área do Cliente. O link vale 24 horas.",
+      title: `Olá ${firstName(o.clientName)}, aqui está o seu acesso`,
+      body: `<p style="margin:0 0 12px">Toque no botão para entrar no projeto <strong>${esc(o.projectName)}</strong>. Não precisa de senha.</p>
+<p style="margin:0;color:#8a85a3;font-size:13px">O link funciona uma vez e vale 24 horas. Se expirar, peça um novo ao João.</p>`,
+      cta: { href: o.url, label: "Entrar no meu projeto" },
+    }),
+    text: `Olá ${firstName(o.clientName)},\n\nEntre no projeto ${o.projectName} (sem senha):\n${o.url}\n\nO link funciona uma vez e vale 24 horas.`,
+  };
+}
+
+/** Aviso ao João: ficheiros a apagar dentro de 7 dias (#122, RN-08). */
+export function retentionWarningEmail(o: { projects: { id: string; name: string; clientName: string; purgeOn: string; days: number }[] }) {
+  const items = o.projects.map((p) => ({
+    ...p,
+    href: `${SITE_URL}/admin/projetos/${p.id}#ficheiros-retencao`,
+    when: `${longDate(p.purgeOn)} (${p.days === 1 ? "amanhã" : `daqui a ${p.days} dias`})`,
+  }));
+  return {
+    subject: `Ficheiros a apagar em breve: ${items.length} projeto${items.length === 1 ? "" : "s"}`,
+    html: layout({
+      preheader: "Os ficheiros destes projetos concluídos vão ser apagados do armazenamento.",
+      title: "Ficheiros a apagar em breve",
+      body: `<p style="margin:0 0 12px">Os ficheiros destes projetos concluídos vão ser apagados do armazenamento (fica o registo). Para os guardar mais tempo, abra o projeto e carregue em <strong>Adiar 30 dias</strong>.</p>
+<ul style="margin:0;padding-left:20px">${items
+        .map((p) => `<li style="margin-bottom:6px"><a href="${esc(p.href)}" style="color:#6d4cff">${esc(p.name)}</a> · ${esc(p.clientName)} · ${esc(p.when)}</li>`)
+        .join("")}</ul>`,
+      cta: { href: items[0]?.href ?? `${SITE_URL}/admin`, label: "Abrir o projeto" },
+    }),
+    text: `Ficheiros a apagar em breve (fica o registo). Para adiar, abra o projeto e carregue em "Adiar 30 dias".\n\n${items.map((p) => `- ${p.name} (${p.clientName}): ${p.when}\n  ${p.href}`).join("\n")}`,
+  };
+}
