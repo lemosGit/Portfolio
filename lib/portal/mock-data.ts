@@ -393,7 +393,22 @@ export const projects: Project[] = [
         id: "ap_conv2",
         subject: "prova",
         versionLabel: "V2",
-        snapshot: { title: "Convite", message: "Nomes maiores e a data corrigida para sábado, 19 de dezembro.", files: ["convite-v2-frente.jpg", "convite-v2-verso.jpg"] },
+        // M7-04: a BD copia para o snapshot os textos-chave, a quantidade, as medidas e o evento (0015, RN-42).
+        snapshot: {
+          title: "Convite",
+          message: "Nomes maiores e a data corrigida para sábado, 19 de dezembro.",
+          files: ["convite-v2-frente.jpg", "convite-v2-verso.jpg"],
+          key_texts: [
+            { label: "Noivos", value: "Ana & Paulo" },
+            { label: "Data", value: "Sábado, 19 de dezembro, às 16h" },
+            { label: "Local", value: "Igreja da Sagrada Família, Luanda" },
+          ],
+          quantity: 120,
+          width_cm: 14.8,
+          height_cm: 21,
+          event_date: at(24).slice(0, 10),
+          has_print: true,
+        },
         status: "pendente",
         requestedAt: at(-1, 15),
         decidedAt: null,

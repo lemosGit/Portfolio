@@ -66,7 +66,9 @@ export function ProofViewer({ series, view }: { series: ProofSeries; view: "over
               <li key={v.deliverableId} className="w-[72%] shrink-0 snap-start sm:w-auto">
                 <Thumb v={v} now={i === 0} className="aspect-[3/4] w-full" onClick={() => setZoom({ v, i: 0 })} />
                 <p className="mt-2 flex items-baseline justify-between text-[13px]">
-                  <b className={cn("font-semibold", i === 0 ? "text-accent" : "text-ink")}>{i === 0 ? `${v.label}, atual` : v.label}</b>
+                  <b className={cn("font-semibold", i === 0 ? "text-accent" : "text-ink")}>
+                    {v.approved ? `${v.label}, aprovada` : i === 0 ? `${v.label}, atual` : v.label}
+                  </b>
                   <span className="text-ink-faint">{shortDate(v.createdAt)}</span>
                 </p>
               </li>
@@ -99,7 +101,7 @@ function Current({ v, title, onZoom }: { v: ProofVersion; title: string; onZoom:
     <figure className="overflow-hidden rounded-2xl border border-line bg-surface">
       <div className="relative">
         <span className="absolute left-3 top-3 z-10 rounded-lg bg-bg/85 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur">
-          {v.label}, atual · {shortDate(v.createdAt)}
+          {v.approved ? `${v.label}, aprovada para produção` : `${v.label}, atual`} · {shortDate(v.createdAt)}
         </span>
         {v.locked || !shown?.thumbUrl ? (
           <NoPreview v={v} className="h-[340px] sm:h-[460px]" />

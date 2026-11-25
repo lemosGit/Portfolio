@@ -26,7 +26,7 @@ export function Approvals({ project }: BlockProps) {
       {pending.length > 0 ? (
         <div className="mt-4 space-y-3">
           {pending.map((a) => (
-            <ApprovalCard key={a.id} a={a} rounds={project.rounds} />
+            <ApprovalCard key={a.id} a={a} rounds={project.rounds} art={project.serviceType === "design"} />
           ))}
         </div>
       ) : (

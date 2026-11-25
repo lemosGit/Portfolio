@@ -29,6 +29,13 @@ describe("proofsFrom", () => {
     expect(out[0].versions[0].comments).toEqual([]);
   });
 
+  it("marca a versão aprovada para produção (M7-04)", () => {
+    const ok: Approval = { ...approval("V2", "x"), status: "aprovada", responses: [{ kind: "aprovar", comment: null, actorRole: "client", createdAt: "" }] };
+    const out = proofsFrom([series("convite", "prova", [ver(1, "20"), ver(2, "22")])], [ok]);
+    expect(out[0].versions[0].approved).toBe(true);
+    expect(out[0].versions[1].approved).toBe(false);
+  });
+
   it("a série com a versão mais recente vem primeiro", () => {
     const out = proofsFrom([series("logo", "prova", [ver(1, "10")]), series("convite", "prova", [ver(1, "20")])]);
     expect(out.map((s) => s.key)).toEqual(["convite", "logo"]);

@@ -18,6 +18,13 @@ export type ApprovalSnapshot = {
   items?: string[];
   /** Prova / entrega: ficheiros da versão. */
   files?: string[];
+  /** Prova do Design (0015, RN-42): o que o cliente confirma ao aprovar a arte, copiado da ficha técnica. */
+  key_texts?: { label: string; value: string }[];
+  quantity?: number;
+  width_cm?: number;
+  height_cm?: number;
+  event_date?: string;
+  has_print?: boolean;
   [k: string]: unknown;
 };
 
