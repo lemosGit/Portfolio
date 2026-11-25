@@ -1,3 +1,4 @@
+import type { AcademicBrief } from "@/lib/academic/brief";
 import type { Payment } from "@/lib/payments/model";
 import type { Approval } from "@/lib/approvals/model";
 /**
@@ -114,6 +115,8 @@ export type Project = {
   approvals?: Approval[];
   /** Pagamentos (Académico e Design, M5-11). O cliente não vê os anulados (RLS). */
   payments?: Payment[];
+  /** Ficha do trabalho académico (M6-01); só no Académico. */
+  academicBrief?: AcademicBrief;
   /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */
   filesPurgeOn?: string;
   /** "github"/"bd" = dados reais; "exemplo" = dados de demonstração; "erro" = falhou a leitura. */

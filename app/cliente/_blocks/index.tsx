@@ -3,6 +3,7 @@
  * Um id sem componente falha no typecheck: o registo e os blocos não se desalinham.
  */
 import type { BlockId } from "@/lib/portal/service-layouts";
+import { AcademicBrief } from "./academic";
 import { Approvals } from "./approvals";
 import { NextStep, PhaseBar } from "./common";
 import { Payments } from "./payments";
@@ -18,6 +19,7 @@ const BLOCKS: Record<BlockId, (p: BlockProps) => React.ReactNode> = {
   "next-step": NextStep,
   approvals: Approvals,
   payments: Payments,
+  "aca-brief": AcademicBrief,
 };
 
 export function Blocks({ ids, ...props }: BlockProps & { ids: BlockId[] }) {

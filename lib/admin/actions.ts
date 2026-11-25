@@ -15,6 +15,7 @@ import { digest } from "@/lib/access/digest";
 import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { postponeTo } from "@/lib/files/retention";
+import { readBrief } from "@/lib/academic/brief";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -993,4 +994,18 @@ export async function postponeFilesPurge(_p: AdminState, f: FormData): Promise<A
   if (error) return { error: `Não foi possível adiar: ${error.message}` };
   refresh();
   return { ok: true, message: `Limpeza adiada: os ficheiros ficam até ${until.split("-").reverse().join("/")}.` };
+}
+
+/* ───────────── Ficha do trabalho académico (M6-01, RF-10.10) ───────────── */
+
+export async function saveAcademicBrief(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const brief = readBrief((k) => str(f, k));
+  if ("error" in brief) return brief;
+  // A BD recusa fichas fora de projetos Académico (F1) e valida os domínios.
+  const { error } = await sb.from("academic_briefs").upsert({ project_id: projectId, ...brief }, { onConflict: "project_id" });
+  if (error) return { error: `Não foi possível guardar a ficha: ${error.message}` };
+  refresh();
+  return { ok: true, message: "Ficha do trabalho guardada." };
 }
