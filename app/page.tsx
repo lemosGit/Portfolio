@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
+import { Services } from "@/components/Services";
 import { Skills } from "@/components/Skills";
 import { Projects } from "@/components/Projects";
 import { Journey } from "@/components/Journey";
@@ -20,6 +21,7 @@ export default function Home() {
       <main id="conteudo" className="relative z-10">
         <Hero />
         <About />
+        <Services />
         <Skills />
         <Projects />
         <Journey />

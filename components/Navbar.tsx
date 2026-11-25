@@ -11,7 +11,8 @@ import { BrandLockup } from "./BrandMark";
 
 const ids = [...navLinks.map((l) => l.id), "contacto"];
 
-export function Navbar() {
+/** `base="/"` nas páginas fora da inicial: os links passam a `/#secção`. */
+export function Navbar({ base = "" }: { base?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const active = useActiveSection(ids);
@@ -46,7 +47,7 @@ export function Navbar() {
         aria-label="Navegação principal"
         className="mx-auto flex h-[72px] max-w-6xl items-center justify-between px-5"
       >
-        <a href="#inicio" className="rounded-xl" aria-label="GeniusFrela — início">
+        <a href={`${base}#inicio`} className="rounded-xl" aria-label="GeniusFrela — início">
           <BrandLockup />
         </a>
 
@@ -54,7 +55,7 @@ export function Navbar() {
           {navLinks.map((l) => (
             <li key={l.id}>
               <a
-                href={`#${l.id}`}
+                href={`${base}#${l.id}`}
                 aria-current={active === l.id ? "true" : undefined}
                 className={cn(
                   "relative py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors",
@@ -107,7 +108,7 @@ export function Navbar() {
                   transition={{ delay: 0.1 + i * 0.06, duration: 0.5, ease: EASE }}
                 >
                   <a
-                    href={`#${l.id}`}
+                    href={`${base}#${l.id}`}
                     onClick={() => setOpen(false)}
                     className="flex items-baseline gap-4 border-b border-white/5 py-5 text-3xl font-light"
                   >

@@ -13,7 +13,7 @@ export function Skills() {
     <section id="competencias" className="py-28 md:py-32">
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeader
-          index="02"
+          index="03"
           label="Competências"
           title={
             <>

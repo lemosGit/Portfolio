@@ -16,7 +16,7 @@ export function Journey() {
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1fr_1.1fr]">
         <Reveal>
           <p className="eyebrow mb-5">
-            <span className="mr-3 text-ink-faint">04</span>Percurso
+            <span className="mr-3 text-ink-faint">05</span>Percurso
           </p>
           <h2 className="text-[clamp(2rem,4.6vw,3.4rem)] font-light leading-[1.08] tracking-tight">
             Conhecimento que se constrói <span className="text-accent">em movimento.</span>

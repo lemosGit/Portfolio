@@ -22,8 +22,16 @@ export const projectRequestMessage =
 /** Link wa.me que abre a conversa com a mensagem preenchida (app no telemóvel, WhatsApp Web no computador). */
 export const whatsappLink = `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(projectRequestMessage)}`;
 
+/** Link wa.me com outra mensagem já escrita (ex.: a página de um serviço). */
+export const whatsappWith = (message: string) =>
+  `https://wa.me/${profile.whatsapp}?text=${encodeURIComponent(message)}`;
+
+export const academicRequestMessage =
+  "Olá! Vim pelo site da GeniusFrela e gostava de pedir um trabalho académico. Podemos conversar sobre o tema, as normas e o prazo?";
+
 export const navLinks = [
   { id: "sobre", label: "Sobre" },
+  { id: "servicos", label: "Serviços" },
   { id: "competencias", label: "Competências" },
   { id: "projetos", label: "Projetos" },
   { id: "percurso", label: "Percurso" },
@@ -86,8 +94,49 @@ export const techTicker = [
   "Git",
 ];
 
+/** Os 3 serviços da GeniusFrela (GeniusFrela_Projeto_e_Layouts §1 e §3; cores do DS V1, ADR-004). */
+export type ServiceId = "development" | "academic" | "design";
+
+export type Service = {
+  id: ServiceId;
+  name: string;
+  short: string;
+  examples: string[];
+  /** Cor do serviço (classe Tailwind `svc-*`). */
+  tone: "dev" | "aca" | "design";
+  /** Página do serviço; sem ela o cartão fica "Em breve". */
+  href?: string;
+};
+
+export const services: Service[] = [
+  {
+    id: "development",
+    name: "Desenvolvimento de Soluções Digitais",
+    short: "Desenvolvimento",
+    examples: ["Sites e sistemas web", "Apps mobile e desktop", "Integrações"],
+    tone: "dev",
+    href: "#projetos",
+  },
+  {
+    id: "academic",
+    name: "Académico",
+    short: "Académico",
+    examples: ["Trabalhos escolares e universitários", "Formatação nas normas", "Revisão do texto"],
+    tone: "aca",
+    href: "/servicos/academico",
+  },
+  {
+    id: "design",
+    name: "Design",
+    short: "Design",
+    examples: ["Logótipos", "Convites e lonas de festa", "Camisolas personalizadas"],
+    tone: "design",
+  },
+];
+
 export type Project = {
   id: string;
+  service: ServiceId;
   title: string;
   kind: string;
   problem: string;
@@ -101,6 +150,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: "priceguard",
+    service: "development",
     title: "Kero PriceGuard",
     kind: "Case study · Retalho",
     problem:
@@ -116,6 +166,7 @@ export const projects: Project[] = [
   },
    {
     id: "candongueiro-pay",
+    service: "development",
     title: "Front-End -> Candongueiro Pay",
     kind: "Case study · Fintech",
     problem:
@@ -131,6 +182,7 @@ export const projects: Project[] = [
 
   {
     id: "minishell",
+    service: "development",
     title: "Minishell Project",
     kind: "Case study · Sistemas Operativos & C",
     problem:
@@ -145,6 +197,7 @@ export const projects: Project[] = [
   },
    {
     id: "girassol",
+    service: "development",
     title: "Monitorização Condomínio Girassol",
     kind: "Case study · IoT",
     problem:
