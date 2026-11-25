@@ -19,7 +19,8 @@ export function DesignProduction({ projectId, spec }: { projectId: string; spec:
         <ActionForm action={setProductionStatus} submit="Guardar estado" pendingLabel="A guardar…">
           <input type="hidden" name="projeto" value={projectId} />
           <Field label="Estado da produção" hint="“A imprimir” põe a Produção em curso (só com o restante pago, RN-15). “Pronto” conclui-a e abre a Entrega.">
-            <select name="estado" defaultValue={spec.productionStatus ?? "a_imprimir"} className={inputCls}>
+            {/* M7-99: a key remonta o seletor com o estado guardado (o React 19 repõe o formulário com o valor antigo, como na D-159). */}
+            <select key={spec.productionStatus ?? "nenhum"} name="estado" defaultValue={spec.productionStatus ?? "a_imprimir"} className={inputCls}>
               {Object.entries(PRODUCTION_LABEL).map(([v, l]) => (
                 <option key={v} value={v} className="bg-raised">
                   {l}

@@ -132,3 +132,22 @@ describe("ProofViewer — arte aprovada (M7-04)", () => {
     expect(screen.queryByRole("button", { name: /Ampliar/ })).toBeNull();
   });
 });
+
+describe("ProofViewer — sem pré-visualização (M7-99)", () => {
+  const svg = (n: number): ProofVersion =>
+    v(n, { files: [{ id: `s${n}`, name: `convite-v${n}-frente.svg`, mime: "image/svg+xml", size: 1500, purged: false }] });
+
+  it("na miniatura, só o ícone e o tipo, com o nome completo para leitores de ecrã e em title", () => {
+    render(<ProofViewer series={series(v(2), svg(1))} view="versions" />);
+    const others = screen.getByRole("region", { name: "Outras versões" });
+    expect(within(others).getByText("SVG")).toBeTruthy();
+    const name = within(others).getByText("convite-v1-frente.svg");
+    expect(name.className).toContain("sr-only");
+    expect(name.parentElement?.getAttribute("title")).toBe("convite-v1-frente.svg");
+  });
+
+  it("na prova grande, o nome inteiro à vista", () => {
+    render(<ProofViewer series={series(svg(1))} view="current" />);
+    expect(screen.getByText("convite-v1-frente.svg").className).not.toContain("sr-only");
+  });
+});
