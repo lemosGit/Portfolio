@@ -16,6 +16,7 @@ import { SITE_URL } from "@/lib/email/send";
 import { kz, parseKz, todayLuanda, type PaymentKind } from "@/lib/payments/model";
 import { postponeTo } from "@/lib/files/retention";
 import { readBrief } from "@/lib/academic/brief";
+import { titlesFromIndex, type SectionStatus } from "@/lib/academic/chapters";
 import { approvalTitle, parseItems, type ApprovalSnapshot, type ApprovalSubject } from "@/lib/approvals/model";
 import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import type { DbPhaseState, ServiceType } from "@/lib/portal/types";
@@ -1008,4 +1009,91 @@ export async function saveAcademicBrief(_p: AdminState, f: FormData): Promise<Ad
   if (error) return { error: `Não foi possível guardar a ficha: ${error.message}` };
   refresh();
   return { ok: true, message: "Ficha do trabalho guardada." };
+}
+
+/* ───────────── Capítulos do trabalho académico (M6-03, RF-10.30, RF-10.40) ───────────── */
+
+const SECTION_STATUSES: SectionStatus[] = ["por_iniciar", "em_curso", "concluido"];
+
+async function nextSectionPosition(sb: Sb, projectId: string) {
+  const { data } = await sb
+    .from("academic_sections")
+    .select("position")
+    .eq("project_id", projectId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle<{ position: number }>();
+  return (data?.position ?? 0) + 1;
+}
+
+/** Acrescenta um ou mais capítulos (um por linha) no fim do índice. */
+export async function addSections(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const titles = titlesFromIndex(str(f, "titulos").split(/\r?\n/));
+  if (titles.length === 0) return { error: "Escreva pelo menos um capítulo (um por linha)." };
+  const start = await nextSectionPosition(sb, projectId);
+  if (start + titles.length - 1 > 200) return { error: "No máximo 200 capítulos por trabalho." };
+  const { error } = await sb
+    .from("academic_sections")
+    .insert(titles.map((title, i) => ({ project_id: projectId, position: start + i, title })));
+  if (error) return { error: `Não foi possível acrescentar: ${error.message}` };
+  refresh();
+  return { ok: true, message: titles.length === 1 ? "Capítulo acrescentado." : `${titles.length} capítulos acrescentados.` };
+}
+
+/** Copia para os capítulos os itens do último índice aprovado pelo cliente (RF-10.30). Só com o índice vazio. */
+export async function importSectionsFromIndex(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const projectId = str(f, "projeto");
+  const { count } = await sb.from("academic_sections").select("id", { count: "exact", head: true }).eq("project_id", projectId);
+  if (count) return { error: "O índice já tem capítulos. Acrescente ou edite-os à mão." };
+  const { data: ap } = await sb
+    .from("approvals")
+    .select("snapshot")
+    .eq("project_id", projectId)
+    .eq("subject", "indice")
+    .eq("status", "aprovada")
+    .order("decided_at", { ascending: false })
+    .limit(1)
+    .maybeSingle<{ snapshot: { items?: string[] } }>();
+  const titles = titlesFromIndex(ap?.snapshot?.items ?? []);
+  if (titles.length === 0) return { error: "Ainda não há um índice aprovado pelo cliente." };
+  const { error } = await sb.from("academic_sections").insert(titles.map((title, i) => ({ project_id: projectId, position: i + 1, title })));
+  if (error) return { error: `Não foi possível copiar: ${error.message}` };
+  refresh();
+  return { ok: true, message: `${titles.length} capítulos copiados do índice aprovado.` };
+}
+
+/** Muda o título e o estado de um capítulo (RF-10.40). */
+export async function updateSection(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const title = str(f, "titulo");
+  const status = str(f, "estado") as SectionStatus;
+  if (!title || title.length > 200) return { error: "O título tem de ter entre 1 e 200 caracteres." };
+  if (!SECTION_STATUSES.includes(status)) return { error: "Estado inválido." };
+  const { data, error } = await sb.from("academic_sections").update({ title, status }).eq("id", str(f, "id")).select("id");
+  if (error) return { error: `Não foi possível guardar: ${error.message}` };
+  if (!data?.length) return { error: "Capítulo não encontrado." };
+  refresh();
+  return { ok: true, message: "Capítulo guardado." };
+}
+
+/** Sobe (-1) ou desce (+1) um capítulo, numa só transação (admin_move_section, 0010). */
+export async function moveSection(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const dir = str(f, "direcao") === "cima" ? -1 : 1;
+  const { error } = await sb.rpc("admin_move_section", { p_section: str(f, "id"), p_dir: dir });
+  if (error) return { error: `Não foi possível mover: ${error.message}` };
+  refresh();
+  return { ok: true };
+}
+
+export async function deleteSection(_p: AdminState, f: FormData): Promise<AdminState> {
+  const { sb } = await requireAdmin();
+  const { data, error } = await sb.from("academic_sections").delete().eq("id", str(f, "id")).select("id");
+  if (error) return { error: `Não foi possível apagar: ${error.message}` };
+  if (!data?.length) return { error: "Capítulo não encontrado." };
+  refresh();
+  return { ok: true, message: "Capítulo apagado." };
 }

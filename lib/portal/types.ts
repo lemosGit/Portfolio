@@ -1,3 +1,4 @@
+import type { Section } from "@/lib/academic/chapters";
 import type { AcademicBrief } from "@/lib/academic/brief";
 import type { Payment } from "@/lib/payments/model";
 import type { Approval } from "@/lib/approvals/model";
@@ -119,6 +120,8 @@ export type Project = {
   dueOnSet?: boolean;
   /** Prazo ajustado (RN-21: + dias a aguardar o cliente), da função project_adjusted_due; só no Académico (M6-02). */
   adjustedDueOn?: string;
+  /** Índice e capítulos (M6-03): só o título e o estado (D-015); só no Académico. */
+  sections?: Section[];
   /** Ficha do trabalho académico (M6-01); só no Académico. */
   academicBrief?: AcademicBrief;
   /** Data em que os ficheiros saem do armazenamento (projeto entregue/cancelado, #122). */

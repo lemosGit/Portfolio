@@ -297,6 +297,14 @@ export const projects: Project[] = [
         responses: [{ kind: "pedir_alteracoes", comment: "Falta o capítulo da metodologia.", actorRole: "client", createdAt: at(-8, 10) }],
       },
     ],
+    // M6-03: capítulos do índice aprovado (V2); 2 de 5 concluídos = os 40% da fase Desenvolvimento.
+    sections: [
+      { id: "sec1", position: 1, title: "1. Introdução", status: "concluido" },
+      { id: "sec2", position: 2, title: "2. Revisão da literatura", status: "concluido" },
+      { id: "sec3", position: 3, title: "3. Metodologia", status: "em_curso" },
+      { id: "sec4", position: 4, title: "4. Resultados", status: "por_iniciar" },
+      { id: "sec5", position: 5, title: "5. Conclusões", status: "por_iniciar" },
+    ],
     // M6-01: ficha do trabalho (atrás de "ver detalhes").
     academicBrief: {
       topic: "O microcrédito e as zungueiras de Luanda",

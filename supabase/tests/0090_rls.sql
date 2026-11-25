@@ -67,7 +67,7 @@ declare
   t text; n bigint;
 begin
   foreach t in array array['project_phases', 'phase_events', 'project_status_events', 'quotes', 'payments', 'deliverables',
-                           'files', 'approvals', 'activity_log', 'access_links', 'feedback', 'demo_links', 'meetings', 'academic_briefs'] loop
+                           'files', 'approvals', 'activity_log', 'access_links', 'feedback', 'demo_links', 'meetings', 'academic_briefs', 'academic_sections'] loop
     execute format('select count(*) from public.%I where project_id = $1', t) into n using b;
     assert n = 0, format('T1: A lê %s linha(s) de %s do projeto de B', n, t);
   end loop;
@@ -95,7 +95,7 @@ declare
 begin
   -- UPDATE e DELETE em tudo o que é de B
   foreach t in array array['project_phases', 'quotes', 'payments', 'deliverables', 'files', 'approvals', 'access_links',
-                           'feedback', 'demo_links', 'meetings', 'phase_events', 'project_status_events', 'activity_log', 'academic_briefs'] loop
+                           'feedback', 'demo_links', 'meetings', 'phase_events', 'project_status_events', 'activity_log', 'academic_briefs', 'academic_sections'] loop
     assert pg_temp.blocked(format('update public.%I set project_id = project_id where project_id = %L', t, b)), format('T6: A altera %s de B', t);
     assert pg_temp.blocked(format('delete from public.%I where project_id = %L', t, b)), format('T6: A apaga %s de B', t);
   end loop;
@@ -183,7 +183,7 @@ declare t text; n bigint; ok boolean;
 begin
   foreach t in array array['clients', 'projects', 'project_phases', 'phase_templates', 'phase_events', 'project_status_events', 'quotes',
                            'payments', 'deliverables', 'files', 'approvals', 'approval_responses', 'activity_log', 'access_links',
-                           'feedback', 'demo_links', 'meetings', 'academic_briefs'] loop
+                           'feedback', 'demo_links', 'meetings', 'academic_briefs', 'academic_sections'] loop
     begin
       execute format('select count(*) from public.%I', t) into n;
     exception when insufficient_privilege then n := 0;
@@ -214,7 +214,7 @@ begin
   foreach fn in array array['public.respond_approval(uuid, text, text, uuid)', 'public.admin_set_phase_status(uuid, text, text)',
                             'public.admin_set_project_status(uuid, text, text, boolean)', 'public.project_adjusted_due(uuid)',
                             'public.design_rounds(uuid)', 'public.mark_password_changed()',
-                            'public.files_purge_on(public.projects)'] loop
+                            'public.files_purge_on(public.projects)', 'public.admin_move_section(uuid, integer)'] loop
     assert not has_function_privilege('anon', fn, 'execute'), format('T12: anon tem EXECUTE em %s', fn);
     assert has_function_privilege('authenticated', fn, 'execute'), format('authenticated sem EXECUTE em %s', fn);
   end loop;
