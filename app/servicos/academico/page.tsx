@@ -7,6 +7,7 @@ import { WhatsappIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 import { Reveal } from "@/components/Reveal";
 import { WhatsappFloat } from "@/components/WhatsappFloat";
+import { HOURS_LABEL } from "@/lib/portal/hours";
 import { CITATION_STYLES, WORK_TYPES } from "@/lib/academic/brief";
 import { academicRequestMessage, whatsappWith } from "@/lib/data";
 
@@ -176,7 +177,7 @@ export default function AcademicServicePage() {
                 Tem um trabalho para entregar? <span className="text-svc-aca">Fale connosco.</span>
               </h2>
               <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-ink-dim">
-                Diga-nos o tema, as normas e o prazo. Atendimento de segunda a sexta, das 18h às 21h.
+                Diga-nos o tema, as normas e o prazo. Atendimento {HOURS_LABEL}.
               </p>
               <a
                 href={whatsapp}

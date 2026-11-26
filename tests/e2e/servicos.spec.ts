@@ -169,6 +169,12 @@ test.describe("Design (M5-14)", () => {
     }
   });
 
+  test("Mensagens: às 10h (dentro do horário) não há aviso de fora de horas (M9-08, RF-30.63)", async ({ page }) => {
+    await page.goto("/cliente/mensagens");
+    await expect(page.getByRole("heading", { name: "Nova mensagem" })).toBeVisible();
+    await expect(page.getByText("Entraremos em contacto assim que o horário de abertura estiver disponível.")).toHaveCount(0);
+  });
+
   test("Orçamento aceite no histórico com design + impressão (M7-06, RF-20.21)", async ({ page }) => {
     await page.goto("/cliente");
     const box = page.getByRole("region", { name: "Aprovações" });

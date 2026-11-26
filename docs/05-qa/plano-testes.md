@@ -104,7 +104,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 ### 4.5 Mensagens e avisos
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
-| CT-019 | US-019 | Mensagem sobre uma fase fica guardada e ligada à fase; **fora do horário (08h–20h)** aparece "Entraremos em contacto assim que…" | E, M | E `tech.spec.ts`, `servicos.spec.ts` (Mensagens abre sem erros) | 🟡 ❌ | Mensagem por fase: M9-02. **Aviso fora do horário (RF-30.63) não está implementado: G1** |
+| CT-019 | US-019 | Mensagem sobre uma fase fica guardada e ligada à fase; **fora do horário (08h–20h, Luanda)** aparece "Entraremos em contacto assim que…" e a mensagem segue na mesma | U, C, E, M | U `hours.test.ts` (limites em Luanda) · C `comum/hours-notice.test.tsx` · E `servicos.spec.ts` (às 10h sem aviso), `publico.spec.ts` (horário nas páginas) | ✅ | Mensagem por fase em produção: M9-02 |
 | CT-020 | US-020 | Aprovação pendente há 2 dias → lembrete por email, sem dados sensíveis, com o link | — | — | ❌ | **Lembrete (RF-30.64) não está implementado: G2**; emails de evento: G3 |
 | CT-021 | US-021 | 3 dias "a aguardar o cliente" depois do aceite → prazo 3 dias depois, com o motivo | U, C, B | U `countdown.test.ts` · C `academico/countdown.test.tsx` (prazo ajustado) · B `0013_prazo.sql` (24 h completas) | ✅ | — |
 
@@ -155,7 +155,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 ## 6. Lacunas encontradas ao escrever o plano
 | # | Lacuna | US / RF | Prioridade | Proposta |
 |---|---|---|---|---|
-| G1 | **Aviso fora do horário de atendimento** na página de mensagens não existe | US-019 / RF-30.63 (Should) | Should | **Decidido (Q-108): implementar já, antes da M9-02** (texto e horário já decididos: D-036, RN-51/52) |
+| G1 | ~~Aviso fora do horário de atendimento na página de mensagens não existe~~ **Feito (M9-08, #154, D-171)**; as páginas públicas também diziam o horário antigo e foram corrigidas | US-019 / RF-30.63 (Should) | Should | — |
 | G2 | **Lembrete por email** de uma ação do cliente pendente há 2 dias não existe | US-020 / RF-30.64 (Should) | Should | **Decidido (Q-108): v1.2**, depois de o envio real dos emails funcionar (L1, G3) |
 | G3 | **Envio real dos emails** (Resend) nunca foi testado de ponta a ponta; nos testes M os avisos vão desligados | US-013, US-018, US-020 / RF-30.35, RF-30.61, RF-30.62 | Should | Um ciclo com os avisos ligados para um email de teste, depois de definir `EMAIL_FROM` (L1) |
 | G4 | **Seletor de projetos** (US-006) sem teste automático | US-006 | Must | E2E com um cliente de demonstração com 2 projetos, ou ciclo M na M9-03 |
@@ -164,5 +164,5 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 
 ## 7. Rastreabilidade
 - As 36 US (US-001…US-036) têm um CT com o mesmo número (CT-001…CT-036). CT-014b e CT-101…CT-106 cobrem a concorrência e os RNF.
-- Totais em 25/11: **30 de 36 US** com o comportamento principal automatizado (✅); 4 parciais (🟡: US-003, US-015, US-017 e US-019, esta também com o aviso fora do horário por implementar); 1 só manual (⬜: US-006); 1 por implementar (❌: US-020).
-- Testes automáticos à data: 201 (U + C), 112 (E + V), SQL 0006…0018 + 0090 + T3.
+- Totais em 25/11 (depois da M9-08): **31 de 36 US** com o comportamento principal automatizado (✅); 3 parciais (🟡: US-003, US-015, US-017); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108).
+- Testes automáticos à data: 207 (U + C), 114 (E + V), SQL 0006…0018 + 0090 + T3.

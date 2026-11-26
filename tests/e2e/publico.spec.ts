@@ -81,6 +81,10 @@ test("Página do Design: 7 fases, tipos de peça, sem preços e 'Fale connosco' 
   const href = await cta.getAttribute("href");
   expect(href).toMatch(/^https:\/\/wa\.me\/244957392400\?text=/);
   expect(decodeURIComponent(href!.split("text=")[1])).toContain("trabalho de design");
+  // M9-08: o horário aprovado (D-036), nas duas páginas
+  await expect(page.getByText("Atendimento todos os dias, das 8h às 20h.", { exact: false })).toBeVisible();
+  await page.goto("/servicos/academico");
+  await expect(page.getByText("Atendimento todos os dias, das 8h às 20h.", { exact: false })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

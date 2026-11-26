@@ -7,6 +7,7 @@ import { WhatsappIcon } from "@/components/Icons";
 import { Navbar } from "@/components/Navbar";
 import { Reveal } from "@/components/Reveal";
 import { WhatsappFloat } from "@/components/WhatsappFloat";
+import { HOURS_LABEL } from "@/lib/portal/hours";
 import { designRequestMessage, whatsappWith } from "@/lib/data";
 import { PIECE_TYPES } from "@/lib/design/spec";
 
@@ -180,7 +181,7 @@ export default function DesignServicePage() {
                 Tem um evento a chegar? <span className="text-svc-design">Fale connosco.</span>
               </h2>
               <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-ink-dim">
-                Diga-nos a peça, a quantidade e a data do evento. Atendimento de segunda a sexta, das 18h às 21h.
+                Diga-nos a peça, a quantidade e a data do evento. Atendimento {HOURS_LABEL}.
               </p>
               <a
                 href={whatsapp}
