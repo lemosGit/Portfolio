@@ -32,11 +32,11 @@ export async function criarAdmin(run: string): Promise<Conta & { db: SupabaseCli
 }
 
 /** Cliente + projeto, como `createClientAccount` (conta com o email confirmado, fases criadas pelo gatilho B1). */
-export async function criarClienteEProjeto(admin: SupabaseClient, run: string, serviceType: "academic" | "design", nome: string) {
+export async function criarClienteEProjeto(admin: SupabaseClient, run: string, serviceType: "academic" | "design", nome: string, cliente = "Cliente Fluxo") {
   const email = `cliente-${run}@teste.local`;
-  const { data: u, error: ue } = await service().auth.admin.createUser({ email, password: testPassword(), email_confirm: true, user_metadata: { name: "Cliente Fluxo" } });
+  const { data: u, error: ue } = await service().auth.admin.createUser({ email, password: testPassword(), email_confirm: true, user_metadata: { name: cliente } });
   if (ue) throw ue;
-  const { data: c, error: ce } = await admin.from("clients").insert({ user_id: u.user.id, name: "Cliente Fluxo", email }).select("id").single();
+  const { data: c, error: ce } = await admin.from("clients").insert({ user_id: u.user.id, name: cliente, email }).select("id").single();
   if (ce) throw ce;
   const { data: p, error: pe } = await admin
     .from("projects")

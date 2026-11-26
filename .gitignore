@@ -43,3 +43,4 @@ env.local
 
 # ficheiros de teste gerados (scripts/gerar_ficheiros_teste.py)
 /tests/fixtures/gerados/
+/test-results-guia/
