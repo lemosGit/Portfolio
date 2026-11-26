@@ -107,7 +107,7 @@ export async function marcarPago(db: SupabaseClient, projectId: string, kind: "s
 export async function carregarVersao(
   db: SupabaseClient,
   projectId: string,
-  o: { phaseKey: string; role: "entregavel" | "prova"; seriesKey: string; title: string; versionNo: number; fileName: string; mime: string; body: Buffer },
+  o: { phaseKey: string; role: "entregavel" | "prova"; seriesKey: string; title: string; versionNo: number; fileName: string; mime: string; body: Buffer; preview?: Buffer; notes?: string },
 ) {
   const deliverableId = randomUUID();
   const fileId = randomUUID();
@@ -119,6 +119,15 @@ export async function carregarVersao(
   if (ue || !signed) throw new Error(`storage (URL assinado): ${ue?.message}`);
   const { error: se } = await st.uploadToSignedUrl(path, signed.token, o.body, { contentType: o.mime });
   if (se) throw new Error(`storage: ${se.message}`);
+  // Pré-visualização WebP, como o browser faz no portal (ADR-003 §3): <ficheiro>.preview.webp.
+  let thumb: string | null = null;
+  if (o.preview) {
+    thumb = path.replace(/\.[a-z0-9]+$/, ".preview.webp");
+    const { data: sp, error: pe } = await st.createSignedUploadUrl(thumb);
+    if (pe || !sp) throw new Error(`storage (pré-visualização): ${pe?.message}`);
+    const { error: pu } = await st.uploadToSignedUrl(thumb, sp.token, o.preview, { contentType: "image/webp" });
+    if (pu) throw new Error(`storage (pré-visualização): ${pu.message}`);
+  }
   await ok(
     db.from("deliverables").insert({
       id: deliverableId,
@@ -129,12 +138,13 @@ export async function carregarVersao(
       version_no: o.versionNo,
       label: `V${o.versionNo}`,
       title: o.title,
+      notes: o.notes ?? null,
       uploaded_by_role: "admin",
     }),
     "deliverables",
   );
   await ok(
-    db.from("files").insert({ id: fileId, deliverable_id: deliverableId, project_id: projectId, bucket: "project-files", storage_path: path, original_name: o.fileName, mime_type: o.mime, size_bytes: o.body.length }),
+    db.from("files").insert({ id: fileId, deliverable_id: deliverableId, project_id: projectId, bucket: "project-files", storage_path: path, original_name: o.fileName, mime_type: o.mime, size_bytes: o.body.length, thumb_path: thumb }),
     "files",
   );
   return deliverableId;
