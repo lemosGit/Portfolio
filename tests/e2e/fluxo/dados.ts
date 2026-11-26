@@ -140,6 +140,28 @@ export async function carregarVersao(
   return deliverableId;
 }
 
+/** Como `createApproval` para uma prova: o snapshot leva o título e os ficheiros; a BD junta os textos-chave (RN-42). */
+export async function pedirAprovacaoProva(db: SupabaseClient, projectId: string, deliverableId: string, phaseKey: string, message: string) {
+  const d = (await ok(db.from("deliverables").select("id, label, title, files (original_name)").eq("id", deliverableId).single(), "versão")) as unknown as {
+    id: string; label: string; title: string | null; files: { original_name: string }[];
+  };
+  await ok(
+    db.from("approvals").insert({
+      project_id: projectId,
+      project_phase_id: await faseId(db, projectId, phaseKey),
+      subject: "prova",
+      deliverable_id: d.id,
+      version_label: d.label,
+      snapshot: { title: d.title ?? "Prova", files: d.files.map((x) => x.original_name), message },
+    }),
+    "pedir aprovação da prova",
+  );
+}
+
+/** PNG mínimo válido (1×1), para as provas. */
+export const png = () =>
+  Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010802000000907753de0000000c4944415408d763f8cfc0f00000030101001b8bb0b50000000049454e44ae426082", "hex");
+
 /** PDF mínimo válido (o portal confirma a assinatura %PDF). */
 export const pdf = (texto: string) => Buffer.from(`%PDF-1.4\n% ${texto}\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 0/Kids[]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n`);
 

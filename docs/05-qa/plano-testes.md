@@ -84,12 +84,12 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 |---|---|---|---|---|---|---|
 | CT-009 | US-009 | Admin marca o sinal pago com a data → pago, no histórico, "Desfazer pago" | U, B, M, F | U `payments.test.ts` · B `0007_blocos.sql` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
 | CT-010 | US-010 | Cliente vê total, pago, em falta e o estado (pendente, pago, em atraso); sem botão de pagar | U, C, E | U `payments.test.ts` (em atraso em Luanda) · C `academico/payments.test.tsx` · E `academico.spec.ts` (pagamentos compactos) | ✅ | — |
-| CT-011 | US-011 | Aceite com o sinal pendente → "Pagar o sinal" com o valor; a fase seguinte não avança (RN-11, D-052) | U, C, B, M, F | B `0011_aceite.sql`, `0017_orcamento_design.sql`, `0018_correcoes_v03.sql` (mensagem "50 000 Kz") · C `design/art-lock.test.tsx` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
+| CT-011 | US-011 | Aceite com o sinal pendente → "Pagar o sinal" com o valor; a fase seguinte não avança (RN-11, D-052) | U, C, B, M, F | B `0011_aceite.sql`, `0017_orcamento_design.sql`, `0018_correcoes_v03.sql` (mensagem "50 000 Kz") · C `design/art-lock.test.tsx` · F `fluxo/academico.fluxo.spec.ts` · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | — |
 
 ### 4.3 Aprovações
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
-| CT-012 | US-012 | "Aceitar" mostra a regra do sinal; aceite com data, hora e autor; Design com design + impressão | C, B, E, M, F | C `design/quote.test.tsx` · B `0011_aceite.sql`, `0017_orcamento_design.sql` · E `academico.spec.ts`, `servicos.spec.ts` (histórico) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | — |
+| CT-012 | US-012 | "Aceitar" mostra a regra do sinal; aceite com data, hora e autor; Design com design + impressão | C, B, E, M, F | C `design/quote.test.tsx` · B `0011_aceite.sql`, `0017_orcamento_design.sql` · E `academico.spec.ts`, `servicos.spec.ts` (histórico) · F `fluxo/academico.fluxo.spec.ts` · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | — |
 | CT-013 | US-013 | "Pedir alterações" sem texto pede o comentário; com texto fica com a versão; o admin é avisado | U, C, B, E | B `0007_blocos.sql` (comentário vazio recusado, RN-05) · U `approvals.test.ts` (autor e comentário) · C `design/rounds.test.tsx` · E `academico.spec.ts` (aprovações, RN-05) | ✅ | Aviso ao admin por email: G3 |
 | CT-014 | US-014 | Admin reabre a arte aprovada com motivo → pendente; com a produção começada → recusado (RN-43); reaberta, volta a aceitar provas (RN-41) | B | B `0007_blocos.sql`, `0015_arte.sql`, `0018_correcoes_v03.sql` | ✅ | M9-03: reabrir no ecrã do admin |
 | CT-014b | — | Duas respostas em paralelo à mesma aprovação → 1 sucesso, 1 "já foi respondido" | B | B `concorrencia.sh` (T3) | ✅ | — |
@@ -124,13 +124,13 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
 | CT-029 | US-029 | Convite digital sem impressão → ficha em "Ver detalhes da peça", Produção "não se aplica"; orçamento só com design (RN-44) | U, C, B, E | U `design-spec.test.ts` · C `design/spec.test.tsx` · B `0014_ficha_tecnica.sql`, `0017_orcamento_design.sql` · E `servicos.spec.ts` (ficha) | ✅ | M9-03: uma peça sem impressão de ponta a ponta |
-| CT-030 | US-030 | A V2 em grande, miniatura comprimida, "Ronda 1 de 2" e a decisão num só painel | U, C, E, V | U `design-proofs.test.ts` · C `design/gallery.test.tsx`, `design/decision.test.tsx` · E `servicos.spec.ts` (galeria, layout) · V `design-visao-geral-*` | ✅ 🟢 | Prova SVG sem pré-visualização (L5) |
-| CT-031 | US-031 | Comparar duas versões, uma por cima da outra no telemóvel, com a data e o pedido | U, C, E | U `design-proofs.test.ts` (par) · C `design/gallery.test.tsx` · E `servicos.spec.ts` (comparar) | ✅ | — |
-| CT-032 | US-032 | Na ronda 1 de 2, pedir alterações → gasta 1 ronda, "Ronda 2 de 2"; o admin responde com a V seguinte | U, C, B, E, M | U `design-rounds.test.ts` · C `design/rounds.test.tsx`, `design/decision.test.tsx` · B `0007_blocos.sql` (`design_rounds`) · E `servicos.spec.ts` (rondas) | ✅ 🟢 | Imagem anexa ao pedido: M9-03 |
+| CT-030 | US-030 | A V2 em grande, miniatura comprimida, "Ronda 1 de 2" e a decisão num só painel | U, C, E, V, F | U `design-proofs.test.ts` · C `design/gallery.test.tsx`, `design/decision.test.tsx` · E `servicos.spec.ts` (galeria, layout) · V `design-visao-geral-*` · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | Prova SVG sem pré-visualização (L5) |
+| CT-031 | US-031 | Comparar duas versões, uma por cima da outra no telemóvel, com a data e o pedido | U, C, E, F | U `design-proofs.test.ts` (par) · C `design/gallery.test.tsx` · E `servicos.spec.ts` (comparar) · F `fluxo/design.fluxo.spec.ts` | ✅ | — |
+| CT-032 | US-032 | Na ronda 1 de 2, pedir alterações → gasta 1 ronda, "Ronda 2 de 2"; o admin responde com a V seguinte | U, C, B, E, M, F | U `design-rounds.test.ts` · C `design/rounds.test.tsx`, `design/decision.test.tsx` · B `0007_blocos.sql` (`design_rounds`) · E `servicos.spec.ts` (rondas) · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | Imagem anexa ao pedido: M9-03 |
 | CT-033 | US-033 | Rondas esgotadas → "Pedir revisão extra"; o admin regista o extra; só conta depois de aceite (RN-07, RN-36) | C, B, M | C `design/rounds.test.tsx`, `design/decision.test.tsx` · B `0007_blocos.sql` (extra acrescenta ronda) | ✅ | **M9-03**: extra de ponta a ponta em produção |
-| CT-034 | US-034 | "Aprovar arte para produção" → aviso, nomes/data/quantidade, "Confirmo"; depois disso, sem botões, sem novas provas (RN-41, RN-42) | C, B, E, M | C `design/art-approval.test.tsx`, `design/art-lock.test.tsx` · B `0015_arte.sql`, `0018_correcoes_v03.sql` · E `servicos.spec.ts` (aprovar arte) | ✅ 🟢 | — |
-| CT-035 | US-035 | Arte aprovada e restante pendente → "Pagar o restante"; pago → "a imprimir" → "pronto" (RN-15) | C, B, M | C `design/art-lock.test.tsx`, `design/pickup.test.tsx` · B `0016_producao.sql` | ✅ 🟢 | — |
-| CT-036 | US-036 | Pronta → data e local em destaque, mapa, folga, ficheiros finais; "Marcar como entregue" conclui (recusado antes de "pronto") | U, C, B, E, M | U `design-spec.test.ts` (folga) · C `design/pickup.test.tsx` · B `0016_producao.sql` · E `servicos.spec.ts` (levantamento previsto) | ✅ 🟢 | Ficheiros digitais em produção: M9-03 |
+| CT-034 | US-034 | "Aprovar arte para produção" → aviso, nomes/data/quantidade, "Confirmo"; depois disso, sem botões, sem novas provas (RN-41, RN-42) | C, B, E, M, F | C `design/art-approval.test.tsx`, `design/art-lock.test.tsx` · B `0015_arte.sql`, `0018_correcoes_v03.sql` · E `servicos.spec.ts` (aprovar arte) · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | — |
+| CT-035 | US-035 | Arte aprovada e restante pendente → "Pagar o restante"; pago → "a imprimir" → "pronto" (RN-15) | C, B, M, F | C `design/art-lock.test.tsx`, `design/pickup.test.tsx` · B `0016_producao.sql` · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | — |
+| CT-036 | US-036 | Pronta → data e local em destaque, mapa, folga, ficheiros finais; "Marcar como entregue" conclui (recusado antes de "pronto") | U, C, B, E, M, F | U `design-spec.test.ts` (folga) · C `design/pickup.test.tsx` · B `0016_producao.sql` · E `servicos.spec.ts` (levantamento previsto) · F `fluxo/design.fluxo.spec.ts` | ✅ 🟢 | Ficheiros digitais em produção: M9-03 |
 
 ### 4.8 Transversais (RNF e segurança)
 | CT | Requisito | Caso | Nível | Automatizado em | Estado | Falta / onde |
@@ -165,5 +165,5 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 
 ## 7. Rastreabilidade
 - As 36 US (US-001…US-036) têm um CT com o mesmo número (CT-001…CT-036). CT-014b e CT-101…CT-106 cobrem a concorrência e os RNF.
-- Totais em 26/11 (depois da M9-02): **33 de 36 US** com o comportamento principal automatizado (✅); 1 parcial (🟡: US-015); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108). O fluxo Académico inteiro corre no CI com o Supabase local (F).
+- Totais em 26/11 (depois da M9-02): **33 de 36 US** com o comportamento principal automatizado (✅); 1 parcial (🟡: US-015); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108). Os fluxos Académico e Design inteiros correm no CI com o Supabase local (F).
 - Testes automáticos à data: 207 (U + C), 114 (E + V), SQL 0006…0018 + 0090 + T3.

@@ -77,7 +77,7 @@ jobs:
       - name: Browser do Playwright
         run: npx playwright install --with-deps chromium
 
-      # M9-02: link mágico → aceite → índice → entrega → ajuste (tests/e2e/fluxo).
+      # M9-02 (Académico) e M9-03 (Design): os fluxos de ponta a ponta em tests/e2e/fluxo.
       - name: Fluxos (Playwright)
         run: npm run e2e:fluxo
 
