@@ -71,8 +71,8 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 | CT | US | Caso (dado · quando · então) | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
 | CT-001 | US-001 | Admin cria um projeto Design → 7 fases do modelo, sem campo de repositório; Académico idem | B, U, M | B `0006_fases.sql` (modelos e fases), U `project-form.test.ts` | ✅ 🟢 | Repetir na M9-02/03 (passo 1) |
-| CT-002 | US-002 | "Gerar link" → link de 24 h, uso único; "Abrir no WhatsApp" com a mensagem e o link | U, M, F | U `access-links.test.ts` · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | 2.º uso automatizado (F). M9-05: expiração. O botão "Gerar link" fica preso no Supabase local (#132) |
-| CT-003 | US-003 | Link válido → entra no projeto; link usado ou expirado → "peça um novo" com WhatsApp | E, M, F | E `tech.spec.ts` (link inválido) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | Link usado: automatizado (F). M9-05: link expirado |
+| CT-002 | US-002 | "Gerar link" → link de 24 h, uso único; "Abrir no WhatsApp" com a mensagem e o link | U, M, F | U `access-links.test.ts` · F `fluxo/academico.fluxo.spec.ts` · F `fluxo/seguranca.fluxo.spec.ts` | ✅ 🟢 | — (M9-05: substituído e expirado automatizados; o botão do admin fica preso no Supabase local, #132) |
+| CT-003 | US-003 | Link válido → entra no projeto; link usado ou expirado → "peça um novo" com WhatsApp | E, M, F | E `tech.spec.ts` (link inválido) · F `fluxo/academico.fluxo.spec.ts` · F `fluxo/seguranca.fluxo.spec.ts` | ✅ 🟢 | — (M9-05: usado, substituído e expirado) |
 | CT-004 | US-004 | Visão geral: etiqueta do serviço, barra de fases, fase atual e um só botão de ação | E, V | E `academico.spec.ts`, `servicos.spec.ts` (Visão geral) · V capturas `*-visao-geral-*` | ✅ | — |
 | CT-005 | US-005 | Admin conclui uma fase ou põe "a aguardar o cliente" → a barra e o próximo passo mudam; fase "não aplicável" | U, B, M | U `admin-phases.test.ts` · B `0006_fases.sql` | ✅ 🟢 | M9-02/03: verificar no cliente logo a seguir (L4: concluir e avançar não é atómico) |
 | CT-006 | US-006 | Cliente com 2 projetos troca no seletor → fases, provas e pagamentos do outro | M | — | ⬜ | **M9-03**: usar os 2 projetos do Cliente de teste Design |
@@ -99,7 +99,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 |---|---|---|---|---|---|---|
 | CT-015 | US-015 | Cliente envia uma foto de 4 MB (aceite, com progresso) e um PDF de 12 MB (recusado antes do envio); formato fora da lista e conteúdo falso recusados | U, M | U `files.test.ts` (tipos, assinatura, limites) | 🟡 | **M9-02**: enviar no briefing com os ficheiros da §3.4 |
 | CT-016 | US-016 | Nova versão de um entregável → a anterior fica e a nova é a atual; prova de peça com a arte aprovada recusada (RN-41) | U, E, B, M | U `files.test.ts` · E `academico.spec.ts`, `servicos.spec.ts` (Ficheiros) · B `0018_correcoes_v03.sql` | ✅ 🟢 | — |
-| CT-017 | US-017 | Descarregar usa um link temporário; um ficheiro bloqueado por pagamento aparece mas não se descarrega (RN-14) | B, C, M, F | B `0007_blocos.sql`, `0012_ajustes.sql` (RN-14) · C `design/gallery.test.tsx` (bloqueada sem imagem) · F `fluxo/academico.fluxo.spec.ts` | ✅ 🟢 | **M9-05**: link expira (URL assinada de 15 min) e não abre noutra sessão |
+| CT-017 | US-017 | Descarregar usa um link temporário; um ficheiro bloqueado por pagamento aparece mas não se descarrega (RN-14) | B, C, M, F | B `0007_blocos.sql`, `0012_ajustes.sql` (RN-14) · C `design/gallery.test.tsx` (bloqueada sem imagem) · F `fluxo/academico.fluxo.spec.ts` · F `fluxo/seguranca.fluxo.spec.ts` | ✅ 🟢 | — (M9-05: 15 min, token alterado, expirado, IDOR) |
 | CT-018 | US-018 | Projeto concluído há 83 dias → aviso; "Adiar"; aos 90 dias apagados, fica o registo; o cliente vê "até quando" | U, B, E | U `retention.test.ts` · B `0008_retencao.sql` · E `tech.spec.ts` (T13, `CRON_SECRET`) | ✅ | Email do aviso: G3 |
 
 ### 4.5 Mensagens e avisos
@@ -137,7 +137,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 |---|---|---|---|---|---|---|
 | CT-101 | RNF-201 | 360 px sem scroll horizontal (portal e páginas públicas) | E | E `academico.spec.ts`, `servicos.spec.ts`, `publico.spec.ts` | ✅ | — (Tech a 360 px nas capturas da M9-04) |
 | CT-102 | RNF-204 | Contraste AA dos tokens do DS V1 | — | ADR-004 §5 (verificado à mão) | 🟢 | — |
-| CT-103 | Segurança (M3-06) | Cliente A não lê nem escreve dados de B; históricos só de inserção; anon sem acesso | B | B `0090_rls.sql` (T1, T2, T6, T7, T10–T12) e RLS nos `00NN` | ✅ | **M9-05**: revisão completa (URLs assinadas, link mágico) |
+| CT-103 | Segurança (M3-06) | Cliente A não lê nem escreve dados de B; históricos só de inserção; anon sem acesso | B, F | B `0090_rls.sql` (T1, T2, T6, T7, T10–T12) e RLS nos `00NN` · F `fluxo/seguranca.fluxo.spec.ts` | ✅ 🟢 | — (M9-05: IDOR nas ações de download e aprovação, cookie do projeto; advisors: `relatorios/seguranca-v1.1.md`) |
 | CT-104 | T13 | A limpeza diária recusa pedidos sem `CRON_SECRET` | E | E `tech.spec.ts` | ✅ | — |
 | CT-105 | Páginas públicas | Serviços com 3 cartões; páginas Académico e Design sem preços, com WhatsApp; filtro do Portfólio | E, V | E `publico.spec.ts` · V `publico-*` | ✅ | — |
 | CT-106 | #132 | Tempo de resposta das ações do admin | M | — | ⬜ | **M9-07** |
@@ -165,5 +165,5 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 
 ## 7. Rastreabilidade
 - As 36 US (US-001…US-036) têm um CT com o mesmo número (CT-001…CT-036). CT-014b e CT-101…CT-106 cobrem a concorrência e os RNF.
-- Totais em 26/11 (depois da M9-02): **33 de 36 US** com o comportamento principal automatizado (✅); 1 parcial (🟡: US-015); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108). Os fluxos Académico e Design inteiros correm no CI com o Supabase local (F).
+- Totais em 26/11 (depois da M9-05): **33 de 36 US** com o comportamento principal automatizado (✅); 1 parcial (🟡: US-015); 1 só manual (⬜: US-006); 1 por implementar na v1.2 (❌: US-020, Q-108). Os fluxos Académico e Design inteiros correm no CI com o Supabase local (F).
 - Testes automáticos à data: 207 (U + C), 114 (E + V), SQL 0006…0018 + 0090 + T3.
