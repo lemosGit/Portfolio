@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guia do cliente — Académico · GeniusFrela</title>
+<style>
+  /* Design System V1 (ADR-004): neutros comuns + Âmbar Saber do Académico. */
+  @font-face { font-family: "Inter"; src: url("../fontes/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Inter"; src: url("../fontes/inter-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Space Grotesk"; src: url("../fontes/space-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Space Grotesk"; src: url("../fontes/space-grotesk-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 300 700; unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+  :root {
+    --noite: #0b0f17; --superficie: #111723; --elevada: #172033; --borda: #232d42;
+    --texto: #e8ecf4; --texto2: #9aa4b8; --texto3: #6b7690;
+    --aca: #e8b65a; --aca-suave: #f5d79a; --aca-tinta: #2e2412; --aca-sobre: #221a08;
+    --ok: #5bd69a; --acao: #ff8a7a; --planeado: #5c6780; --violeta: #8b7cf6; --azul: #4c8dff;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; background: #05070c; }
+  body { font-family: "Inter", system-ui, sans-serif; color: var(--texto); font-size: 10.5pt; line-height: 1.55; }
+
+  .pagina {
+    width: 210mm; height: 297mm; margin: 0 auto 12px; padding: 16mm 15mm 14mm; position: relative; overflow: hidden;
+    background: radial-gradient(120% 60% at 100% 0%, rgba(232,182,90,.07), transparent 60%), var(--noite);
+    page-break-after: always; break-after: page; display: flex; flex-direction: column;
+  }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  @media print { html, body { background: var(--noite); } .pagina { margin: 0; } }
+
+  /* Cabeçalho e rodapé de cada página */
+  .topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9mm; }
+  .marca { display: flex; align-items: center; gap: 9px; font-family: "Space Grotesk"; font-weight: 600; font-size: 12pt; letter-spacing: -.01em; }
+  .marca .g { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: linear-gradient(135deg, var(--violeta), var(--azul)); color: #fff; font-size: 13pt; }
+  .marca span b { color: var(--azul); font-weight: 600; }
+  .etiqueta { display: inline-block; font-size: 7.5pt; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--aca); background: var(--aca-tinta); border-radius: 6px; padding: 3px 8px; }
+  .rodape { margin-top: auto; padding-top: 5mm; display: flex; justify-content: space-between; color: var(--texto3); font-size: 8pt; border-top: 1px solid var(--borda); }
+
+  h1, h2, h3 { font-family: "Space Grotesk", sans-serif; font-weight: 600; letter-spacing: -.02em; margin: 0; }
+  h1 { font-size: 30pt; line-height: 1.08; }
+  h2 { font-size: 21pt; line-height: 1.15; }
+  h3 { font-size: 12.5pt; line-height: 1.3; }
+  p { margin: 0 0 3mm; }
+  .sobre { font-size: 8pt; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto2); margin-bottom: 3mm; display: flex; align-items: center; gap: 7px; }
+  .sobre::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--aca); }
+  .destaque { color: var(--aca); }
+  .lead { color: var(--texto2); font-size: 11pt; max-width: 150mm; }
+  .peq { font-size: 8.5pt; color: var(--texto2); }
+  b, strong { font-weight: 600; color: var(--texto); }
+
+  /* Passos numerados */
+  .passos { list-style: none; padding: 0; margin: 0; counter-reset: p; display: grid; gap: 3.2mm; }
+  .passos li { counter-increment: p; position: relative; padding-left: 10mm; }
+  .passos li::before { content: counter(p); position: absolute; left: 0; top: 0; width: 6.5mm; height: 6.5mm; border-radius: 50%; display: grid; place-items: center;
+    background: var(--aca); color: var(--aca-sobre); font-weight: 700; font-size: 9pt; font-family: "Space Grotesk"; }
+  .passos li b { display: block; margin-bottom: .5mm; }
+
+  /* Caixas */
+  .caixa { background: var(--superficie); border: 1px solid var(--borda); border-radius: 14px; padding: 4.5mm 5mm; }
+  .caixa.aca { background: var(--aca-tinta); border-color: rgba(232,182,90,.35); }
+  .caixa.aca h3 { color: var(--aca-suave); }
+  .caixa.acao { background: rgba(255,138,122,.07); border-color: rgba(255,138,122,.35); }
+  .caixa h3 { margin-bottom: 2mm; }
+  .dica { display: flex; gap: 3mm; align-items: flex-start; }
+  .dica .i { flex: none; width: 6mm; height: 6mm; border-radius: 7px; display: grid; place-items: center; background: var(--aca); color: var(--aca-sobre); font-weight: 700; font-size: 9pt; }
+
+  /* Ecrãs */
+  .telefone { background: #05070c; border: 1px solid var(--borda); border-radius: 26px; padding: 7px; box-shadow: 0 18px 40px -18px rgba(0,0,0,.8), 0 0 0 4px rgba(255,255,255,.02); position: relative; }
+  .telefone img { display: block; width: 100%; border-radius: 19px; }
+  .cartao-img { border: 1px solid var(--borda); border-radius: 16px; overflow: hidden; background: var(--superficie); position: relative; }
+  .cartao-img img { display: block; width: 100%; }
+  .legenda { font-size: 8pt; color: var(--texto3); margin-top: 2mm; text-align: center; }
+  .num { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--aca); color: var(--aca-sobre); font: 700 9pt "Space Grotesk"; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(11,15,23,.9); }
+
+  .grelha { display: grid; gap: 7mm; }
+  .g-txt-tel { grid-template-columns: 1fr 62mm; align-items: start; }
+  .g-2 { grid-template-columns: 1fr 1fr; }
+  .g-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* Tabela das fases */
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 9pt; }
+  th { text-align: left; font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--texto2); font-weight: 600; padding: 0 3mm 2.5mm; }
+  td { padding: 3mm; border-top: 1px solid var(--borda); vertical-align: top; }
+  td:first-child { width: 11mm; }
+  .bola { width: 7mm; height: 7mm; border-radius: 50%; display: grid; place-items: center; font: 700 9pt "Space Grotesk"; background: var(--elevada); color: var(--aca-suave); border: 1px solid var(--borda); }
+  .quem { display: inline-block; font-size: 7.5pt; font-weight: 600; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+  .quem.voce { background: rgba(255,138,122,.12); color: var(--acao); }
+  .quem.gf { background: var(--aca-tinta); color: var(--aca); }
+
+  /* Legenda de cores */
+  .cores { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5mm 6mm; }
+  .cor { display: flex; align-items: center; gap: 3mm; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 99px; font-size: 8pt; font-weight: 600; white-space: nowrap; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip.ok { background: rgba(91,214,154,.1); color: var(--ok); }
+  .chip.agora { background: rgba(232,182,90,.15); color: var(--aca-suave); }
+  .chip.acao { background: rgba(255,138,122,.12); color: var(--acao); }
+  .chip.plan { background: var(--elevada); color: var(--texto2); }
+
+  /* Capa */
+  .capa { background: radial-gradient(90% 55% at 85% 10%, rgba(232,182,90,.16), transparent 60%), radial-gradient(70% 50% at 0% 100%, rgba(139,124,246,.10), transparent 60%), var(--noite); }
+  .capa h1 { font-size: 40pt; margin: 6mm 0 5mm; }
+  .capa .tel-capa { position: absolute; right: 13mm; bottom: 24mm; width: 60mm; transform: rotate(4deg); }
+  .capa .tel-capa2 { position: absolute; right: 60mm; bottom: 38mm; width: 50mm; transform: rotate(-5deg); opacity: .95; }
+
+  .indice { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 10mm; }
+  .indice li { break-inside: avoid; display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--borda); }
+  .indice li span:first-child { color: var(--aca); font-family: "Space Grotesk"; font-weight: 600; width: 7mm; }
+  .faq h3 { font-size: 10.5pt; margin-bottom: 1mm; color: var(--aca-suave); }
+  .faq > div { break-inside: avoid; margin-bottom: 4mm; }
+</style>
+</head>
+<body>
+
+<!-- ═════════ 1. Capa ═════════ -->
+<section class="pagina capa">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Académico</span></div>
+  <p class="sobre" style="margin-top:14mm">Guia do cliente · Área do Cliente</p>
+  <h1>O seu trabalho académico,<br><span class="destaque">com o prazo à vista.</span></h1>
+  <p class="lead">Tudo o que precisa de saber para acompanhar o seu trabalho na Área do Cliente da GeniusFrela: como entrar, o que significa cada ecrã e o que fazer em cada fase, do briefing aos ajustes.</p>
+  <div class="caixa aca" style="max-width:80mm; margin-top:8mm">
+    <h3>Em 1 minuto</h3>
+    <ul class="passos">
+      <li><b>Entra pelo link que recebe no WhatsApp.</b>Sem senhas nem aplicações para instalar.</li>
+      <li><b>Vê sempre quantos dias faltam.</b>E em que fase está o seu trabalho.</li>
+      <li><b>Quando algo aparecer a coral, é consigo.</b>Aceitar, aprovar, pagar ou responder: um botão de cada vez.</li>
+    </ul>
+  </div>
+  <div class="telefone tel-capa2"><img src="capturas/02-visao-geral-briefing.png" alt=""></div>
+  <div class="telefone tel-capa"><img src="capturas/12-desenvolvimento.png" alt="Visão geral do portal com a contagem do prazo"></div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico · v1.0</span><span>Novembro de 2026</span></div>
+</section>
+
+<!-- ═════════ 2. Índice e o portal num relance ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Académico</span></div>
+  <p class="sobre">Neste guia</p>
+  <h2 style="margin-bottom:6mm">O que vai encontrar</h2>
+  <ol class="indice">
+    <li><span>01</span><span>Como ler o portal: cores, menu e Visão geral</span></li>
+    <li><span>02</span><span>As 7 fases do seu trabalho</span></li>
+    <li><span>03</span><span>Entrar no portal</span></li>
+    <li><span>04</span><span>Briefing: ficha e referências</span></li>
+    <li><span>05</span><span>Aceitar o orçamento</span></li>
+    <li><span>06</span><span>Pagar o sinal e os pagamentos</span></li>
+    <li><span>07</span><span>Aprovar o índice</span></li>
+    <li><span>08</span><span>Acompanhar os capítulos</span></li>
+    <li><span>09</span><span>Receber a entrega final</span></li>
+    <li><span>10</span><span>Pedir ajustes</span></li>
+    <li><span>11</span><span>Mensagens e horário</span></li>
+    <li><span>12</span><span>Perguntas frequentes</span></li>
+  </ol>
+
+  <div class="grelha g-txt-tel" style="margin-top:9mm">
+    <div>
+      <p class="sobre">01 · Como ler o portal</p>
+      <h2 style="margin-bottom:4mm">A Visão geral num relance</h2>
+      <p class="lead" style="margin-bottom:5mm">É o primeiro ecrã depois de entrar. Responde a três perguntas: quanto tempo falta, onde está o trabalho e se há algo para si.</p>
+      <ul class="passos">
+        <li><b>Contagem do prazo</b>Os dias que faltam até à entrega. Com menos de 2 dias passa a horas; a 3 dias aparece "Prazo próximo".</li>
+        <li><b>Barra das fases</b>Os 7 traços são as 7 fases. "Fase 4 de 7" e o nome da fase em curso.</li>
+        <li><b>Próximo passo</b>O que está a acontecer agora e, se for consigo, o que tem de fazer. Aqui, "2 de 5 capítulos" e a percentagem.</li>
+        <li><b>Menu</b>Visão geral, Projeto (as fases em detalhe), Ficheiros e Mensagens. No computador fica à esquerda.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="telefone">
+        <img src="capturas/12-desenvolvimento.png" alt="Visão geral durante o Desenvolvimento">
+        <span class="num" style="left:-9px; top:39%">1</span>
+        <span class="num" style="left:-9px; top:55.5%">2</span>
+        <span class="num" style="left:-9px; top:66%">3</span>
+        <span class="num" style="left:-9px; top:94%">4</span>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>2</span></div>
+</section>
+
+<!-- ═════════ 3. Cores e as 7 fases ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Académico</span></div>
+  <p class="sobre">01 · Como ler o portal</p>
+  <h2 style="margin-bottom:4mm">O que querem dizer as cores</h2>
+  <div class="caixa" style="margin-bottom:9mm">
+    <div class="cores">
+      <div class="cor"><span class="chip ok">Concluído</span><span class="peq">Fase ou tarefa terminada.</span></div>
+      <div class="cor"><span class="chip agora">Em curso</span><span class="peq">Estamos a trabalhar nesta fase.</span></div>
+      <div class="cor"><span class="chip acao">Aguarda a sua resposta</span><span class="peq">É consigo: aceitar, aprovar ou pagar.</span></div>
+      <div class="cor"><span class="chip plan">Por iniciar</span><span class="peq">Ainda não começou.</span></div>
+    </div>
+  </div>
+
+  <p class="sobre">02 · As 7 fases</p>
+  <h2 style="margin-bottom:5mm">Do briefing aos ajustes</h2>
+  <table>
+    <thead><tr><th></th><th>Fase</th><th>O que acontece</th><th>O que faz</th><th>Quem</th></tr></thead>
+    <tbody>
+      <tr><td><span class="bola">1</span></td><td><b>Pedido e briefing</b></td><td>Combinamos o tema, as normas, as páginas e o prazo.</td><td>Envia o enunciado e as referências em Ficheiros.</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">2</span></td><td><b>Orçamento e aceite</b></td><td>Recebe o valor, o sinal e a data de entrega.</td><td>Aceita o orçamento e paga o sinal (50%).</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">3</span></td><td><b>Estrutura (índice)</b></td><td>Propomos o índice do trabalho.</td><td>Aprova o índice ou pede alterações.</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">4</span></td><td><b>Desenvolvimento</b></td><td>Escrevemos capítulo a capítulo.</td><td>Acompanha "X de Y capítulos". Nada a fazer.</td><td><span class="quem gf">GeniusFrela</span></td></tr>
+      <tr><td><span class="bola">5</span></td><td><b>Revisão e formatação</b></td><td>Revemos o texto e aplicamos as normas.</td><td>Pode enviar ficheiros, se for preciso.</td><td><span class="quem gf">GeniusFrela</span></td></tr>
+      <tr><td><span class="bola">6</span></td><td><b>Entrega final</b></td><td>Os ficheiros finais (PDF e Word) ficam no portal.</td><td>Paga o restante e descarrega.</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">7</span></td><td><b>Ajustes</b></td><td>Durante 7 dias pode pedir pequenas correções.</td><td>Pede o ajuste no portal, se precisar.</td><td><span class="quem voce">Você</span></td></tr>
+    </tbody>
+  </table>
+  <div class="caixa aca dica" style="margin-top:7mm">
+    <span class="i">i</span>
+    <div><b>O tempo à espera de si não conta contra si.</b> Enquanto uma fase está "a aguardar a sua resposta" (uma aprovação ou um pagamento), a data de entrega desliza os mesmos dias, e o portal mostra a nova data e o motivo.</div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>3</span></div>
+</section>
+
+<!-- ═════════ 4. Entrar ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Académico</span></div>
+  <p class="sobre">03 · Entrar no portal</p>
+  <h2 style="margin-bottom:4mm">Um toque no link e está dentro</h2>
+  <p class="lead" style="margin-bottom:7mm">Não precisa de criar conta nem de decorar senhas. Enviamos-lhe um link pessoal pelo WhatsApp.</p>
+  <div class="grelha g-2">
+    <div>
+      <ul class="passos">
+        <li><b>Abra o link que recebeu no WhatsApp.</b>Abre a página "Olá, <i>o seu nome</i>" com o nome do seu projeto.</li>
+        <li><b>Toque em "Entrar no meu projeto".</b>Fica logo na Visão geral do seu trabalho.</li>
+        <li><b>Pronto: fica com a sessão aberta.</b>Da próxima vez, abra o portal no mesmo telemóvel e entra sem o link.</li>
+      </ul>
+      <div class="caixa" style="margin-top:7mm">
+        <h3>Regras do link, para a sua segurança</h3>
+        <p class="peq" style="margin:0">O link é <b>só seu</b>, funciona <b>uma vez</b> e vale <b>24 horas</b>. Se pedirmos um link novo, o anterior deixa de funcionar. Não o reencaminhe a ninguém.</p>
+      </div>
+      <div class="caixa acao" style="margin-top:4mm">
+        <h3>"Este link já não é válido"?</h3>
+        <p class="peq" style="margin:0">Já foi usado ou passou das 24 horas. Toque em <b>"Pedir um link novo no WhatsApp"</b> e enviamos-lhe outro.</p>
+      </div>
+      <div class="caixa" style="margin-top:4mm">
+        <h3>Prefere email e senha?</h3>
+        <p class="peq" style="margin:0">Se lhe demos uma senha, entre em <b>joao-pereira.dev/cliente/login</b> com o seu email. No primeiro acesso pede-lhe para escolher uma senha nova.</p>
+      </div>
+    </div>
+    <div class="grelha g-2" style="gap:5mm">
+      <div><div class="telefone"><img src="capturas/01-entrar-link.png" alt="Página do link de acesso"></div><p class="legenda">O link do WhatsApp</p></div>
+      <div><div class="telefone"><img src="capturas/21-login.png" alt="Página de login"></div><p class="legenda">Email e senha (alternativa)</p></div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>4</span></div>
+</section>
+
+<!-- ═════════ 5. Briefing ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 1</span></div>
+  <p class="sobre">04 · Briefing</p>
+  <h2 style="margin-bottom:4mm">Começamos pelo que o seu trabalho precisa</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois da conversa inicial, registamos a ficha do trabalho. Enquanto não há orçamento aceite, a contagem diz "Prazo por definir".</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div>
+      <div class="telefone"><img src="capturas/02-visao-geral-briefing.png" alt="Visão geral no briefing"></div>
+      <p class="legenda">Fase 1 de 7 · Pedido e briefing</p>
+    </div>
+    <div>
+      <h3 style="margin-bottom:3mm">Ver a ficha do trabalho</h3>
+      <p class="peq">No fim da Visão geral, toque em <b>"Ver detalhes do trabalho"</b>: tema, tipo, nível, instituição, normas e número de páginas. Se algo estiver errado, diga-nos nas Mensagens.</p>
+      <div class="cartao-img"><img src="capturas/04-ficha-trabalho.png" alt="Ficha do trabalho"></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:3mm">Enviar o enunciado e as referências</h3>
+      <p class="peq">Em <b>Ficheiros → Enviar referências</b>, escolha os ficheiros e toque em "Enviar". Pode enviar no briefing e na revisão.</p>
+      <div class="cartao-img"><img src="capturas/03-enviar-referencias.png" alt="Enviar referências"></div>
+      <div class="caixa" style="margin-top:4mm; padding:3.5mm 4mm">
+        <p class="peq" style="margin:0"><b>Formatos:</b> JPG, PNG, WebP, HEIC, PDF, DOC e DOCX.<br><b>Limites:</b> até 10 MB por ficheiro e 10 ficheiros por fase. Um ficheiro maior é recusado antes de ser enviado.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>5</span></div>
+</section>
+
+<!-- ═════════ 6. Orçamento ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 2</span></div>
+  <p class="sobre">05 · Aceitar o orçamento</p>
+  <h2 style="margin-bottom:4mm">O valor, o sinal e a data, num só cartão</h2>
+  <p class="lead" style="margin-bottom:7mm">Quando o orçamento estiver pronto, aparece um cartão na Visão geral, em Aprovações. A fase fica "a aguardar a sua resposta".</p>
+  <div class="grelha g-2">
+    <div>
+      <ul class="passos">
+        <li><b>Leia o cartão.</b>Total, sinal (50%), restante e a data de entrega. A regra do sinal está logo por baixo.</li>
+        <li><b>Toque em "Aceitar".</b>O portal pede uma confirmação: depois de aceitar não pode voltar atrás.</li>
+        <li><b>Toque em "Confirmar aceite".</b>O aceite fica registado com a data e a hora. A data de entrega passa a ser o prazo do trabalho e aparecem o sinal e o restante em Pagamentos.</li>
+      </ul>
+      <div class="caixa acao" style="margin-top:7mm">
+        <h3>A regra do sinal</h3>
+        <p class="peq" style="margin:0">O sinal <b>não é devolvido</b> se desistir depois de pagar, porque cobre o trabalho já começado. Se quiser mudar alguma coisa no orçamento, toque em <b>"Pedir alterações"</b> em vez de aceitar.</p>
+      </div>
+      <div class="cartao-img" style="max-width:52mm; margin-top:4mm"><img src="capturas/05-orcamento.png" alt="Cartão do orçamento"></div>
+      <p class="legenda" style="text-align:left">O cartão do orçamento, na Visão geral</p>
+    </div>
+    <div><div class="cartao-img" style="max-width:80mm; margin-left:auto"><img src="capturas/06-orcamento-confirmar.png" alt="Confirmar o aceite"></div><p class="legenda">Depois de tocar em "Aceitar": confirmar</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>6</span></div>
+</section>
+
+<!-- ═════════ 7. Pagamentos ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 2</span></div>
+  <p class="sobre">06 · Pagar o sinal e os pagamentos</p>
+  <h2 style="margin-bottom:4mm">O trabalho começa com o sinal pago</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois do aceite, a contagem começa e o próximo passo passa a ser "Pagar o sinal". A fase seguinte só arranca depois de o pagamento estar registado.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <ul class="passos">
+        <li><b>Pague como combinámos.</b>O pagamento é feito <b>fora do portal</b> (transferência ou outro meio combinado). Não há botão de pagar no portal.</li>
+        <li><b>A GeniusFrela regista o pagamento.</b>Quando o recebermos, marcamo-lo como pago. O sinal passa a "Pago" e o trabalho pode avançar para a fase seguinte.</li>
+        <li><b>Acompanhe em Pagamentos.</b>Na Visão geral vê o que falta; em "Ver pagamentos" vê cada parte, com o estado: <span class="chip acao" style="height:18px">Pendente</span> <span class="chip ok" style="height:18px">Pago</span></li>
+      </ul>
+      <div class="cartao-img" style="margin-top:7mm; max-width:92mm"><img src="capturas/08-pagamentos.png" alt="Pagamentos"></div>
+      <p class="legenda" style="text-align:left">O sinal (50%) e o restante, que se paga antes da entrega final.</p>
+    </div>
+    <div><div class="telefone"><img src="capturas/07-pagar-sinal.png" alt="Próximo passo: pagar o sinal"></div><p class="legenda">"Pagar o sinal" no próximo passo</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>7</span></div>
+</section>
+
+<!-- ═════════ 8. Índice ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 3</span></div>
+  <p class="sobre">07 · Aprovar o índice</p>
+  <h2 style="margin-bottom:4mm">Antes de escrevermos, aprova a estrutura</h2>
+  <p class="lead" style="margin-bottom:7mm">Propomos o índice com os capítulos. Pode aprová-lo como está ou pedir alterações, as vezes que forem precisas.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div>
+      <div class="cartao-img"><img src="capturas/09-indice.png" alt="Índice para aprovar"></div>
+      <p class="legenda">O índice proposto</p>
+      <ul class="passos" style="margin-top:4mm">
+        <li><b>Leia os capítulos.</b>E a mensagem que juntámos.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="cartao-img"><img src="capturas/10-indice-pedir-alteracoes.png" alt="Pedir alterações ao índice"></div>
+      <p class="legenda">Pedir alterações</p>
+      <div class="caixa" style="margin-top:4mm; padding:3.5mm 4mm"><p class="peq" style="margin:0"><b>Quer mudar algo?</b> Toque em "Pedir alterações", escreva o que quer mudar (o comentário é obrigatório) e "Enviar pedido". Recebe uma versão nova (V2) para aprovar.</p></div>
+    </div>
+    <div>
+      <div class="cartao-img"><img src="capturas/11-indice-confirmar.png" alt="Confirmar aprovação"></div>
+      <p class="legenda">Aprovar e confirmar</p>
+      <div class="caixa aca" style="margin-top:4mm; padding:3.5mm 4mm"><p class="peq" style="margin:0; color:var(--aca-suave)"><b style="color:var(--aca-suave)">Está tudo bem?</b> Toque em "Aprovar" e depois em "Confirmar aprovação". A fase Estrutura fecha e começamos a escrever.</p></div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>8</span></div>
+</section>
+
+<!-- ═════════ 9. Desenvolvimento ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fases 4 e 5</span></div>
+  <p class="sobre">08 · Acompanhar os capítulos</p>
+  <h2 style="margin-bottom:4mm">Veja o trabalho a avançar, capítulo a capítulo</h2>
+  <p class="lead" style="margin-bottom:7mm">Nesta fase não precisa de fazer nada. O próximo passo mostra quantos capítulos estão prontos; a página Projeto mostra cada um.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div><div class="telefone"><img src="capturas/12-desenvolvimento.png" alt="Visão geral no Desenvolvimento"></div><p class="legenda">"2 de 5 capítulos" · 40%</p></div>
+    <div><div class="telefone"><img src="capturas/13-projeto-fases.png" alt="Página Projeto"></div><p class="legenda">Projeto: as fases e os capítulos</p></div>
+    <div>
+      <h3 style="margin-bottom:3mm">Na página Projeto</h3>
+      <p class="peq">As 7 fases de cima para baixo, com a data em que cada uma terminou. Na fase em curso, a lista dos capítulos:</p>
+      <div class="caixa" style="padding:3.5mm 4mm; margin-bottom:4mm">
+        <div class="cores" style="grid-template-columns:1fr">
+          <div class="cor"><span class="chip ok">Pronto</span><span class="peq">Capítulo escrito.</span></div>
+          <div class="cor"><span class="chip agora">A escrever</span><span class="peq">Em curso agora.</span></div>
+          <div class="cor"><span class="chip plan">Por começar</span><span class="peq">Vem a seguir.</span></div>
+        </div>
+      </div>
+      <p class="peq">O portal mostra o título e o estado de cada capítulo; o texto completo chega na entrega final.</p>
+      <h3 style="margin:5mm 0 2mm">Revisão e formatação</h3>
+      <p class="peq">Revemos o texto e aplicamos as normas da ficha. Se tiver material novo, pode enviá-lo em Ficheiros nesta fase.</p>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>9</span></div>
+</section>
+
+<!-- ═════════ 10. Entrega final ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 6</span></div>
+  <p class="sobre">09 · Receber a entrega final</p>
+  <h2 style="margin-bottom:4mm">Os ficheiros finais, prontos a descarregar</h2>
+  <p class="lead" style="margin-bottom:7mm">Quando o trabalho estiver pronto, carregamos os ficheiros finais (PDF e Word). Ficam disponíveis assim que o restante estiver pago.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <ul class="passos">
+        <li><b>O próximo passo diz "Pagar o restante".</b>Com o valor que falta. Em Ficheiros, a entrega aparece com um cadeado e "disponível depois do pagamento".</li>
+        <li><b>Pague o restante, como o sinal.</b>A GeniusFrela regista o pagamento e disponibiliza a entrega.</li>
+        <li><b>Descarregue em Ficheiros.</b>Toque em "Descarregar". O link de download é temporário (15 minutos): se demorar, toque outra vez.</li>
+      </ul>
+      <div class="grelha g-2" style="gap:5mm; margin-top:7mm">
+        <div><div class="cartao-img"><img src="capturas/16-entrega-bloqueada.png" alt="Entrega bloqueada"></div><p class="legenda">Antes: bloqueada até ao pagamento</p></div>
+        <div><div class="cartao-img"><img src="capturas/17-entrega-disponivel.png" alt="Entrega disponível"></div><p class="legenda">Depois: "Descarregar"</p></div>
+      </div>
+      <div class="caixa aca dica" style="margin-top:6mm"><span class="i">!</span><div class="peq" style="color:var(--aca-suave)"><b style="color:var(--aca-suave)">Guarde os seus ficheiros.</b> Ficam no portal 90 dias depois da conclusão do projeto; o portal avisa até quando pode descarregar.</div></div>
+    </div>
+    <div><div class="telefone"><img src="capturas/15-pagar-restante.png" alt="Pagar o restante"></div><p class="legenda">Fase 6 de 7 · Entrega final</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>10</span></div>
+</section>
+
+<!-- ═════════ 11. Ajustes ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 7</span></div>
+  <p class="sobre">10 · Pedir ajustes</p>
+  <h2 style="margin-bottom:4mm">7 dias para pequenas correções</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois da entrega, a contagem passa a mostrar os dias que tem para pedir ajustes. Leia o trabalho com calma e diga-nos o que corrigir.</p>
+  <div class="grelha g-3" style="align-items:start; grid-template-columns: 50mm 1fr 1fr">
+    <div><div class="telefone"><img src="capturas/18-visao-geral-ajustes.png" alt="Dias para pedir ajustes"></div><p class="legenda">"8 dias para pedir ajustes"</p></div>
+    <div>
+      <ul class="passos">
+        <li><b>Escreva o que quer ajustar.</b>Em "O que quer ajustar?", com pelo menos 10 caracteres. Se tiver um ficheiro (ex.: página assinalada), envie-o em Ficheiros.</li>
+        <li><b>Toque em "Pedir ajuste".</b>O pedido fica "Em análise" e a GeniusFrela responde com uma versão nova da entrega (V2), sem apagar a anterior.</li>
+        <li><b>Acompanhe o pedido.</b>Quando estiver resolvido, aparece "Resolvido" e a versão que o corrige.</li>
+      </ul>
+      <div class="cartao-img" style="margin-top:5mm"><img src="capturas/19-pedir-ajuste.png" alt="Pedir ajuste"></div>
+    </div>
+    <div>
+      <div class="cartao-img"><img src="capturas/20-ajuste-enviado.png" alt="Ajuste enviado"></div>
+      <p class="legenda">O pedido enviado, "Em análise"</p>
+      <div class="caixa" style="margin-top:4mm; padding:3.5mm 4mm">
+        <h3 style="font-size:10.5pt">O que está incluído</h3>
+        <p class="peq" style="margin:0">Correções para cumprir a ficha: <b>tema, normas e número de páginas</b>. Mudar o tema ou o número de páginas é <b>trabalho novo</b>, com um orçamento à parte.</p>
+      </div>
+      <div class="caixa" style="margin-top:4mm; padding:3.5mm 4mm">
+        <p class="peq" style="margin:0"><b>Terminado o prazo</b>, o projeto conclui-se sozinho. Para mais alguma coisa, fale connosco nas Mensagens.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>11</span></div>
+</section>
+
+<!-- ═════════ 12. Mensagens ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Sempre</span></div>
+  <p class="sobre">11 · Mensagens e horário</p>
+  <h2 style="margin-bottom:4mm">Fale connosco sem sair do portal</h2>
+  <p class="lead" style="margin-bottom:7mm">As Mensagens guardam toda a conversa sobre o seu trabalho, ligada à fase certa. Assim nada se perde entre o WhatsApp e o email.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <ul class="passos">
+        <li><b>Abra Mensagens no menu.</b>O número no ícone diz quantas respostas novas tem.</li>
+        <li><b>Escolha o assunto em "Sobre".</b>"Geral" ou uma fase (ex.: Desenvolvimento). Ajuda-nos a responder mais depressa.</li>
+        <li><b>Escreva e toque na seta para enviar.</b>A nossa resposta aparece por baixo, com a fase a que diz respeito.</li>
+      </ul>
+      <div class="caixa" style="margin-top:7mm">
+        <h3>Horário de atendimento</h3>
+        <p style="margin:0">Todos os dias, das <b>8h às 20h</b> (hora de Luanda). Pode escrever a qualquer hora: fora do horário, o portal avisa "Entraremos em contacto assim que o horário de abertura estiver disponível."</p>
+      </div>
+      <div class="caixa" style="margin-top:4mm">
+        <h3>WhatsApp</h3>
+        <p style="margin:0">Para um link de acesso novo ou um assunto urgente: <b>+244 957 392 400</b>. No portal, o botão de conversa, no topo, abre as Mensagens.</p>
+      </div>
+    </div>
+    <div><div class="telefone"><img src="capturas/14-mensagens.png" alt="Mensagens"></div><p class="legenda">A conversa, com o assunto de cada mensagem</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Académico</span><span>12</span></div>
+</section>
+
+<!-- ═════════ 13. Perguntas frequentes ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Académico</span></div>
+  <p class="sobre">12 · Perguntas frequentes</p>
+  <h2 style="margin-bottom:7mm">Dúvidas comuns</h2>
+  <div class="grelha g-2 faq" style="gap:4mm 9mm">
+    <div><h3>Preciso de instalar alguma aplicação?</h3><p class="peq">Não. O portal abre no browser do telemóvel ou do computador.</p></div>
+    <div><h3>Perdi o link ou ele expirou.</h3><p class="peq">Toque em "Pedir um link novo no WhatsApp" ou escreva-nos. Cada link funciona uma vez e vale 24 horas.</p></div>
+    <div><h3>Como pago?</h3><p class="peq">Fora do portal, como combinámos. A GeniusFrela regista o pagamento e o portal atualiza-se: o estado passa a "Pago".</p></div>
+    <div><h3>Porque mudou a data de entrega?</h3><p class="peq">Enquanto esperamos por si (uma aprovação ou um pagamento), o prazo desliza os mesmos dias. O portal mostra a nova data e o motivo.</p></div>
+    <div><h3>Aprovei por engano. E agora?</h3><p class="peq">Uma aprovação não se desfaz no portal. Escreva-nos nas Mensagens: podemos reabrir o pedido.</p></div>
+    <div><h3>Posso ver o texto antes da entrega?</h3><p class="peq">O portal mostra o índice e o progresso dos capítulos. O trabalho completo chega na entrega final.</p></div>
+    <div><h3>O ficheiro não descarrega.</h3><p class="peq">Se tiver cadeado, falta o pagamento do restante. Se o link expirou (15 minutos), toque outra vez em "Descarregar".</p></div>
+    <div><h3>Posso pedir ajustes depois dos 7 dias?</h3><p class="peq">O botão deixa de aparecer; fale connosco nas Mensagens e vemos caso a caso.</p></div>
+    <div><h3>Os meus dados estão seguros?</h3><p class="peq">Só a sua conta vê o seu projeto. Os ficheiros ficam num armazenamento privado e só se descarregam por links temporários.</p></div>
+    <div><h3>Tenho mais de um trabalho connosco.</h3><p class="peq">Troque de projeto no cartão do projeto, no topo do menu.</p></div>
+  </div>
+  <div class="caixa aca" style="margin-top:auto; margin-bottom:6mm; display:flex; align-items:center; justify-content:space-between; gap:6mm">
+    <div><h3>Ficou alguma dúvida?</h3><p class="peq" style="margin:0; color:var(--aca-suave)">Escreva-nos nas Mensagens do portal ou pelo WhatsApp <b style="color:var(--aca-suave)">+244 957 392 400</b>. Todos os dias, das 8h às 20h.</p></div>
+    <div class="marca" style="flex:none"><span class="g">G</span><span>Genius<b>Frela</b></span></div>
+  </div>
+  <div class="rodape" style="margin-top:0"><span>GeniusFrela · Guia do cliente Académico</span><span>13</span></div>
+</section>
+
+</body>
+</html>

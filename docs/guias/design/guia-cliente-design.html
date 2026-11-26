@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guia do cliente — Design · GeniusFrela</title>
+<style>
+  /* Design System V1 (ADR-004): neutros comuns + Lilás Criativo do Design. */
+  @font-face { font-family: "Inter"; src: url("../fontes/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Inter"; src: url("../fontes/inter-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 100 900; unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "Space Grotesk"; src: url("../fontes/space-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "Space Grotesk"; src: url("../fontes/space-grotesk-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 300 700; unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+  :root {
+    --noite: #0b0f17; --superficie: #111723; --elevada: #172033; --borda: #232d42;
+    --texto: #e8ecf4; --texto2: #9aa4b8; --texto3: #6b7690;
+    --aca: #a78bfa; --aca-suave: #d2c4ff; --aca-tinta: #231b3f; --aca-sobre: #170f2e;
+    --ok: #5bd69a; --acao: #ff8a7a; --planeado: #5c6780; --violeta: #8b7cf6; --azul: #4c8dff;
+  }
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; background: #05070c; }
+  body { font-family: "Inter", system-ui, sans-serif; color: var(--texto); font-size: 10.5pt; line-height: 1.55; }
+
+  .pagina {
+    width: 210mm; height: 297mm; margin: 0 auto 12px; padding: 16mm 15mm 14mm; position: relative; overflow: hidden;
+    background: radial-gradient(120% 60% at 100% 0%, rgba(167,139,250,.08), transparent 60%), var(--noite);
+    page-break-after: always; break-after: page; display: flex; flex-direction: column;
+  }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  @media print { html, body { background: var(--noite); } .pagina { margin: 0; } }
+
+  /* Cabeçalho e rodapé de cada página */
+  .topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9mm; }
+  .marca { display: flex; align-items: center; gap: 9px; font-family: "Space Grotesk"; font-weight: 600; font-size: 12pt; letter-spacing: -.01em; }
+  .marca .g { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: linear-gradient(135deg, var(--violeta), var(--azul)); color: #fff; font-size: 13pt; }
+  .marca span b { color: var(--azul); font-weight: 600; }
+  .etiqueta { display: inline-block; font-size: 7.5pt; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--aca); background: var(--aca-tinta); border-radius: 6px; padding: 3px 8px; }
+  .rodape { margin-top: auto; padding-top: 5mm; display: flex; justify-content: space-between; color: var(--texto3); font-size: 8pt; border-top: 1px solid var(--borda); }
+
+  h1, h2, h3 { font-family: "Space Grotesk", sans-serif; font-weight: 600; letter-spacing: -.02em; margin: 0; }
+  h1 { font-size: 30pt; line-height: 1.08; }
+  h2 { font-size: 21pt; line-height: 1.15; }
+  h3 { font-size: 12.5pt; line-height: 1.3; }
+  p { margin: 0 0 3mm; }
+  .sobre { font-size: 8pt; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto2); margin-bottom: 3mm; display: flex; align-items: center; gap: 7px; }
+  .sobre::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--aca); }
+  .destaque { color: var(--aca); }
+  .lead { color: var(--texto2); font-size: 11pt; max-width: 150mm; }
+  .peq { font-size: 8.5pt; color: var(--texto2); }
+  b, strong { font-weight: 600; color: var(--texto); }
+
+  /* Passos numerados */
+  .passos { list-style: none; padding: 0; margin: 0; counter-reset: p; display: grid; gap: 3.2mm; }
+  .passos li { counter-increment: p; position: relative; padding-left: 10mm; }
+  .passos li::before { content: counter(p); position: absolute; left: 0; top: 0; width: 6.5mm; height: 6.5mm; border-radius: 50%; display: grid; place-items: center;
+    background: var(--aca); color: var(--aca-sobre); font-weight: 700; font-size: 9pt; font-family: "Space Grotesk"; }
+  .passos li b { display: block; margin-bottom: .5mm; }
+
+  /* Caixas */
+  .caixa { background: var(--superficie); border: 1px solid var(--borda); border-radius: 14px; padding: 4.5mm 5mm; }
+  .caixa.aca { background: var(--aca-tinta); border-color: rgba(167,139,250,.38); }
+  .caixa.aca h3 { color: var(--aca-suave); }
+  .caixa.acao { background: rgba(255,138,122,.07); border-color: rgba(255,138,122,.35); }
+  .caixa h3 { margin-bottom: 2mm; }
+  .dica { display: flex; gap: 3mm; align-items: flex-start; }
+  .dica .i { flex: none; width: 6mm; height: 6mm; border-radius: 7px; display: grid; place-items: center; background: var(--aca); color: var(--aca-sobre); font-weight: 700; font-size: 9pt; }
+
+  /* Ecrãs */
+  .telefone { background: #05070c; border: 1px solid var(--borda); border-radius: 26px; padding: 7px; box-shadow: 0 18px 40px -18px rgba(0,0,0,.8), 0 0 0 4px rgba(255,255,255,.02); position: relative; }
+  .telefone img { display: block; width: 100%; border-radius: 19px; }
+  .cartao-img { border: 1px solid var(--borda); border-radius: 16px; overflow: hidden; background: var(--superficie); position: relative; }
+  .cartao-img img { display: block; width: 100%; }
+  .legenda { font-size: 8pt; color: var(--texto3); margin-top: 2mm; text-align: center; }
+  .num { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--aca); color: var(--aca-sobre); font: 700 9pt "Space Grotesk"; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(11,15,23,.9); }
+
+  .grelha { display: grid; gap: 7mm; }
+  .g-txt-tel { grid-template-columns: 1fr 62mm; align-items: start; }
+  .g-2 { grid-template-columns: 1fr 1fr; }
+  .g-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* Tabela das fases */
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 9pt; }
+  th { text-align: left; font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--texto2); font-weight: 600; padding: 0 3mm 2.5mm; }
+  td { padding: 3mm; border-top: 1px solid var(--borda); vertical-align: top; }
+  td:first-child { width: 11mm; }
+  .bola { width: 7mm; height: 7mm; border-radius: 50%; display: grid; place-items: center; font: 700 9pt "Space Grotesk"; background: var(--elevada); color: var(--aca-suave); border: 1px solid var(--borda); }
+  .quem { display: inline-block; font-size: 7.5pt; font-weight: 600; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+  .quem.voce { background: rgba(255,138,122,.12); color: var(--acao); }
+  .quem.gf { background: var(--aca-tinta); color: var(--aca); }
+
+  /* Legenda de cores */
+  .cores { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5mm 6mm; }
+  .cor { display: flex; align-items: center; gap: 3mm; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 99px; font-size: 8pt; font-weight: 600; white-space: nowrap; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip.ok { background: rgba(91,214,154,.1); color: var(--ok); }
+  .chip.agora { background: rgba(167,139,250,.16); color: var(--aca-suave); }
+  .chip.acao { background: rgba(255,138,122,.12); color: var(--acao); }
+  .chip.plan { background: var(--elevada); color: var(--texto2); }
+
+  /* Capa */
+  .capa { background: radial-gradient(90% 55% at 85% 10%, rgba(167,139,250,.18), transparent 60%), radial-gradient(70% 50% at 0% 100%, rgba(139,124,246,.10), transparent 60%), var(--noite); }
+  .capa h1 { font-size: 40pt; margin: 6mm 0 5mm; }
+  .capa .tel-capa { position: absolute; right: 13mm; bottom: 24mm; width: 60mm; transform: rotate(4deg); }
+  .capa .tel-capa2 { position: absolute; right: 60mm; bottom: 38mm; width: 50mm; transform: rotate(-5deg); opacity: .95; }
+
+  .indice { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 10mm; }
+  .indice li { break-inside: avoid; display: flex; gap: 3mm; padding: 2.4mm 0; border-bottom: 1px dashed var(--borda); }
+  .indice li span:first-child { color: var(--aca); font-family: "Space Grotesk"; font-weight: 600; width: 7mm; }
+  .faq h3 { font-size: 10.5pt; margin-bottom: 1mm; color: var(--aca-suave); }
+  .faq > div { break-inside: avoid; margin-bottom: 4mm; }
+</style>
+</head>
+<body>
+
+<!-- ═════════ 1. Capa ═════════ -->
+<section class="pagina capa">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Design</span></div>
+  <p class="sobre" style="margin-top:14mm">Guia do cliente · Área do Cliente</p>
+  <h1>A sua peça,<br><span class="destaque">aprovada antes de imprimir.</span></h1>
+  <p class="lead">Tudo o que precisa de saber para acompanhar o seu logótipo, convite, lona ou camisola na Área do Cliente da GeniusFrela: ver as provas, pedir revisões, aprovar a arte e saber quando e onde levantar.</p>
+  <div class="caixa aca" style="max-width:80mm; margin-top:8mm">
+    <h3>Em 1 minuto</h3>
+    <ul class="passos">
+      <li><b>Entra pelo link que recebe no WhatsApp.</b>Sem senhas nem aplicações para instalar.</li>
+      <li><b>Vê cada prova em grande.</b>E pede alterações com um comentário.</li>
+      <li><b>Nada vai para impressão sem o seu "sim".</b>Confirma os nomes, a data e a quantidade antes de aprovar.</li>
+    </ul>
+  </div>
+  <div class="telefone tel-capa2"><img src="capturas/20-pronto-levantar.png" alt=""></div>
+  <div class="telefone tel-capa"><img src="capturas/11-v2-visao-geral.png" alt="A prova em grande na Visão geral"></div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design · v1.0</span><span>Novembro de 2026</span></div>
+</section>
+
+<!-- ═════════ 2. Índice e Visão geral ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Design</span></div>
+  <p class="sobre">Neste guia</p>
+  <h2 style="margin-bottom:6mm">O que vai encontrar</h2>
+  <ol class="indice">
+    <li><span>01</span><span>Como ler o portal: cores, menu e Visão geral</span></li>
+    <li><span>02</span><span>As 7 fases da sua peça</span></li>
+    <li><span>03</span><span>Entrar no portal</span></li>
+    <li><span>04</span><span>Briefing: ficha técnica e referências</span></li>
+    <li><span>05</span><span>Orçamento: design + impressão</span></li>
+    <li><span>06</span><span>Pagar o sinal</span></li>
+    <li><span>07</span><span>A primeira prova</span></li>
+    <li><span>08</span><span>Pedir alterações e as rondas</span></li>
+    <li><span>09</span><span>Comparar versões</span></li>
+    <li><span>10</span><span>Sem rondas: a revisão extra</span></li>
+    <li><span>11</span><span>Aprovar a arte para produção</span></li>
+    <li><span>12</span><span>Produção e levantamento</span></li>
+    <li><span>13</span><span>Projeto e Mensagens</span></li>
+    <li><span>14</span><span>Perguntas frequentes</span></li>
+  </ol>
+
+  <div class="grelha g-txt-tel" style="margin-top:8mm">
+    <div>
+      <p class="sobre">01 · Como ler o portal</p>
+      <h2 style="margin-bottom:4mm">A Visão geral num relance</h2>
+      <p class="lead" style="margin-bottom:5mm">É o primeiro ecrã depois de entrar. A protagonista é a sua peça: a prova mais recente aparece em grande.</p>
+      <ul class="passos">
+        <li><b>A sua peça</b>O tipo de peça e a data do evento, sempre no topo.</li>
+        <li><b>Barra das fases</b>Os 7 traços são as 7 fases. "Fase 4 de 7" e o nome da fase em curso.</li>
+        <li><b>A prova em grande</b>A versão atual (ex.: "V2, atual"), com "Ampliar". Por baixo vem o painel de decisão (ver a secção 07).</li>
+        <li><b>Menu</b>Visão geral, Projeto (provas e fases), Ficheiros e Mensagens. No computador fica à esquerda, e a prova fica ao lado da decisão.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="telefone">
+        <img src="capturas/11-v2-visao-geral.png" alt="Visão geral com a prova V2">
+        <span class="num" style="left:-9px; top:14%">1</span>
+        <span class="num" style="left:-9px; top:39%">2</span>
+        <span class="num" style="left:-9px; top:54%">3</span>
+        <span class="num" style="left:-9px; top:94%">4</span>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>2</span></div>
+</section>
+
+<!-- ═════════ 3. Cores e as 7 fases ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Design</span></div>
+  <p class="sobre">01 · Como ler o portal</p>
+  <h2 style="margin-bottom:4mm">O que querem dizer as cores</h2>
+  <div class="caixa" style="margin-bottom:6mm">
+    <div class="cores">
+      <div class="cor"><span class="chip ok">Concluído</span><span class="peq">Fase terminada.</span></div>
+      <div class="cor"><span class="chip agora">Em curso</span><span class="peq">Estamos a trabalhar nesta fase.</span></div>
+      <div class="cor"><span class="chip acao">Aguarda a sua resposta</span><span class="peq">É consigo: aceitar, aprovar ou pagar.</span></div>
+      <div class="cor"><span class="chip plan">Por iniciar</span><span class="peq">Ainda não começou.</span></div>
+    </div>
+  </div>
+
+  <p class="sobre">02 · As 7 fases</p>
+  <h2 style="margin-bottom:3mm">Do briefing ao levantamento</h2>
+  <table>
+    <thead><tr><th></th><th>Fase</th><th>O que acontece</th><th>O que faz</th><th>Quem</th></tr></thead>
+    <tbody>
+      <tr><td><span class="bola">1</span></td><td><b>Briefing</b></td><td>Combinamos a peça, as medidas, a quantidade, os textos e a data do evento.</td><td>Envia referências (fotos, logótipos, ideias).</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">2</span></td><td><b>Orçamento e sinal</b></td><td>Recebe o valor do design e o da impressão, o sinal e as rondas incluídas.</td><td>Aceita o orçamento e paga o sinal (50%).</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">3</span></td><td><b>Conceito / esboço</b></td><td>Desenhamos a primeira proposta.</td><td>Nada a fazer: espera pela V1.</td><td><span class="quem gf">GeniusFrela</span></td></tr>
+      <tr><td><span class="bola">4</span></td><td><b>Revisões</b></td><td>Vê cada prova e pede alterações. Cada pedido gasta uma ronda.</td><td>Comenta ou aprova cada versão.</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">5</span></td><td><b>Aprovação final da arte</b></td><td>Confirma os nomes, a data e a quantidade.</td><td>Aprova a arte para produção.</td><td><span class="quem voce">Você</span></td></tr>
+      <tr><td><span class="bola">6</span></td><td><b>Produção / impressão</b></td><td>Imprimimos a peça.</td><td>Paga o restante antes de imprimir.</td><td><span class="quem gf">GeniusFrela</span></td></tr>
+      <tr><td><span class="bola">7</span></td><td><b>Entrega / levantamento</b></td><td>A peça fica pronta: data, hora e local.</td><td>Levanta a peça (e descarrega os ficheiros digitais, se os houver).</td><td><span class="quem voce">Você</span></td></tr>
+    </tbody>
+  </table>
+  <div class="caixa aca dica" style="margin-top:4mm">
+    <span class="i">i</span>
+    <div><b>Peça só digital?</b> Um logótipo ou um convite digital não tem impressão: a fase 6 aparece como "não se aplica" e passa-se diretamente da aprovação da arte para a entrega dos ficheiros.</div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>3</span></div>
+</section>
+
+<!-- ═════════ 4. Entrar ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Design</span></div>
+  <p class="sobre">03 · Entrar no portal</p>
+  <h2 style="margin-bottom:4mm">Um toque no link e está dentro</h2>
+  <p class="lead" style="margin-bottom:7mm">Não precisa de criar conta nem de decorar senhas. Enviamos-lhe um link pessoal pelo WhatsApp.</p>
+  <div class="grelha g-2">
+    <div>
+      <ul class="passos">
+        <li><b>Abra o link que recebeu no WhatsApp.</b>Abre a página "Olá, <i>o seu nome</i>" com o nome do seu projeto.</li>
+        <li><b>Toque em "Entrar no meu projeto".</b>Fica logo na Visão geral da sua peça.</li>
+        <li><b>Pronto: fica com a sessão aberta.</b>Da próxima vez, abra o portal no mesmo telemóvel e entra sem o link.</li>
+      </ul>
+      <div class="caixa" style="margin-top:7mm">
+        <h3>Regras do link, para a sua segurança</h3>
+        <p class="peq" style="margin:0">O link é <b>só seu</b>, funciona <b>uma vez</b> e vale <b>24 horas</b>. Se pedirmos um link novo, o anterior deixa de funcionar. Não o reencaminhe a ninguém.</p>
+      </div>
+      <div class="caixa acao" style="margin-top:4mm">
+        <h3>"Este link já não é válido"?</h3>
+        <p class="peq" style="margin:0">Já foi usado ou passou das 24 horas. Toque em <b>"Pedir um link novo no WhatsApp"</b> e enviamos-lhe outro.</p>
+      </div>
+      <div class="caixa" style="margin-top:4mm">
+        <h3>Prefere email e senha?</h3>
+        <p class="peq" style="margin:0">Se lhe demos uma senha, entre em <b>joao-pereira.dev/cliente/login</b> com o seu email. No primeiro acesso pede-lhe para escolher uma senha nova.</p>
+      </div>
+    </div>
+    <div class="grelha g-2" style="gap:5mm">
+      <div><div class="telefone"><img src="capturas/01-entrar-link.png" alt="Página do link de acesso"></div><p class="legenda">O link do WhatsApp</p></div>
+      <div><div class="telefone"><img src="../academico/capturas/21-login.png" alt="Página de login"></div><p class="legenda">Email e senha (alternativa)</p></div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>4</span></div>
+</section>
+
+<!-- ═════════ 5. Briefing ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 1</span></div>
+  <p class="sobre">04 · Briefing</p>
+  <h2 style="margin-bottom:4mm">Tudo o que a sua peça precisa, numa ficha</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois da conversa inicial, registamos a ficha técnica da peça. É o que vai ser impresso: vale a pena conferir.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div>
+      <div class="telefone"><img src="capturas/02-visao-geral-briefing.png" alt="Visão geral no briefing"></div>
+      <p class="legenda">Fase 1 de 7 · Briefing</p>
+    </div>
+    <div>
+      <h3 style="margin-bottom:3mm">Ver a ficha técnica</h3>
+      <p class="peq">No fim da Visão geral, toque em <b>"Ver detalhes da peça"</b>: tipo, medidas, material, quantidade, acabamento, impressão, evento e os <b>textos da peça</b> (nomes, data, local). Se algo estiver errado, diga-nos nas Mensagens.</p>
+      <div class="cartao-img"><img src="capturas/03-ficha-tecnica.png" alt="Ficha técnica da peça"></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:3mm">Enviar referências</h3>
+      <p class="peq">Em <b>Ficheiros → Enviar referências</b>: fotos, o logótipo que já tem, exemplos de que gosta. Pode enviar no briefing e durante as revisões.</p>
+      <div class="cartao-img"><img src="capturas/04-enviar-referencias.png" alt="Enviar referências"></div>
+      <div class="caixa" style="margin-top:4mm; padding:3.5mm 4mm">
+        <p class="peq" style="margin:0"><b>Formatos:</b> JPG, PNG, WebP, HEIC, PDF, DOC e DOCX.<br><b>Limites:</b> até 10 MB por ficheiro e 10 ficheiros por fase.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>5</span></div>
+</section>
+
+<!-- ═════════ 6. Orçamento ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 2</span></div>
+  <p class="sobre">05 · Orçamento</p>
+  <h2 style="margin-bottom:4mm">O design e a impressão, em separado</h2>
+  <p class="lead" style="margin-bottom:7mm">O orçamento aparece num cartão na Visão geral. Vê quanto custa o design e quanto custa a impressão, o total, o sinal e quantas rondas de revisão estão incluídas.</p>
+  <div class="grelha g-2">
+    <div>
+      <ul class="passos">
+        <li><b>Leia o cartão.</b>Design, impressão, total, sinal (50%), restante, a data de entrega e as <b>rondas incluídas</b> (normalmente 2).</li>
+        <li><b>Toque em "Aceitar".</b>O portal pede uma confirmação: depois de aceitar não pode voltar atrás.</li>
+        <li><b>Toque em "Confirmar aceite".</b>O aceite fica registado. Aparecem o sinal e o restante em Pagamentos.</li>
+      </ul>
+      <div class="caixa acao" style="margin-top:7mm">
+        <h3>A regra do sinal</h3>
+        <p class="peq" style="margin:0">O sinal <b>não é devolvido</b> se desistir depois de pagar, porque cobre o trabalho já começado. Se quiser mudar o orçamento, toque em <b>"Pedir alterações"</b> em vez de aceitar.</p>
+      </div>
+    </div>
+    <div><div class="cartao-img" style="max-width:78mm; margin-left:auto"><img src="capturas/06-orcamento-confirmar.png" alt="Confirmar o aceite"></div><p class="legenda">O cartão do orçamento, depois de tocar em "Aceitar"</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>6</span></div>
+</section>
+
+<!-- ═════════ 7. Sinal ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 2</span></div>
+  <p class="sobre">06 · Pagar o sinal</p>
+  <h2 style="margin-bottom:4mm">O desenho começa com o sinal pago</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois do aceite, o próximo passo passa a ser "Pagar o sinal". O conceito só começa depois de o pagamento estar registado.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <ul class="passos">
+        <li><b>Pague como combinámos.</b>O pagamento é feito <b>fora do portal</b> (transferência ou outro meio combinado). Não há botão de pagar no portal.</li>
+        <li><b>A GeniusFrela regista o pagamento.</b>Quando o recebermos, marcamo-lo como pago e o sinal passa a <span class="chip ok" style="height:18px">Pago</span>.</li>
+        <li><b>Começamos a primeira proposta.</b>A fase 3, Conceito / esboço, arranca. Recebe a V1 na Visão geral.</li>
+      </ul>
+      <div class="caixa" style="margin-top:7mm">
+        <h3>Os pagamentos, sempre à vista</h3>
+        <p class="peq" style="margin:0">Na Visão geral vê o que falta pagar; em <b>"Ver pagamentos"</b> vê cada parte: o <b>sinal</b>, antes do conceito, e o <b>restante</b>, antes da produção. Uma revisão extra, se a pedir, aparece aqui também.</p>
+      </div>
+      <div class="caixa aca dica" style="margin-top:4mm"><span class="i">i</span><div class="peq" style="color:var(--aca-suave)"><b style="color:var(--aca-suave)">Exemplo:</b> design 45 000 Kz + impressão 75 000 Kz = 120 000 Kz. Sinal de 50%: 60 000 Kz agora, 60 000 Kz antes de imprimir.</div></div>
+    </div>
+    <div><div class="telefone"><img src="capturas/07-pagar-sinal.png" alt="Próximo passo: pagar o sinal"></div><p class="legenda">"Pagar o sinal" no próximo passo</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>7</span></div>
+</section>
+
+<!-- ═════════ 8. Primeira prova ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fases 3 e 4</span></div>
+  <p class="sobre">07 · A primeira prova</p>
+  <h2 style="margin-bottom:4mm">A V1 em grande, e a decisão ao lado</h2>
+  <p class="lead" style="margin-bottom:7mm">Quando a primeira proposta estiver pronta, aparece em grande na Visão geral. Toque em "Ampliar" para a ver em ecrã inteiro; se tiver frente e verso, troque entre as duas.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <h3 style="margin-bottom:3mm">O painel de decisão</h3>
+      <div class="cartao-img" style="max-width:96mm; margin-bottom:5mm"><img src="capturas/09-v1-decisao.png" alt="Painel de decisão da V1"></div>
+      <ul class="passos">
+        <li><b>O estado e a ronda.</b>"Aguarda a sua resposta" e as rondas incluídas ("2 rondas incluídas" ou "Ronda 1 de 2").</li>
+        <li><b>Dois botões.</b><b style="display:inline">"Aprovar arte para produção"</b> se está perfeito; <b style="display:inline">"Pedir alterações"</b> se quer mudar algo.</li>
+        <li><b>Quantas revisões ainda tem.</b>"Ainda pode pedir 2 revisões incluídas no preço."</li>
+      </ul>
+    </div>
+    <div><div class="telefone"><img src="capturas/08-v1-visao-geral.png" alt="A V1 em grande"></div><p class="legenda">"V1, atual" na Visão geral</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>8</span></div>
+</section>
+
+<!-- ═════════ 9. Pedir alterações e rondas ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 4</span></div>
+  <p class="sobre">08 · Pedir alterações e as rondas</p>
+  <h2 style="margin-bottom:4mm">Cada pedido de alterações é uma ronda</h2>
+  <p class="lead" style="margin-bottom:7mm">O orçamento inclui um número de rondas de revisão (normalmente 2). Cada vez que pede alterações a uma prova, gasta uma ronda e recebe uma versão nova.</p>
+  <div class="grelha g-2" style="align-items:start">
+    <div>
+      <ul class="passos">
+        <li><b>Toque em "Pedir alterações".</b>O portal diz que ronda vai usar: "Vai usar a ronda 1 de 2 incluídas."</li>
+        <li><b>Escreva o que quer mudar.</b>Seja concreto: "os nomes maiores", "a data é sábado". O comentário é obrigatório. Se tiver uma imagem de referência, envie-a em Ficheiros.</li>
+        <li><b>Toque em "Enviar pedido".</b>Recebe a versão seguinte (V2, V3…). O pedido fica guardado junto da versão a que diz respeito.</li>
+      </ul>
+      <div class="cartao-img" style="margin-top:6mm"><img src="capturas/10-v1-pedir-alteracoes.png" alt="Pedir alterações à V1"></div>
+      <p class="legenda">Ronda 1 de 2</p>
+    </div>
+    <div>
+      <div class="cartao-img"><img src="capturas/14-v2-ultima-ronda.png" alt="Última ronda incluída"></div>
+      <p class="legenda">Na última ronda, o portal avisa</p>
+      <div class="caixa acao" style="margin-top:5mm">
+        <h3>Atenção à última ronda</h3>
+        <p class="peq" style="margin:0">Quando o pedido gastar a última ronda incluída, o portal avisa: <i>"Esta é a ronda 2 de 2 incluídas. Depois desta, cada nova revisão tem um custo extra."</i> Junte tudo o que quer mudar no mesmo pedido.</p>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>9</span></div>
+</section>
+
+<!-- ═════════ 10. Comparar versões ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 4</span></div>
+  <p class="sobre">09 · Comparar versões</p>
+  <h2 style="margin-bottom:4mm">Veja o que mudou de uma versão para a outra</h2>
+  <p class="lead" style="margin-bottom:7mm">A versão mais recente fica sempre em grande. As anteriores ficam em "Outras versões", com o que pediu em cada uma.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div><div class="telefone"><img src="capturas/11-v2-visao-geral.png" alt="V2 atual"></div><p class="legenda">"V2, atual" e a nota da versão</p></div>
+    <div>
+      <div class="cartao-img"><img src="capturas/12-outras-versoes.png" alt="Outras versões"></div>
+      <p class="legenda">A V1, com o seu pedido</p>
+      <ul class="passos" style="margin-top:5mm">
+        <li><b>Toque em "Comparar com a V2".</b>Vê as duas versões, uma por cima da outra, e o pedido que levou à mais recente.</li>
+        <li><b>Toque numa miniatura</b>para a ampliar. O ficheiro original pode ser descarregado a pedido.</li>
+      </ul>
+      <div class="caixa" style="margin-top:5mm; padding:3.5mm 4mm"><p class="peq" style="margin:0">Na página <b>Projeto</b> estão todas as versões lado a lado, com a atual marcada.</p></div>
+    </div>
+    <div><div class="telefone"><img src="capturas/13-comparar.png" alt="Comparar V1 e V2"></div><p class="legenda">V1 e V2, uma por cima da outra</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>10</span></div>
+</section>
+
+<!-- ═════════ 11. Revisão extra ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 4</span></div>
+  <p class="sobre">10 · Sem rondas: a revisão extra</p>
+  <h2 style="margin-bottom:4mm">Usou as rondas incluídas? Há duas saídas</h2>
+  <p class="lead" style="margin-bottom:7mm">Quando já não há rondas incluídas, o botão "Pedir alterações" dá lugar a "Pedir revisão extra". Nunca fica bloqueado: pode aprovar a versão atual ou pedir mais uma revisão, paga à parte.</p>
+  <div class="grelha g-2" style="align-items:start">
+    <div>
+      <div class="cartao-img" style="max-width:74mm"><img src="capturas/15-v3-sem-rondas.png" alt="V3 sem rondas incluídas"></div>
+      <p class="legenda">"Ronda 2 de 2": as duas saídas</p>
+      <ul class="passos" style="margin-top:6mm">
+        <li><b>Está tudo bem?</b>Toque em "Aprovar arte para produção" (ver a secção 11).</li>
+        <li><b>Quer mais uma alteração?</b>Toque em "Pedir revisão extra", descreva o que quer mudar e envie.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="cartao-img" style="max-width:66mm"><img src="capturas/16-revisao-extra.png" alt="Pedir revisão extra"></div>
+      <p class="legenda">O pedido da revisão extra</p>
+      <div class="caixa acao" style="margin-top:5mm">
+        <h3>Como funciona a revisão extra</h3>
+        <ul class="passos" style="margin-top:2mm">
+          <li><b>Recebemos o seu pedido nas Mensagens</b>e dizemos-lhe o valor antes de começar.</li>
+          <li><b>O extra aparece para aceitar</b>em Aprovações e em Pagamentos.</li>
+          <li><b>Só avançamos depois de o aceitar.</b>Ganha mais uma ronda e recebe a versão seguinte.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>11</span></div>
+</section>
+
+<!-- ═════════ 12. Aprovar a arte ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fase 5</span></div>
+  <p class="sobre">11 · Aprovar a arte para produção</p>
+  <h2 style="margin-bottom:4mm">O passo mais importante: confirme antes de aprovar</h2>
+  <p class="lead" style="margin-bottom:7mm">Aprovar a arte é dizer "pode imprimir". Por isso o portal mostra-lhe, antes de aprovar, exatamente o que vai ser impresso.</p>
+  <div class="grelha g-txt-tel">
+    <div>
+      <ul class="passos">
+        <li><b>Toque em "Aprovar arte para produção".</b>Abre a confirmação, com o aviso a coral: depois de aprovar, a peça vai para impressão e já não pode ser alterada.</li>
+        <li><b>Confira os textos da peça.</b>Os nomes, a data e o local, a data do evento, as medidas, a quantidade e a versão. Leia letra a letra.</li>
+        <li><b>Marque "Confirmo que os nomes, a data e a quantidade estão certos".</b>Só então o botão "Aprovar para produção" fica ativo.</li>
+        <li><b>Toque em "Aprovar para produção".</b>A versão fica "aprovada para produção" e o projeto passa para a Produção.</li>
+      </ul>
+      <div class="caixa acao" style="margin-top:7mm">
+        <h3>Encontrou um erro na ficha?</h3>
+        <p class="peq" style="margin:0">Não aprove. Use "Pedir alterações" (ou "Pedir revisão extra") ou escreva-nos nas Mensagens. Depois de aprovada, a arte só se reabre por nós e só antes de a impressão começar.</p>
+      </div>
+    </div>
+    <div><div class="telefone"><img src="capturas/17-aprovar-arte.png" alt="Confirmação da aprovação da arte"></div><p class="legenda">A confirmação com os textos da peça</p></div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>12</span></div>
+</section>
+
+<!-- ═════════ 13. Produção e levantamento ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Fases 6 e 7</span></div>
+  <p class="sobre">12 · Produção e levantamento</p>
+  <h2 style="margin-bottom:4mm">Do "a imprimir" ao "pronto para levantar"</h2>
+  <p class="lead" style="margin-bottom:7mm">Depois da aprovação, o ecrã deixa de falar da arte e passa a falar da produção e de onde e quando levantar.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div><div class="telefone"><img src="capturas/18-pagar-restante.png" alt="Pagar o restante"></div><p class="legenda"><b>1.</b> "Pagar o restante": a impressão começa depois do pagamento</p></div>
+    <div><div class="telefone"><img src="capturas/19-em-producao.png" alt="Em produção"></div><p class="legenda"><b>2.</b> "Em produção": "Estamos a imprimir as 120 peças"</p></div>
+    <div><div class="telefone"><img src="capturas/20-pronto-levantar.png" alt="Pronto para levantar"></div><p class="legenda"><b>3.</b> "Pronto para levantar": dia, hora, local e mapa</p></div>
+  </div>
+  <div class="grelha g-2" style="margin-top:6mm">
+    <div class="caixa">
+      <h3>Pronto para levantar</h3>
+      <p class="peq" style="margin:0">A data e o local aparecem em destaque. <b>"Abrir no mapa"</b> abre o local no Google Maps. Se a peça tiver ficheiros digitais (PDF, PNG), descarrega-os aqui.</p>
+    </div>
+    <div class="caixa aca">
+      <h3>A folga até ao evento</h3>
+      <p class="peq" style="margin:0; color:var(--aca-suave)">O portal diz-lhe quantos dias tem entre o levantamento e o evento ("tem 4 dias de folga"), para levantar com tempo.</p>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>13</span></div>
+</section>
+
+<!-- ═════════ 14. Entregue, Projeto e Mensagens ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Sempre</span></div>
+  <p class="sobre">13 · Projeto e Mensagens</p>
+  <h2 style="margin-bottom:4mm">Tudo guardado, do primeiro esboço à entrega</h2>
+  <p class="lead" style="margin-bottom:7mm">Quando levantar a peça, marcamo-la como entregue e o projeto conclui-se. As provas, as conversas e os ficheiros continuam no portal.</p>
+  <div class="grelha g-3" style="align-items:start">
+    <div><div class="telefone"><img src="capturas/23-entregue.png" alt="Peça entregue"></div><p class="legenda">"Peça entregue" e a arte aprovada</p></div>
+    <div><div class="telefone"><img src="capturas/21-projeto-galeria.png" alt="Página Projeto"></div><p class="legenda">Projeto: todas as provas lado a lado</p></div>
+    <div><div class="telefone"><img src="capturas/22-mensagens.png" alt="Mensagens"></div><p class="legenda">A conversa com a GeniusFrela</p></div>
+  </div>
+  <div class="grelha g-2" style="margin-top:6mm">
+    <div class="caixa">
+      <h3>Mensagens</h3>
+      <p class="peq" style="margin:0">Escolha o assunto em "Sobre" (Geral ou uma fase), escreva e toque na seta. O botão de conversa, no topo do portal, também abre as Mensagens.</p>
+    </div>
+    <div class="caixa">
+      <h3>Horário de atendimento</h3>
+      <p class="peq" style="margin:0">Todos os dias, das <b>8h às 20h</b> (hora de Luanda). Pode escrever a qualquer hora; fora do horário, o portal avisa que respondemos assim que abrirmos.</p>
+    </div>
+  </div>
+  <div class="rodape"><span>GeniusFrela · Guia do cliente Design</span><span>14</span></div>
+</section>
+
+<!-- ═════════ 15. Perguntas frequentes ═════════ -->
+<section class="pagina">
+  <div class="topo"><div class="marca"><span class="g">G</span><span>Genius<b>Frela</b></span></div><span class="etiqueta">Design</span></div>
+  <p class="sobre">14 · Perguntas frequentes</p>
+  <h2 style="margin-bottom:7mm">Dúvidas comuns</h2>
+  <div class="grelha g-2 faq" style="gap:4mm 9mm">
+    <div><h3>Preciso de instalar alguma aplicação?</h3><p class="peq">Não. O portal abre no browser do telemóvel ou do computador.</p></div>
+    <div><h3>Perdi o link ou ele expirou.</h3><p class="peq">Toque em "Pedir um link novo no WhatsApp" ou escreva-nos. Cada link funciona uma vez e vale 24 horas.</p></div>
+    <div><h3>Quantas revisões posso pedir?</h3><p class="peq">As incluídas no orçamento (normalmente 2). Depois disso, cada revisão é um extra: dizemos-lhe o valor e só avançamos se aceitar.</p></div>
+    <div><h3>A prova no ecrã tem as cores certas?</h3><p class="peq">A pré-visualização é leve, para abrir depressa no telemóvel. Para ver o ficheiro com todo o pormenor, descarregue o original em "Ampliar".</p></div>
+    <div><h3>Aprovei a arte e vi um erro.</h3><p class="peq">Escreva-nos já nas Mensagens. Antes de a impressão começar, podemos reabrir a aprovação; depois de começar, já não.</p></div>
+    <div><h3>Como pago?</h3><p class="peq">Fora do portal, como combinámos. A GeniusFrela regista o pagamento e o portal atualiza-se: o estado passa a "Pago".</p></div>
+    <div><h3>Porque não começam a imprimir?</h3><p class="peq">A impressão começa com a arte aprovada e o restante pago. O próximo passo mostra o que falta.</p></div>
+    <div><h3>Posso mudar a data de levantamento?</h3><p class="peq">Sim: peça nas Mensagens. A nova data e o local aparecem logo no portal.</p></div>
+    <div><h3>Os meus dados estão seguros?</h3><p class="peq">Só a sua conta vê o seu projeto. Os ficheiros ficam num armazenamento privado e só se descarregam por links temporários.</p></div>
+    <div><h3>Tenho mais de uma peça connosco.</h3><p class="peq">Troque de projeto no cartão do projeto, no topo do menu.</p></div>
+  </div>
+  <div class="caixa aca" style="margin-top:auto; margin-bottom:6mm; display:flex; align-items:center; justify-content:space-between; gap:6mm">
+    <div><h3>Ficou alguma dúvida?</h3><p class="peq" style="margin:0; color:var(--aca-suave)">Escreva-nos nas Mensagens do portal ou pelo WhatsApp <b style="color:var(--aca-suave)">+244 957 392 400</b>. Todos os dias, das 8h às 20h.</p></div>
+    <div class="marca" style="flex:none"><span class="g">G</span><span>Genius<b>Frela</b></span></div>
+  </div>
+  <div class="rodape" style="margin-top:0"><span>GeniusFrela · Guia do cliente Design</span><span>15</span></div>
+</section>
+
+</body>
+</html>
