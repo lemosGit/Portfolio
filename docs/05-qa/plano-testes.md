@@ -77,7 +77,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 | CT-005 | US-005 | Admin conclui uma fase ou põe "a aguardar o cliente" → a barra e o próximo passo mudam; fase "não aplicável" | U, B, M | U `admin-phases.test.ts` · B `0006_fases.sql` | ✅ 🟢 | M9-02/03: verificar no cliente logo a seguir (L4: concluir e avançar não é atómico) |
 | CT-006 | US-006 | Cliente com 2 projetos troca no seletor → fases, provas e pagamentos do outro | M | — | ⬜ | **M9-03**: usar os 2 projetos do Cliente de teste Design |
 | CT-007 | US-007 | Projeto cancelado depois do sinal pago → cancelado, sinal fica pago, pendentes anulados | B | B `0007_blocos.sql` (RN-13), `0008_retencao.sql` | ✅ | M9-02: cancelar um projeto de teste no admin |
-| CT-008 | US-008 | Cliente Tech abre o portal depois da v1.1 → páginas como antes | E, V | E `tech.spec.ts` · V capturas Tech (12) | ✅ | **M9-04** (regressão completa) |
+| CT-008 | US-008 | Cliente Tech abre o portal depois da v1.1 → páginas como antes | E, V, M | E `tech.spec.ts`, `desenvolvimento.spec.ts` (conteúdo de cada página: fases do GitHub, tarefas, demos, mensagens, agenda) · V capturas Tech (12) | ✅ 🟢 | — (M9-04: `relatorios/M9-04-regressao-tech.md`) |
 
 ### 4.2 Pagamentos
 | CT | US | Caso | Nível | Automatizado em | Estado | Falta / onde |
@@ -135,7 +135,7 @@ Em "Automatizado em", os ficheiros são relativos à raiz do repositório (E = `
 ### 4.8 Transversais (RNF e segurança)
 | CT | Requisito | Caso | Nível | Automatizado em | Estado | Falta / onde |
 |---|---|---|---|---|---|---|
-| CT-101 | RNF-201 | 360 px sem scroll horizontal (portal e páginas públicas) | E | E `academico.spec.ts`, `servicos.spec.ts`, `publico.spec.ts` | ✅ | Tech a 360 px: M9-04 |
+| CT-101 | RNF-201 | 360 px sem scroll horizontal (portal e páginas públicas) | E | E `academico.spec.ts`, `servicos.spec.ts`, `publico.spec.ts` | ✅ | — (Tech a 360 px nas capturas da M9-04) |
 | CT-102 | RNF-204 | Contraste AA dos tokens do DS V1 | — | ADR-004 §5 (verificado à mão) | 🟢 | — |
 | CT-103 | Segurança (M3-06) | Cliente A não lê nem escreve dados de B; históricos só de inserção; anon sem acesso | B | B `0090_rls.sql` (T1, T2, T6, T7, T10–T12) e RLS nos `00NN` | ✅ | **M9-05**: revisão completa (URLs assinadas, link mágico) |
 | CT-104 | T13 | A limpeza diária recusa pedidos sem `CRON_SECRET` | E | E `tech.spec.ts` | ✅ | — |
