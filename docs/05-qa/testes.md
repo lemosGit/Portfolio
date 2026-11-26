@@ -47,5 +47,6 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 - `npx supabase start` (Docker; a 1.ª vez descarrega as imagens) aplica `supabase/migrations/*` num Supabase local. `npx supabase stop` para parar.
 - `npm run e2e:fluxo` faz o build em `.next-fluxo` e arranca o portal na porta 3200 apontado ao Supabase local (`supabase status`); recusa correr se o URL não for local. Sem emails, sem GitHub, hora real.
 - `tests/e2e/fluxo/academico.fluxo.spec.ts`: link mágico (uso único) → aceite do orçamento (o sinal trava a Estrutura) → índice aprovado → entrega final bloqueada até ao restante, depois descarregada → ajuste resolvido com a V2. Cada execução cria os seus dados com um sufixo único.
+- `tests/e2e/fluxo/design.fluxo.spec.ts` (M9-03): link mágico → aceite do orçamento com design + impressão (o sinal trava o Conceito) → V1 com alterações pedidas (ronda 1 de 2) → V2 aprovada para produção com os textos-chave e "Confirmo" → sem novas provas (RN-41) → "a imprimir" recusado sem o restante (RN-15) → em produção → pronto para levantar → entregue.
 - Limite conhecido: o link é gerado pela lógica da ação, não pelo botão do admin (no Supabase local a resposta da ação fica presa no browser; #132).
 

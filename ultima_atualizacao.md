@@ -5,8 +5,8 @@
 ## 📍 Estado actual
 | | Tarefa | Issue | Entregável |
 |---|---|---|---|
-| ✅ Última feita | M9-02 Testar de ponta a ponta o fluxo Académico | #75 | `tests/e2e/fluxo/academico.fluxo.spec.ts`, `playwright.fluxo.config.ts`, `supabase/config.jsonc` |
-| ⏭️ Próxima | M9-03 Testar de ponta a ponta o fluxo Design | #76 | — |
+| ✅ Última feita | M9-03 Testar de ponta a ponta o fluxo Design | #76 | `tests/e2e/fluxo/design.fluxo.spec.ts` |
+| ⏭️ Próxima | M9-04 Verificar a regressão do layout Desenvolvimento | #77 | — |
 | ❓ Perguntas em aberto | **Aprovar as capturas do Design (M7-07, Q-106) e a `publico-design` (M7-08, Q-107)** · **D-122 por fazer (índices e políticas antigas, migração própria)** · **R-08: definir `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` no GitHub** · Datas das milestones M2–M10 · R-01 Vercel Hobby aceite (rever no fim de cada milestone) · PNG dos diagramas por gerar (contexto, 3 MER, 7 estados, 2 sequências): falta autorizar o `mermaid-cli` | | |
 | 🎨 Referência de design | **Design System V1** — `docs/references/designer_system/Design System — GeniusFrela@2x.png` (todas as tarefas de design, D-086) | | |
 <!-- ESTADO:FIM -->
@@ -111,3 +111,4 @@
 | 2026-11-25 | M9-01 | #74 | Plano de testes (D-170): 36 casos (CT-001…036) a partir dos critérios das US, mais concorrência e RNF; nível, ficheiro automatizado, estado e o que falta por tarefa; dados de teste por serviço (demonstração, BD, produção, ficheiros gerados); 30 de 36 US automatizadas, lacunas G1…G6 (Q-108: G1 já, G2 na v1.2). Pós-v0.3: 0018 aplicada em produção, V3 de teste apagada (L6) | `docs/05-qa/plano-testes.md`, `scripts/gerar_ficheiros_teste.py` |
 | 2026-11-25 | M9-08 | #154 | Aviso fora do horário (G1, Q-108, D-171): horário 08h–20h todos os dias em Luanda (`lib/portal/hours.ts`), aviso na página de mensagens sem bloquear o envio; páginas públicas corrigidas para o horário aprovado (diziam 18h–21h). 6 testes unitários/componente, 2 E2E; capturas `publico-*` regravadas | `lib/portal/hours.ts`, `app/cliente/_components/HoursNotice.tsx`, `app/cliente/(portal)/mensagens/page.tsx` |
 | 2026-11-26 | M9-02 | #75 | Fluxo Académico de ponta a ponta com Supabase local (D-172): CLI `supabase` (devDependency), `supabase/config.jsonc`, `playwright.fluxo.config.ts` (build próprio, porta 3200, só local), 5 passos (link mágico de uso único → aceite → índice → entrega bloqueada até ao restante e descarregada → ajuste resolvido com a V2), job novo no CI. Encontrado: a resposta da ação "Gerar link de acesso" fica presa no browser (mesmo sintoma da #132) | `tests/e2e/fluxo/`, `playwright.fluxo.config.ts`, `.github/workflows/ci.yml` |
+| 2026-11-26 | M9-03 | #76 | Fluxo Design de ponta a ponta com o Supabase local (D-172): link mágico, aceite com design + impressão e o sinal a travar o Conceito, V1 com alterações (ronda 1 de 2), V2 aprovada com textos-chave e "Confirmo", RN-41 no carregamento, RN-15 na produção, pronto para levantar (mapa e folga), entregue. 5 testes; os 2 fluxos (10 testes) estáveis em 2 execuções seguidas | `tests/e2e/fluxo/design.fluxo.spec.ts`, `tests/e2e/fluxo/dados.ts` |
