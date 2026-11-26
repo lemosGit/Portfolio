@@ -51,3 +51,5 @@ Tiradas em 2026-11-24, **antes de qualquer mudança da M5**: Visão geral, Meu p
 - `tests/e2e/fluxo/seguranca.fluxo.spec.ts` (M9-05): link mágico substituído, expirado e usado (e o Auth a recusar o token gasto); URL assinada de 15 min, recusada sem token, com o token alterado e depois de expirar; IDOR: o cliente A repete as Server Actions de download e de aprovação com os ids do cliente B; cookie do projeto. Relatório: `relatorios/seguranca-v1.1.md`.
 - Limite conhecido: o link é gerado pela lógica da ação, não pelo botão do admin (no Supabase local a resposta da ação fica presa no browser; #132).
 
+## Capturas do Design e da página pública (M7-07, M7-08)
+`design-visao-geral-*` (layout fiel ao wireframe, D-166) e `publico-design-*` (D-167) **aprovadas pelo João a 2026-11-26** (Q-106, Q-107). São a referência do Design.
